@@ -2,6 +2,28 @@
 import macros
 {.experimental: "codeReordering".}
 
+macro vk*(name, instance: untyped): untyped =
+  #let vvkCreateDebugUtilsMessengerEXT: PFNVkCreateDebugUtilsMessengerEXT = cast[PFNVkCreateDebugUtilsMessengerEXT](vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"))
+  nnkStmtList.newTree(
+    nnkLetSection.newTree(
+      nnkIdentDefs.newTree(
+        newIdentNode("v" & name.strVal),
+        newIdentNode("PFN" & name.strVal),
+        nnkCast.newTree(
+          newIdentNode("PFN" & name.strVal),
+          nnkCall.newTree(
+            newIdentNode("vkGetInstanceProcAddr"),
+            newIdentNode(instance.strVal),
+            newLit(name.strVal)
+          )
+        )
+      )
+    )
+  )
+
+
+
+
 macro genDistinctOps(identifiers: untyped): untyped =
   result =  nnkStmtList.newTree() #same as newNimNode()
   for identifier in identifiers:
@@ -7051,3 +7073,101 @@ const
   vkGoogleDecorateString* = 1
   vkGoogleDecorateStringSpecVersion* = 0
   vkGoogleDecorateStringExtensionName* = "vkGoogleDecorateString"
+
+from strutils import replace
+
+macro genFlagConverters(identifiers: untyped): untyped =
+  result =  nnkStmtList.newTree() #same as newNimNode()
+  for identifier in identifiers: #Identifiers of the FlagBits types
+    var flagType = identifier.strVal.replace("Bit")
+    result.add(
+      nnkConverterDef.newTree(
+        nnkPostfix.newTree(
+          newIdentNode("*"),
+          newIdentNode("to" & flagType)
+        ),
+        newEmptyNode(),
+        newEmptyNode(),
+        nnkFormalParams.newTree(
+          newIdentNode(flagType ),
+          nnkIdentDefs.newTree(
+            newIdentNode("i"),
+            newIdentNode(identifier.strVal),
+            newEmptyNode()
+          )
+        ),
+        newEmptyNode(),
+        newEmptyNode(),
+        nnkStmtList.newTree(
+          nnkDotExpr.newTree(
+            newIdentNode("i"),
+            newIdentNode(flagType )
+          )
+        )
+      )
+    )
+
+genFlagConverters:
+  VkFormatFeatureFlagBits
+  VkImageUsageFlagBits
+  VkImageCreateFlagBits
+  VkSampleCountFlagBits
+  VkQueueFlagBits
+  VkMemoryPropertyFlagBits
+  VkMemoryHeapFlagBits
+  VkDeviceQueueCreateFlagBits
+  VkPipelineStageFlagBits
+  VkImageAspectFlagBits
+  VkSparseImageFormatFlagBits
+  VkSparseMemoryBindFlagBits
+  VkFenceCreateFlagBits
+  VkQueryPipelineStatisticFlagBits
+  VkQueryResultFlagBits
+  VkBufferCreateFlagBits
+  VkBufferUsageFlagBits
+  VkPipelineCreateFlagBits
+  VkShaderStageFlagBits
+  VkCullModeFlagBits
+  VkColorComponentFlagBits
+  VkDescriptorSetLayoutCreateFlagBits
+  VkDescriptorPoolCreateFlagBits
+  VkAttachmentDescriptionFlagBits
+  VkSubpassDescriptionFlagBits
+  VkAccessFlagBits
+  VkDependencyFlagBits
+  VkCommandPoolCreateFlagBits
+  VkCommandPoolResetFlagBits
+  VkCommandBufferUsageFlagBits
+  VkQueryControlFlagBits
+  VkCommandBufferResetFlagBits
+  VkStencilFaceFlagBits
+  VkRenderPassCreateFlagBits
+  VkSubgroupFeatureFlagBits
+  VkPeerMemoryFeatureFlagBits
+  VkMemoryAllocateFlagBits
+  VkExternalMemoryHandleTypeFlagBits
+  VkExternalMemoryFeatureFlagBits
+  VkExternalFenceHandleTypeFlagBits
+  VkExternalFenceFeatureFlagBits
+  VkFenceImportFlagBits
+  VkSemaphoreImportFlagBits
+  VkExternalSemaphoreHandleTypeFlagBits
+  VkExternalSemaphoreFeatureFlagBits
+  VkSurfaceTransformFlagBitsKHR
+  VkCompositeAlphaFlagBitsKHR
+  VkSwapchainCreateFlagBitsKHR
+  VkDeviceGroupPresentModeFlagBitsKHR
+  VkDisplayPlaneAlphaFlagBitsKHR
+  VkDebugReportFlagBitsEXT
+  VkExternalMemoryHandleTypeFlagBitsNV
+  VkExternalMemoryFeatureFlagBitsNV
+  VkConditionalRenderingFlagBitsEXT
+  VkIndirectCommandsLayoutUsageFlagBitsNVX
+  VkObjectEntryUsageFlagBitsNVX
+  VkSurfaceCounterFlagBitsEXT
+  VkDebugUtilsMessageSeverityFlagBitsEXT
+  VkDebugUtilsMessageTypeFlagBitsEXT
+  VkDescriptorBindingFlagBitsEXT
+  VkGeometryFlagBitsNV
+  VkGeometryInstanceFlagBitsNV
+  VkBuildAccelerationStructureFlagBitsNV
