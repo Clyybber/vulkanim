@@ -3,7 +3,6 @@ import macros
 {.experimental: "codeReordering".}
 
 macro vk*(name, instance: untyped): untyped =
-  #let vvkCreateDebugUtilsMessengerEXT: PFNVkCreateDebugUtilsMessengerEXT = cast[PFNVkCreateDebugUtilsMessengerEXT](vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"))
   nnkStmtList.newTree(
     nnkLetSection.newTree(
       nnkIdentDefs.newTree(
@@ -221,10 +220,12 @@ genDistinctOps:
   VkQueryResultFlagBits
   VkBufferCreateFlagBits
   VkBufferUsageFlagBits
+  VkImageViewCreateFlagBits
   VkPipelineCreateFlagBits
   VkShaderStageFlagBits
   VkCullModeFlagBits
   VkColorComponentFlagBits
+  VkSamplerCreateFlagBits
   VkDescriptorSetLayoutCreateFlagBits
   VkDescriptorPoolCreateFlagBits
   VkAttachmentDescriptionFlagBits
@@ -237,7 +238,6 @@ genDistinctOps:
   VkQueryControlFlagBits
   VkCommandBufferResetFlagBits
   VkStencilFaceFlagBits
-  VkRenderPassCreateFlagBits
   VkPointClippingBehavior
   VkTessellationDomainOrigin
   VkSamplerYcbcrModelConversion
@@ -263,6 +263,7 @@ genDistinctOps:
   VkDeviceGroupPresentModeFlagBitsKHR
   VkDisplayPlaneAlphaFlagBitsKHR
   VkDriverIdKHR
+  VkResolveModeFlagBitsKHR
   VkDebugReportObjectTypeEXT
   VkDebugReportFlagBitsEXT
   VkRasterizationOrderAMD
@@ -302,7 +303,9 @@ genDistinctOps:
   VkQueueGlobalPriorityEXT
   VkTimeDomainEXT
   VkMemoryOverallocationBehaviorAMD
-## * Copyright (c) 2015-2018 The Khronos Group Inc.
+  VkValidationFeatureEnableEXT
+  VkValidationFeatureDisableEXT
+## * Copyright (c) 2015-2019 The Khronos Group Inc.
 ## *
 ## * Licensed under the Apache License, Version 2.0 (the "License");
 ## * you may not use this file except in compliance with the License.
@@ -322,17 +325,17 @@ genDistinctOps:
 ##
 
 const
-  vkVersion_1_0* = 1
+  vkVersion10* = 1
 
 template vkMakeVersion*(major, minor, patch: untyped): untyped =
   (((major) shl 22) or ((minor) shl 12) or (patch))
 
-##  DEPRECATED: This define has been removed. Specific version defines (e.g. vkApiVersion_1_0), or the vkMakeVersion macro, should be used instead.
+##  DEPRECATED: This define has been removed. Specific version defines (e.g. vkApiVersion10), or the vkMakeVersion macro, should be used instead.
 ## #define vkApiVersion vkMakeVersion(1, 0, 0) // Patch version should always be set to 0
 ##  Vulkan 1.0 version number
 
 const
-  vkApiVersion_1_0* = vkMakeVersion(1, 0, 0) ##  Patch version should always be set to 0
+  vkApiVersion10* = vkMakeVersion(1, 0, 0) ##  Patch version should always be set to 0
 
 template vkVersionMajor*(version: untyped): untyped =
   ((uint32)(version) shr 22)
@@ -346,7 +349,7 @@ template vkVersionPatch*(version: untyped): untyped =
 ##  Version of this file
 
 const
-  vkHeaderVersion* = 92
+  vkHeaderVersion* = 97
   vkNullHandle* = 0
 
 type
@@ -382,14 +385,14 @@ type
 
 const
   vkLodClampNone* = 1000.0
-  vkRemainingMipLevels* = (not 0'u32)
-  vkRemainingArrayLayers* = (not 0'u32)
-  vkWholeSize* = (not 0'u32)
-  vkAttachmentUnused* = (not 0'u32)
+  vkRemainingMipLevels* = (not 0)
+  vkRemainingArrayLayers* = (not 0)
+  vkWholeSize* = (not 0)
+  vkAttachmentUnused* = (not 0)
   vkTrue* = 1
   vkFalse* = 0
-  vkQueueFamilyIgnored* = (not 0'u32)
-  vkSubpassExternal* = (not 0'u32)
+  vkQueueFamilyIgnored* = (not 0)
+  vkSubpassExternal* = (not 0)
   vkMaxPhysicalDeviceNameSize* = 256
   vkUuidSize* = 16
   vkMaxMemoryTypes* = 32
@@ -476,6 +479,7 @@ type
   VkBufferUsageFlagBits* = distinct cint
   VkBufferUsageFlags* = VkFlags
   VkBufferViewCreateFlags* = VkFlags
+  VkImageViewCreateFlagBits* = distinct cint
   VkImageViewCreateFlags* = VkFlags
   VkShaderModuleCreateFlags* = VkFlags
   VkPipelineCacheCreateFlags* = VkFlags
@@ -498,6 +502,7 @@ type
   VkPipelineDynamicStateCreateFlags* = VkFlags
   VkPipelineLayoutCreateFlags* = VkFlags
   VkShaderStageFlags* = VkFlags
+  VkSamplerCreateFlagBits* = distinct cint
   VkSamplerCreateFlags* = VkFlags
   VkDescriptorSetLayoutCreateFlagBits* = distinct cint
   VkDescriptorSetLayoutCreateFlags* = VkFlags
@@ -526,7 +531,6 @@ type
   VkCommandBufferResetFlags* = VkFlags
   VkStencilFaceFlagBits* = distinct cint
   VkStencilFaceFlags* = VkFlags
-  VkRenderPassCreateFlagBits* = distinct cint
   VkApplicationInfo* {.bycopy.} = object
     sType*: VkStructureType
     pNext*: pointer
@@ -581,7 +585,7 @@ type
     multiViewport*: VkBool32
     samplerAnisotropy*: VkBool32
     textureCompressionETC2*: VkBool32
-    textureCompressionASTCLdr*: VkBool32
+    textureCompressionASTC_LDR*: VkBool32
     textureCompressionBC*: VkBool32
     occlusionQueryPrecise*: VkBool32
     pipelineStatisticsQuery*: VkBool32
@@ -1245,7 +1249,7 @@ type
     pBindings*: ptr VkDescriptorSetLayoutBinding
 
   VkDescriptorPoolSize* {.bycopy.} = object
-    descriptorType*: VkDescriptorType
+    `type`*: VkDescriptorType
     descriptorCount*: uint32
 
   VkDescriptorPoolCreateInfo* {.bycopy.} = object
@@ -1655,12 +1659,13 @@ const
   vkPipelineCacheHeaderVersionMaxEnum* = 0x7FFFFFFF.VkPipelineCacheHeaderVersion
 
 const
-  vkErrorNotPermittedExt* = -1000174001.VkResult
+  vkErrorInvalidDeviceAddressExt* = -1000244000.VkResult
   vkErrorOutOfPoolMemoryKhr: VkResult = vkErrorOutOfPoolMemory
   vkErrorInvalidExternalHandleKhr: VkResult = vkErrorInvalidExternalHandle
   vkResultBeginRange: VkResult = vkErrorFragmentedPool
   vkResultEndRange: VkResult = vkIncomplete
   vkResultRangeSize: VkResult = (vkIncomplete - vkErrorFragmentedPool + 1)
+  vkErrorNotPermittedExt* = -1000174001.VkResult
   vkErrorFragmentationExt* = -1000161000.VkResult
   vkErrorInvalidDrmFormatModifierPlaneLayoutExt* = -1000158000.VkResult
   vkErrorInvalidExternalHandle* = -1000072003.VkResult
@@ -1773,15 +1778,15 @@ const
   vkStructureTypeImportMemoryWin32HandleInfoNv* = 1000057000.VkStructureType
   vkStructureTypeExportMemoryWin32HandleInfoNv* = 1000057001.VkStructureType
   vkStructureTypeWin32KeyedMutexAcquireReleaseInfoNv* = 1000058000.VkStructureType
-  vkStructureTypePhysicalDeviceFeatures_2* = 1000059000.VkStructureType
-  vkStructureTypePhysicalDeviceProperties_2* = 1000059001.VkStructureType
-  vkStructureTypeFormatProperties_2* = 1000059002.VkStructureType
-  vkStructureTypeImageFormatProperties_2* = 1000059003.VkStructureType
-  vkStructureTypePhysicalDeviceImageFormatInfo_2* = 1000059004.VkStructureType
-  vkStructureTypeQueueFamilyProperties_2* = 1000059005.VkStructureType
-  vkStructureTypePhysicalDeviceMemoryProperties_2* = 1000059006.VkStructureType
-  vkStructureTypeSparseImageFormatProperties_2* = 1000059007.VkStructureType
-  vkStructureTypePhysicalDeviceSparseImageFormatInfo_2* = 1000059008.VkStructureType
+  vkStructureTypePhysicalDeviceFeatures2* = 1000059000.VkStructureType
+  vkStructureTypePhysicalDeviceProperties2* = 1000059001.VkStructureType
+  vkStructureTypeFormatProperties2* = 1000059002.VkStructureType
+  vkStructureTypeImageFormatProperties2* = 1000059003.VkStructureType
+  vkStructureTypePhysicalDeviceImageFormatInfo2* = 1000059004.VkStructureType
+  vkStructureTypeQueueFamilyProperties2* = 1000059005.VkStructureType
+  vkStructureTypePhysicalDeviceMemoryProperties2* = 1000059006.VkStructureType
+  vkStructureTypeSparseImageFormatProperties2* = 1000059007.VkStructureType
+  vkStructureTypePhysicalDeviceSparseImageFormatInfo2* = 1000059008.VkStructureType
   vkStructureTypeMemoryAllocateFlagsInfo* = 1000060000.VkStructureType
   vkStructureTypeDeviceGroupRenderPassBeginInfo* = 1000060003.VkStructureType
   vkStructureTypeDeviceGroupCommandBufferBeginInfo* = 1000060004.VkStructureType
@@ -1823,7 +1828,7 @@ const
   vkStructureTypeExportSemaphoreCreateInfo* = 1000077000.VkStructureType
   vkStructureTypeImportSemaphoreWin32HandleInfoKhr* = 1000078000.VkStructureType
   vkStructureTypeExportSemaphoreWin32HandleInfoKhr* = 1000078001.VkStructureType
-  vkStructureTypeD3D12FenceSubmitInfoKhr* = 1000078002.VkStructureType
+  vkStructureTypeD3d12FenceSubmitInfoKhr* = 1000078002.VkStructureType
   vkStructureTypeSemaphoreGetWin32HandleInfoKhr* = 1000078003.VkStructureType
   vkStructureTypeImportSemaphoreFdInfoKhr* = 1000079000.VkStructureType
   vkStructureTypeSemaphoreGetFdInfoKhr* = 1000079001.VkStructureType
@@ -1831,7 +1836,8 @@ const
   vkStructureTypeCommandBufferInheritanceConditionalRenderingInfoExt* = 1000081000.VkStructureType
   vkStructureTypePhysicalDeviceConditionalRenderingFeaturesExt* = 1000081001.VkStructureType
   vkStructureTypeConditionalRenderingBeginInfoExt* = 1000081002.VkStructureType
-  vkStructureTypePhysicalDevice_16BITStorageFeatures* = 1000083000.VkStructureType
+  vkStructureTypePhysicalDeviceFloat16Int8FeaturesKhr* = 1000082000.VkStructureType
+  vkStructureTypePhysicalDevice16bitStorageFeatures* = 1000083000.VkStructureType
   vkStructureTypePresentRegionsKhr* = 1000084000.VkStructureType
   vkStructureTypeDescriptorUpdateTemplateCreateInfo* = 1000085000.VkStructureType
   vkStructureTypeObjectTableCreateInfoNvx* = 1000086000.VkStructureType
@@ -1841,7 +1847,7 @@ const
   vkStructureTypeDeviceGeneratedCommandsLimitsNvx* = 1000086004.VkStructureType
   vkStructureTypeDeviceGeneratedCommandsFeaturesNvx* = 1000086005.VkStructureType
   vkStructureTypePipelineViewportWScalingStateCreateInfoNv* = 1000087000.VkStructureType
-  vkStructureTypeSurfaceCapabilities_2Ext* = 1000090000.VkStructureType
+  vkStructureTypeSurfaceCapabilities2Ext* = 1000090000.VkStructureType
   vkStructureTypeDisplayPowerInfoExt* = 1000091000.VkStructureType
   vkStructureTypeDeviceEventInfoExt* = 1000091001.VkStructureType
   vkStructureTypeDisplayEventInfoExt* = 1000091002.VkStructureType
@@ -1855,11 +1861,11 @@ const
   vkStructureTypePhysicalDeviceConservativeRasterizationPropertiesExt* = 1000101000.VkStructureType
   vkStructureTypePipelineRasterizationConservativeStateCreateInfoExt* = 1000101001.VkStructureType
   vkStructureTypeHdrMetadataExt* = 1000105000.VkStructureType
-  vkStructureTypeAttachmentDescription_2Khr* = 1000109000.VkStructureType
-  vkStructureTypeAttachmentReference_2Khr* = 1000109001.VkStructureType
-  vkStructureTypeSubpassDescription_2Khr* = 1000109002.VkStructureType
-  vkStructureTypeSubpassDependency_2Khr* = 1000109003.VkStructureType
-  vkStructureTypeRenderPassCreateInfo_2Khr* = 1000109004.VkStructureType
+  vkStructureTypeAttachmentDescription2Khr* = 1000109000.VkStructureType
+  vkStructureTypeAttachmentReference2Khr* = 1000109001.VkStructureType
+  vkStructureTypeSubpassDescription2Khr* = 1000109002.VkStructureType
+  vkStructureTypeSubpassDependency2Khr* = 1000109003.VkStructureType
+  vkStructureTypeRenderPassCreateInfo2Khr* = 1000109004.VkStructureType
   vkStructureTypeSubpassBeginInfoKhr* = 1000109005.VkStructureType
   vkStructureTypeSubpassEndInfoKhr* = 1000109006.VkStructureType
   vkStructureTypeSharedPresentSurfaceCapabilitiesKhr* = 1000111000.VkStructureType
@@ -1875,15 +1881,15 @@ const
   vkStructureTypeRenderPassInputAttachmentAspectCreateInfo* = 1000117001.VkStructureType
   vkStructureTypeImageViewUsageCreateInfo* = 1000117002.VkStructureType
   vkStructureTypePipelineTessellationDomainOriginStateCreateInfo* = 1000117003.VkStructureType
-  vkStructureTypePhysicalDeviceSurfaceInfo_2Khr* = 1000119000.VkStructureType
-  vkStructureTypeSurfaceCapabilities_2Khr* = 1000119001.VkStructureType
-  vkStructureTypeSurfaceFormat_2Khr* = 1000119002.VkStructureType
+  vkStructureTypePhysicalDeviceSurfaceInfo2Khr* = 1000119000.VkStructureType
+  vkStructureTypeSurfaceCapabilities2Khr* = 1000119001.VkStructureType
+  vkStructureTypeSurfaceFormat2Khr* = 1000119002.VkStructureType
   vkStructureTypePhysicalDeviceVariablePointerFeatures* = 1000120000.VkStructureType
-  vkStructureTypeDisplayProperties_2Khr* = 1000121000.VkStructureType
-  vkStructureTypeDisplayPlaneProperties_2Khr* = 1000121001.VkStructureType
-  vkStructureTypeDisplayModeProperties_2Khr* = 1000121002.VkStructureType
-  vkStructureTypeDisplayPlaneInfo_2Khr* = 1000121003.VkStructureType
-  vkStructureTypeDisplayPlaneCapabilities_2Khr* = 1000121004.VkStructureType
+  vkStructureTypeDisplayProperties2Khr* = 1000121000.VkStructureType
+  vkStructureTypeDisplayPlaneProperties2Khr* = 1000121001.VkStructureType
+  vkStructureTypeDisplayModeProperties2Khr* = 1000121002.VkStructureType
+  vkStructureTypeDisplayPlaneInfo2Khr* = 1000121003.VkStructureType
+  vkStructureTypeDisplayPlaneCapabilities2Khr* = 1000121004.VkStructureType
   vkStructureTypeIosSurfaceCreateInfoMvk* = 1000122000.VkStructureType
   vkStructureTypeMacosSurfaceCreateInfoMvk* = 1000123000.VkStructureType
   vkStructureTypeMemoryDedicatedRequirements* = 1000127000.VkStructureType
@@ -1913,12 +1919,12 @@ const
   vkStructureTypeProtectedSubmitInfo* = 1000145000.VkStructureType
   vkStructureTypePhysicalDeviceProtectedMemoryFeatures* = 1000145001.VkStructureType
   vkStructureTypePhysicalDeviceProtectedMemoryProperties* = 1000145002.VkStructureType
-  vkStructureTypeDeviceQueueInfo_2* = 1000145003.VkStructureType
-  vkStructureTypeBufferMemoryRequirementsInfo_2* = 1000146000.VkStructureType
-  vkStructureTypeImageMemoryRequirementsInfo_2* = 1000146001.VkStructureType
-  vkStructureTypeImageSparseMemoryRequirementsInfo_2* = 1000146002.VkStructureType
-  vkStructureTypeMemoryRequirements_2* = 1000146003.VkStructureType
-  vkStructureTypeSparseImageMemoryRequirements_2* = 1000146004.VkStructureType
+  vkStructureTypeDeviceQueueInfo2* = 1000145003.VkStructureType
+  vkStructureTypeBufferMemoryRequirementsInfo2* = 1000146000.VkStructureType
+  vkStructureTypeImageMemoryRequirementsInfo2* = 1000146001.VkStructureType
+  vkStructureTypeImageSparseMemoryRequirementsInfo2* = 1000146002.VkStructureType
+  vkStructureTypeMemoryRequirements2* = 1000146003.VkStructureType
+  vkStructureTypeSparseImageMemoryRequirements2* = 1000146004.VkStructureType
   vkStructureTypeImageFormatListCreateInfoKhr* = 1000147000.VkStructureType
   vkStructureTypePhysicalDeviceBlendOperationAdvancedFeaturesExt* = 1000148000.VkStructureType
   vkStructureTypePhysicalDeviceBlendOperationAdvancedPropertiesExt* = 1000148001.VkStructureType
@@ -1963,10 +1969,10 @@ const
   vkStructureTypeAccelerationStructureInfoNv* = 1000165012.VkStructureType
   vkStructureTypePhysicalDeviceRepresentativeFragmentTestFeaturesNv* = 1000166000.VkStructureType
   vkStructureTypePipelineRepresentativeFragmentTestStateCreateInfoNv* = 1000166001.VkStructureType
-  vkStructureTypePhysicalDeviceMaintenance_3Properties* = 1000168000.VkStructureType
+  vkStructureTypePhysicalDeviceMaintenance3Properties* = 1000168000.VkStructureType
   vkStructureTypeDescriptorSetLayoutSupport* = 1000168001.VkStructureType
   vkStructureTypeDeviceQueueGlobalPriorityCreateInfoExt* = 1000174000.VkStructureType
-  vkStructureTypePhysicalDevice_8BITStorageFeaturesKhr* = 1000177000.VkStructureType
+  vkStructureTypePhysicalDevice8bitStorageFeaturesKhr* = 1000177000.VkStructureType
   vkStructureTypeImportMemoryHostPointerInfoExt* = 1000178000.VkStructureType
   vkStructureTypeMemoryHostPointerPropertiesExt* = 1000178001.VkStructureType
   vkStructureTypePhysicalDeviceExternalMemoryHostPropertiesExt* = 1000178002.VkStructureType
@@ -1978,6 +1984,9 @@ const
   vkStructureTypePipelineVertexInputDivisorStateCreateInfoExt* = 1000190001.VkStructureType
   vkStructureTypePhysicalDeviceVertexAttributeDivisorFeaturesExt* = 1000190002.VkStructureType
   vkStructureTypePhysicalDeviceDriverPropertiesKhr* = 1000196000.VkStructureType
+  vkStructureTypePhysicalDeviceFloatControlsPropertiesKhr* = 1000197000.VkStructureType
+  vkStructureTypePhysicalDeviceDepthStencilResolvePropertiesKhr* = 1000199000.VkStructureType
+  vkStructureTypeSubpassDescriptionDepthStencilResolveKhr* = 1000199001.VkStructureType
   vkStructureTypePhysicalDeviceComputeShaderDerivativesFeaturesNv* = 1000201000.VkStructureType
   vkStructureTypePhysicalDeviceMeshShaderFeaturesNv* = 1000202000.VkStructureType
   vkStructureTypePhysicalDeviceMeshShaderPropertiesNv* = 1000202001.VkStructureType
@@ -1990,19 +1999,31 @@ const
   vkStructureTypePhysicalDeviceVulkanMemoryModelFeaturesKhr* = 1000211000.VkStructureType
   vkStructureTypePhysicalDevicePciBusInfoPropertiesExt* = 1000212000.VkStructureType
   vkStructureTypeImagepipeSurfaceCreateInfoFuchsia* = 1000214000.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentDensityMapFeaturesExt* = 1000218000.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentDensityMapPropertiesExt* = 1000218001.VkStructureType
+  vkStructureTypeRenderPassFragmentDensityMapCreateInfoExt* = 1000218002.VkStructureType
+  vkStructureTypePhysicalDeviceScalarBlockLayoutFeaturesExt* = 1000221000.VkStructureType
+  vkStructureTypePhysicalDeviceMemoryBudgetPropertiesExt* = 1000237000.VkStructureType
+  vkStructureTypePhysicalDeviceMemoryPriorityFeaturesExt* = 1000238000.VkStructureType
+  vkStructureTypeMemoryPriorityAllocateInfoExt* = 1000238001.VkStructureType
+  vkStructureTypePhysicalDeviceBufferAddressFeaturesExt* = 1000244000.VkStructureType
+  vkStructureTypeBufferDeviceAddressInfoExt* = 1000244001.VkStructureType
+  vkStructureTypeBufferDeviceAddressCreateInfoExt* = 1000244002.VkStructureType
+  vkStructureTypeImageStencilUsageCreateInfoExt* = 1000246000.VkStructureType
+  vkStructureTypeValidationFeaturesExt* = 1000247000.VkStructureType
   vkStructureTypeDebugReportCreateInfoExt: VkStructureType = vkStructureTypeDebugReportCallbackCreateInfoExt
   vkStructureTypeRenderPassMultiviewCreateInfoKhr: VkStructureType = vkStructureTypeRenderPassMultiviewCreateInfo
   vkStructureTypePhysicalDeviceMultiviewFeaturesKhr: VkStructureType = vkStructureTypePhysicalDeviceMultiviewFeatures
   vkStructureTypePhysicalDeviceMultiviewPropertiesKhr: VkStructureType = vkStructureTypePhysicalDeviceMultiviewProperties
-  vkStructureTypePhysicalDeviceFeatures_2Khr: VkStructureType = vkStructureTypePhysicalDeviceFeatures_2
-  vkStructureTypePhysicalDeviceProperties_2Khr: VkStructureType = vkStructureTypePhysicalDeviceProperties_2
-  vkStructureTypeFormatProperties_2Khr: VkStructureType = vkStructureTypeFormatProperties_2
-  vkStructureTypeImageFormatProperties_2Khr: VkStructureType = vkStructureTypeImageFormatProperties_2
-  vkStructureTypePhysicalDeviceImageFormatInfo_2Khr: VkStructureType = vkStructureTypePhysicalDeviceImageFormatInfo_2
-  vkStructureTypeQueueFamilyProperties_2Khr: VkStructureType = vkStructureTypeQueueFamilyProperties_2
-  vkStructureTypePhysicalDeviceMemoryProperties_2Khr: VkStructureType = vkStructureTypePhysicalDeviceMemoryProperties_2
-  vkStructureTypeSparseImageFormatProperties_2Khr: VkStructureType = vkStructureTypeSparseImageFormatProperties_2
-  vkStructureTypePhysicalDeviceSparseImageFormatInfo_2Khr: VkStructureType = vkStructureTypePhysicalDeviceSparseImageFormatInfo_2
+  vkStructureTypePhysicalDeviceFeatures2Khr: VkStructureType = vkStructureTypePhysicalDeviceFeatures2
+  vkStructureTypePhysicalDeviceProperties2Khr: VkStructureType = vkStructureTypePhysicalDeviceProperties2
+  vkStructureTypeFormatProperties2Khr: VkStructureType = vkStructureTypeFormatProperties2
+  vkStructureTypeImageFormatProperties2Khr: VkStructureType = vkStructureTypeImageFormatProperties2
+  vkStructureTypePhysicalDeviceImageFormatInfo2Khr: VkStructureType = vkStructureTypePhysicalDeviceImageFormatInfo2
+  vkStructureTypeQueueFamilyProperties2Khr: VkStructureType = vkStructureTypeQueueFamilyProperties2
+  vkStructureTypePhysicalDeviceMemoryProperties2Khr: VkStructureType = vkStructureTypePhysicalDeviceMemoryProperties2
+  vkStructureTypeSparseImageFormatProperties2Khr: VkStructureType = vkStructureTypeSparseImageFormatProperties2
+  vkStructureTypePhysicalDeviceSparseImageFormatInfo2Khr: VkStructureType = vkStructureTypePhysicalDeviceSparseImageFormatInfo2
   vkStructureTypeMemoryAllocateFlagsInfoKhr: VkStructureType = vkStructureTypeMemoryAllocateFlagsInfo
   vkStructureTypeDeviceGroupRenderPassBeginInfoKhr: VkStructureType = vkStructureTypeDeviceGroupRenderPassBeginInfo
   vkStructureTypeDeviceGroupCommandBufferBeginInfoKhr: VkStructureType = vkStructureTypeDeviceGroupCommandBufferBeginInfo
@@ -2023,8 +2044,9 @@ const
   vkStructureTypePhysicalDeviceExternalSemaphoreInfoKhr: VkStructureType = vkStructureTypePhysicalDeviceExternalSemaphoreInfo
   vkStructureTypeExternalSemaphorePropertiesKhr: VkStructureType = vkStructureTypeExternalSemaphoreProperties
   vkStructureTypeExportSemaphoreCreateInfoKhr: VkStructureType = vkStructureTypeExportSemaphoreCreateInfo
-  vkStructureTypePhysicalDevice_16BITStorageFeaturesKhr: VkStructureType = vkStructureTypePhysicalDevice_16BITStorageFeatures
+  vkStructureTypePhysicalDevice16bitStorageFeaturesKhr: VkStructureType = vkStructureTypePhysicalDevice16bitStorageFeatures
   vkStructureTypeDescriptorUpdateTemplateCreateInfoKhr: VkStructureType = vkStructureTypeDescriptorUpdateTemplateCreateInfo
+  vkStructureTypeSurfaceCapabilities2Ext: VkStructureType = vkStructureTypeSurfaceCapabilities2Ext
   vkStructureTypePhysicalDeviceExternalFenceInfoKhr: VkStructureType = vkStructureTypePhysicalDeviceExternalFenceInfo
   vkStructureTypeExternalFencePropertiesKhr: VkStructureType = vkStructureTypeExternalFenceProperties
   vkStructureTypeExportFenceCreateInfoKhr: VkStructureType = vkStructureTypeExportFenceCreateInfo
@@ -2035,11 +2057,11 @@ const
   vkStructureTypePhysicalDeviceVariablePointerFeaturesKhr: VkStructureType = vkStructureTypePhysicalDeviceVariablePointerFeatures
   vkStructureTypeMemoryDedicatedRequirementsKhr: VkStructureType = vkStructureTypeMemoryDedicatedRequirements
   vkStructureTypeMemoryDedicatedAllocateInfoKhr: VkStructureType = vkStructureTypeMemoryDedicatedAllocateInfo
-  vkStructureTypeBufferMemoryRequirementsInfo_2Khr: VkStructureType = vkStructureTypeBufferMemoryRequirementsInfo_2
-  vkStructureTypeImageMemoryRequirementsInfo_2Khr: VkStructureType = vkStructureTypeImageMemoryRequirementsInfo_2
-  vkStructureTypeImageSparseMemoryRequirementsInfo_2Khr: VkStructureType = vkStructureTypeImageSparseMemoryRequirementsInfo_2
-  vkStructureTypeMemoryRequirements_2Khr: VkStructureType = vkStructureTypeMemoryRequirements_2
-  vkStructureTypeSparseImageMemoryRequirements_2Khr: VkStructureType = vkStructureTypeSparseImageMemoryRequirements_2
+  vkStructureTypeBufferMemoryRequirementsInfo2Khr: VkStructureType = vkStructureTypeBufferMemoryRequirementsInfo2
+  vkStructureTypeImageMemoryRequirementsInfo2Khr: VkStructureType = vkStructureTypeImageMemoryRequirementsInfo2
+  vkStructureTypeImageSparseMemoryRequirementsInfo2Khr: VkStructureType = vkStructureTypeImageSparseMemoryRequirementsInfo2
+  vkStructureTypeMemoryRequirements2Khr: VkStructureType = vkStructureTypeMemoryRequirements2
+  vkStructureTypeSparseImageMemoryRequirements2Khr: VkStructureType = vkStructureTypeSparseImageMemoryRequirements2
   vkStructureTypeSamplerYcbcrConversionCreateInfoKhr: VkStructureType = vkStructureTypeSamplerYcbcrConversionCreateInfo
   vkStructureTypeSamplerYcbcrConversionInfoKhr: VkStructureType = vkStructureTypeSamplerYcbcrConversionInfo
   vkStructureTypeBindImagePlaneMemoryInfoKhr: VkStructureType = vkStructureTypeBindImagePlaneMemoryInfo
@@ -2048,7 +2070,7 @@ const
   vkStructureTypeSamplerYcbcrConversionImageFormatPropertiesKhr: VkStructureType = vkStructureTypeSamplerYcbcrConversionImageFormatProperties
   vkStructureTypeBindBufferMemoryInfoKhr: VkStructureType = vkStructureTypeBindBufferMemoryInfo
   vkStructureTypeBindImageMemoryInfoKhr: VkStructureType = vkStructureTypeBindImageMemoryInfo
-  vkStructureTypePhysicalDeviceMaintenance_3PropertiesKhr: VkStructureType = vkStructureTypePhysicalDeviceMaintenance_3Properties
+  vkStructureTypePhysicalDeviceMaintenance3PropertiesKhr: VkStructureType = vkStructureTypePhysicalDeviceMaintenance3Properties
   vkStructureTypeDescriptorSetLayoutSupportKhr: VkStructureType = vkStructureTypeDescriptorSetLayoutSupport
   vkStructureTypeBeginRange: VkStructureType = vkStructureTypeApplicationInfo
   vkStructureTypeEndRange: VkStructureType = vkStructureTypeLoaderDeviceCreateInfo
@@ -2075,14 +2097,14 @@ const
 
 const
   vkFormatUndefined* = 0.VkFormat
-  vkFormatR4G4UnormPack8* = 1.VkFormat
-  vkFormatR4G4B4A4UnormPack16* = 2.VkFormat
-  vkFormatB4G4R4A4UnormPack16* = 3.VkFormat
-  vkFormatR5G6B5UnormPack16* = 4.VkFormat
-  vkFormatB5G6R5UnormPack16* = 5.VkFormat
-  vkFormatR5G5B5A1UnormPack16* = 6.VkFormat
-  vkFormatB5G5R5A1UnormPack16* = 7.VkFormat
-  vkFormatA1R5G5B5UnormPack16* = 8.VkFormat
+  vkFormatR4g4UnormPack8* = 1.VkFormat
+  vkFormatR4g4b4a4UnormPack16* = 2.VkFormat
+  vkFormatB4g4r4a4UnormPack16* = 3.VkFormat
+  vkFormatR5g6b5UnormPack16* = 4.VkFormat
+  vkFormatB5g6r5UnormPack16* = 5.VkFormat
+  vkFormatR5g5b5a1UnormPack16* = 6.VkFormat
+  vkFormatB5g5r5a1UnormPack16* = 7.VkFormat
+  vkFormatA1r5g5b5UnormPack16* = 8.VkFormat
   vkFormatR8Unorm* = 9.VkFormat
   vkFormatR8Snorm* = 10.VkFormat
   vkFormatR8Uscaled* = 11.VkFormat
@@ -2090,60 +2112,60 @@ const
   vkFormatR8Uint* = 13.VkFormat
   vkFormatR8Sint* = 14.VkFormat
   vkFormatR8Srgb* = 15.VkFormat
-  vkFormatR8G8Unorm* = 16.VkFormat
-  vkFormatR8G8Snorm* = 17.VkFormat
-  vkFormatR8G8Uscaled* = 18.VkFormat
-  vkFormatR8G8Sscaled* = 19.VkFormat
-  vkFormatR8G8Uint* = 20.VkFormat
-  vkFormatR8G8Sint* = 21.VkFormat
-  vkFormatR8G8Srgb* = 22.VkFormat
-  vkFormatR8G8B8Unorm* = 23.VkFormat
-  vkFormatR8G8B8Snorm* = 24.VkFormat
-  vkFormatR8G8B8Uscaled* = 25.VkFormat
-  vkFormatR8G8B8Sscaled* = 26.VkFormat
-  vkFormatR8G8B8Uint* = 27.VkFormat
-  vkFormatR8G8B8Sint* = 28.VkFormat
-  vkFormatR8G8B8Srgb* = 29.VkFormat
-  vkFormatB8G8R8Unorm* = 30.VkFormat
-  vkFormatB8G8R8Snorm* = 31.VkFormat
-  vkFormatB8G8R8Uscaled* = 32.VkFormat
-  vkFormatB8G8R8Sscaled* = 33.VkFormat
-  vkFormatB8G8R8Uint* = 34.VkFormat
-  vkFormatB8G8R8Sint* = 35.VkFormat
-  vkFormatB8G8R8Srgb* = 36.VkFormat
-  vkFormatR8G8B8A8Unorm* = 37.VkFormat
-  vkFormatR8G8B8A8Snorm* = 38.VkFormat
-  vkFormatR8G8B8A8Uscaled* = 39.VkFormat
-  vkFormatR8G8B8A8Sscaled* = 40.VkFormat
-  vkFormatR8G8B8A8Uint* = 41.VkFormat
-  vkFormatR8G8B8A8Sint* = 42.VkFormat
-  vkFormatR8G8B8A8Srgb* = 43.VkFormat
-  vkFormatB8G8R8A8Unorm* = 44.VkFormat
-  vkFormatB8G8R8A8Snorm* = 45.VkFormat
-  vkFormatB8G8R8A8Uscaled* = 46.VkFormat
-  vkFormatB8G8R8A8Sscaled* = 47.VkFormat
-  vkFormatB8G8R8A8Uint* = 48.VkFormat
-  vkFormatB8G8R8A8Sint* = 49.VkFormat
-  vkFormatB8G8R8A8Srgb* = 50.VkFormat
-  vkFormatA8B8G8R8UnormPack32* = 51.VkFormat
-  vkFormatA8B8G8R8SnormPack32* = 52.VkFormat
-  vkFormatA8B8G8R8UscaledPack32* = 53.VkFormat
-  vkFormatA8B8G8R8SscaledPack32* = 54.VkFormat
-  vkFormatA8B8G8R8UintPack32* = 55.VkFormat
-  vkFormatA8B8G8R8SintPack32* = 56.VkFormat
-  vkFormatA8B8G8R8SrgbPack32* = 57.VkFormat
-  vkFormatA2R10G10B10UnormPack32* = 58.VkFormat
-  vkFormatA2R10G10B10SnormPack32* = 59.VkFormat
-  vkFormatA2R10G10B10UscaledPack32* = 60.VkFormat
-  vkFormatA2R10G10B10SscaledPack32* = 61.VkFormat
-  vkFormatA2R10G10B10UintPack32* = 62.VkFormat
-  vkFormatA2R10G10B10SintPack32* = 63.VkFormat
-  vkFormatA2B10G10R10UnormPack32* = 64.VkFormat
-  vkFormatA2B10G10R10SnormPack32* = 65.VkFormat
-  vkFormatA2B10G10R10UscaledPack32* = 66.VkFormat
-  vkFormatA2B10G10R10SscaledPack32* = 67.VkFormat
-  vkFormatA2B10G10R10UintPack32* = 68.VkFormat
-  vkFormatA2B10G10R10SintPack32* = 69.VkFormat
+  vkFormatR8g8Unorm* = 16.VkFormat
+  vkFormatR8g8Snorm* = 17.VkFormat
+  vkFormatR8g8Uscaled* = 18.VkFormat
+  vkFormatR8g8Sscaled* = 19.VkFormat
+  vkFormatR8g8Uint* = 20.VkFormat
+  vkFormatR8g8Sint* = 21.VkFormat
+  vkFormatR8g8Srgb* = 22.VkFormat
+  vkFormatR8g8b8Unorm* = 23.VkFormat
+  vkFormatR8g8b8Snorm* = 24.VkFormat
+  vkFormatR8g8b8Uscaled* = 25.VkFormat
+  vkFormatR8g8b8Sscaled* = 26.VkFormat
+  vkFormatR8g8b8Uint* = 27.VkFormat
+  vkFormatR8g8b8Sint* = 28.VkFormat
+  vkFormatR8g8b8Srgb* = 29.VkFormat
+  vkFormatB8g8r8Unorm* = 30.VkFormat
+  vkFormatB8g8r8Snorm* = 31.VkFormat
+  vkFormatB8g8r8Uscaled* = 32.VkFormat
+  vkFormatB8g8r8Sscaled* = 33.VkFormat
+  vkFormatB8g8r8Uint* = 34.VkFormat
+  vkFormatB8g8r8Sint* = 35.VkFormat
+  vkFormatB8g8r8Srgb* = 36.VkFormat
+  vkFormatR8g8b8a8Unorm* = 37.VkFormat
+  vkFormatR8g8b8a8Snorm* = 38.VkFormat
+  vkFormatR8g8b8a8Uscaled* = 39.VkFormat
+  vkFormatR8g8b8a8Sscaled* = 40.VkFormat
+  vkFormatR8g8b8a8Uint* = 41.VkFormat
+  vkFormatR8g8b8a8Sint* = 42.VkFormat
+  vkFormatR8g8b8a8Srgb* = 43.VkFormat
+  vkFormatB8g8r8a8Unorm* = 44.VkFormat
+  vkFormatB8g8r8a8Snorm* = 45.VkFormat
+  vkFormatB8g8r8a8Uscaled* = 46.VkFormat
+  vkFormatB8g8r8a8Sscaled* = 47.VkFormat
+  vkFormatB8g8r8a8Uint* = 48.VkFormat
+  vkFormatB8g8r8a8Sint* = 49.VkFormat
+  vkFormatB8g8r8a8Srgb* = 50.VkFormat
+  vkFormatA8b8g8r8UnormPack32* = 51.VkFormat
+  vkFormatA8b8g8r8SnormPack32* = 52.VkFormat
+  vkFormatA8b8g8r8UscaledPack32* = 53.VkFormat
+  vkFormatA8b8g8r8SscaledPack32* = 54.VkFormat
+  vkFormatA8b8g8r8UintPack32* = 55.VkFormat
+  vkFormatA8b8g8r8SintPack32* = 56.VkFormat
+  vkFormatA8b8g8r8SrgbPack32* = 57.VkFormat
+  vkFormatA2r10g10b10UnormPack32* = 58.VkFormat
+  vkFormatA2r10g10b10SnormPack32* = 59.VkFormat
+  vkFormatA2r10g10b10UscaledPack32* = 60.VkFormat
+  vkFormatA2r10g10b10SscaledPack32* = 61.VkFormat
+  vkFormatA2r10g10b10UintPack32* = 62.VkFormat
+  vkFormatA2r10g10b10SintPack32* = 63.VkFormat
+  vkFormatA2b10g10r10UnormPack32* = 64.VkFormat
+  vkFormatA2b10g10r10SnormPack32* = 65.VkFormat
+  vkFormatA2b10g10r10UscaledPack32* = 66.VkFormat
+  vkFormatA2b10g10r10SscaledPack32* = 67.VkFormat
+  vkFormatA2b10g10r10UintPack32* = 68.VkFormat
+  vkFormatA2b10g10r10SintPack32* = 69.VkFormat
   vkFormatR16Unorm* = 70.VkFormat
   vkFormatR16Snorm* = 71.VkFormat
   vkFormatR16Uscaled* = 72.VkFormat
@@ -2151,53 +2173,53 @@ const
   vkFormatR16Uint* = 74.VkFormat
   vkFormatR16Sint* = 75.VkFormat
   vkFormatR16Sfloat* = 76.VkFormat
-  vkFormatR16G16Unorm* = 77.VkFormat
-  vkFormatR16G16Snorm* = 78.VkFormat
-  vkFormatR16G16Uscaled* = 79.VkFormat
-  vkFormatR16G16Sscaled* = 80.VkFormat
-  vkFormatR16G16Uint* = 81.VkFormat
-  vkFormatR16G16Sint* = 82.VkFormat
-  vkFormatR16G16Sfloat* = 83.VkFormat
-  vkFormatR16G16B16Unorm* = 84.VkFormat
-  vkFormatR16G16B16Snorm* = 85.VkFormat
-  vkFormatR16G16B16Uscaled* = 86.VkFormat
-  vkFormatR16G16B16Sscaled* = 87.VkFormat
-  vkFormatR16G16B16Uint* = 88.VkFormat
-  vkFormatR16G16B16Sint* = 89.VkFormat
-  vkFormatR16G16B16Sfloat* = 90.VkFormat
-  vkFormatR16G16B16A16Unorm* = 91.VkFormat
-  vkFormatR16G16B16A16Snorm* = 92.VkFormat
-  vkFormatR16G16B16A16Uscaled* = 93.VkFormat
-  vkFormatR16G16B16A16Sscaled* = 94.VkFormat
-  vkFormatR16G16B16A16Uint* = 95.VkFormat
-  vkFormatR16G16B16A16Sint* = 96.VkFormat
-  vkFormatR16G16B16A16Sfloat* = 97.VkFormat
+  vkFormatR16g16Unorm* = 77.VkFormat
+  vkFormatR16g16Snorm* = 78.VkFormat
+  vkFormatR16g16Uscaled* = 79.VkFormat
+  vkFormatR16g16Sscaled* = 80.VkFormat
+  vkFormatR16g16Uint* = 81.VkFormat
+  vkFormatR16g16Sint* = 82.VkFormat
+  vkFormatR16g16Sfloat* = 83.VkFormat
+  vkFormatR16g16b16Unorm* = 84.VkFormat
+  vkFormatR16g16b16Snorm* = 85.VkFormat
+  vkFormatR16g16b16Uscaled* = 86.VkFormat
+  vkFormatR16g16b16Sscaled* = 87.VkFormat
+  vkFormatR16g16b16Uint* = 88.VkFormat
+  vkFormatR16g16b16Sint* = 89.VkFormat
+  vkFormatR16g16b16Sfloat* = 90.VkFormat
+  vkFormatR16g16b16a16Unorm* = 91.VkFormat
+  vkFormatR16g16b16a16Snorm* = 92.VkFormat
+  vkFormatR16g16b16a16Uscaled* = 93.VkFormat
+  vkFormatR16g16b16a16Sscaled* = 94.VkFormat
+  vkFormatR16g16b16a16Uint* = 95.VkFormat
+  vkFormatR16g16b16a16Sint* = 96.VkFormat
+  vkFormatR16g16b16a16Sfloat* = 97.VkFormat
   vkFormatR32Uint* = 98.VkFormat
   vkFormatR32Sint* = 99.VkFormat
   vkFormatR32Sfloat* = 100.VkFormat
-  vkFormatR32G32Uint* = 101.VkFormat
-  vkFormatR32G32Sint* = 102.VkFormat
-  vkFormatR32G32Sfloat* = 103.VkFormat
-  vkFormatR32G32B32Uint* = 104.VkFormat
-  vkFormatR32G32B32Sint* = 105.VkFormat
-  vkFormatR32G32B32Sfloat* = 106.VkFormat
-  vkFormatR32G32B32A32Uint* = 107.VkFormat
-  vkFormatR32G32B32A32Sint* = 108.VkFormat
-  vkFormatR32G32B32A32Sfloat* = 109.VkFormat
+  vkFormatR32g32Uint* = 101.VkFormat
+  vkFormatR32g32Sint* = 102.VkFormat
+  vkFormatR32g32Sfloat* = 103.VkFormat
+  vkFormatR32g32b32Uint* = 104.VkFormat
+  vkFormatR32g32b32Sint* = 105.VkFormat
+  vkFormatR32g32b32Sfloat* = 106.VkFormat
+  vkFormatR32g32b32a32Uint* = 107.VkFormat
+  vkFormatR32g32b32a32Sint* = 108.VkFormat
+  vkFormatR32g32b32a32Sfloat* = 109.VkFormat
   vkFormatR64Uint* = 110.VkFormat
   vkFormatR64Sint* = 111.VkFormat
   vkFormatR64Sfloat* = 112.VkFormat
-  vkFormatR64G64Uint* = 113.VkFormat
-  vkFormatR64G64Sint* = 114.VkFormat
-  vkFormatR64G64Sfloat* = 115.VkFormat
-  vkFormatR64G64B64Uint* = 116.VkFormat
-  vkFormatR64G64B64Sint* = 117.VkFormat
-  vkFormatR64G64B64Sfloat* = 118.VkFormat
-  vkFormatR64G64B64A64Uint* = 119.VkFormat
-  vkFormatR64G64B64A64Sint* = 120.VkFormat
-  vkFormatR64G64B64A64Sfloat* = 121.VkFormat
-  vkFormatB10G11R11UfloatPack32* = 122.VkFormat
-  vkFormatE5B9G9R9UfloatPack32* = 123.VkFormat
+  vkFormatR64g64Uint* = 113.VkFormat
+  vkFormatR64g64Sint* = 114.VkFormat
+  vkFormatR64g64Sfloat* = 115.VkFormat
+  vkFormatR64g64b64Uint* = 116.VkFormat
+  vkFormatR64g64b64Sint* = 117.VkFormat
+  vkFormatR64g64b64Sfloat* = 118.VkFormat
+  vkFormatR64g64b64a64Uint* = 119.VkFormat
+  vkFormatR64g64b64a64Sint* = 120.VkFormat
+  vkFormatR64g64b64a64Sfloat* = 121.VkFormat
+  vkFormatB10g11r11UfloatPack32* = 122.VkFormat
+  vkFormatE5b9g9r9UfloatPack32* = 123.VkFormat
   vkFormatD16Unorm* = 124.VkFormat
   vkFormatX8D24UnormPack32* = 125.VkFormat
   vkFormatD32Sfloat* = 126.VkFormat
@@ -2217,136 +2239,136 @@ const
   vkFormatBc4SnormBlock* = 140.VkFormat
   vkFormatBc5UnormBlock* = 141.VkFormat
   vkFormatBc5SnormBlock* = 142.VkFormat
-  vkFormatBc6HUfloatBlock* = 143.VkFormat
-  vkFormatBc6HSfloatBlock* = 144.VkFormat
+  vkFormatBc6hUfloatBlock* = 143.VkFormat
+  vkFormatBc6hSfloatBlock* = 144.VkFormat
   vkFormatBc7UnormBlock* = 145.VkFormat
   vkFormatBc7SrgbBlock* = 146.VkFormat
-  vkFormatEtc2R8G8B8UnormBlock* = 147.VkFormat
-  vkFormatEtc2R8G8B8SrgbBlock* = 148.VkFormat
-  vkFormatEtc2R8G8B8A1UnormBlock* = 149.VkFormat
-  vkFormatEtc2R8G8B8A1SrgbBlock* = 150.VkFormat
-  vkFormatEtc2R8G8B8A8UnormBlock* = 151.VkFormat
-  vkFormatEtc2R8G8B8A8SrgbBlock* = 152.VkFormat
+  vkFormatEtc2R8g8b8UnormBlock* = 147.VkFormat
+  vkFormatEtc2R8g8b8SrgbBlock* = 148.VkFormat
+  vkFormatEtc2R8g8b8a1UnormBlock* = 149.VkFormat
+  vkFormatEtc2R8g8b8a1SrgbBlock* = 150.VkFormat
+  vkFormatEtc2R8g8b8a8UnormBlock* = 151.VkFormat
+  vkFormatEtc2R8g8b8a8SrgbBlock* = 152.VkFormat
   vkFormatEacR11UnormBlock* = 153.VkFormat
   vkFormatEacR11SnormBlock* = 154.VkFormat
-  vkFormatEacR11G11UnormBlock* = 155.VkFormat
-  vkFormatEacR11G11SnormBlock* = 156.VkFormat
-  vkFormatAstc_4x4UnormBlock* = 157.VkFormat
-  vkFormatAstc_4x4SrgbBlock* = 158.VkFormat
-  vkFormatAstc_5x4UnormBlock* = 159.VkFormat
-  vkFormatAstc_5x4SrgbBlock* = 160.VkFormat
-  vkFormatAstc_5x5UnormBlock* = 161.VkFormat
-  vkFormatAstc_5x5SrgbBlock* = 162.VkFormat
-  vkFormatAstc_6x5UnormBlock* = 163.VkFormat
-  vkFormatAstc_6x5SrgbBlock* = 164.VkFormat
-  vkFormatAstc_6x6UnormBlock* = 165.VkFormat
-  vkFormatAstc_6x6SrgbBlock* = 166.VkFormat
-  vkFormatAstc_8x5UnormBlock* = 167.VkFormat
-  vkFormatAstc_8x5SrgbBlock* = 168.VkFormat
-  vkFormatAstc_8x6UnormBlock* = 169.VkFormat
-  vkFormatAstc_8x6SrgbBlock* = 170.VkFormat
-  vkFormatAstc_8x8UnormBlock* = 171.VkFormat
-  vkFormatAstc_8x8SrgbBlock* = 172.VkFormat
-  vkFormatAstc_10x5UnormBlock* = 173.VkFormat
-  vkFormatAstc_10x5SrgbBlock* = 174.VkFormat
-  vkFormatAstc_10x6UnormBlock* = 175.VkFormat
-  vkFormatAstc_10x6SrgbBlock* = 176.VkFormat
-  vkFormatAstc_10x8UnormBlock* = 177.VkFormat
-  vkFormatAstc_10x8SrgbBlock* = 178.VkFormat
-  vkFormatAstc_10x10UnormBlock* = 179.VkFormat
-  vkFormatAstc_10x10SrgbBlock* = 180.VkFormat
-  vkFormatAstc_12x10UnormBlock* = 181.VkFormat
-  vkFormatAstc_12x10SrgbBlock* = 182.VkFormat
-  vkFormatAstc_12x12UnormBlock* = 183.VkFormat
-  vkFormatAstc_12x12SrgbBlock* = 184.VkFormat
-  vkFormatPvrtc1_2BPPUnormBlockImg* = 1000054000.VkFormat
-  vkFormatPvrtc1_4BPPUnormBlockImg* = 1000054001.VkFormat
-  vkFormatPvrtc2_2BPPUnormBlockImg* = 1000054002.VkFormat
-  vkFormatPvrtc2_4BPPUnormBlockImg* = 1000054003.VkFormat
-  vkFormatPvrtc1_2BPPSrgbBlockImg* = 1000054004.VkFormat
-  vkFormatPvrtc1_4BPPSrgbBlockImg* = 1000054005.VkFormat
-  vkFormatPvrtc2_2BPPSrgbBlockImg* = 1000054006.VkFormat
-  vkFormatPvrtc2_4BPPSrgbBlockImg* = 1000054007.VkFormat
-  vkFormatG8B8G8R8_422UnormKhr: VkFormat = vkFormatG8B8G8R8_422Unorm
-  vkFormatB8G8R8G8_422UnormKhr: VkFormat = vkFormatB8G8R8G8_422Unorm
-  vkFormatG8B8R8_3PLANE_420UnormKhr: VkFormat = vkFormatG8B8R8_3PLANE_420Unorm
-  vkFormatG8B8R8_2PLANE_420UnormKhr: VkFormat = vkFormatG8B8R8_2PLANE_420Unorm
-  vkFormatG8B8R8_3PLANE_422UnormKhr: VkFormat = vkFormatG8B8R8_3PLANE_422Unorm
-  vkFormatG8B8R8_2PLANE_422UnormKhr: VkFormat = vkFormatG8B8R8_2PLANE_422Unorm
-  vkFormatG8B8R8_3PLANE_444UnormKhr: VkFormat = vkFormatG8B8R8_3PLANE_444Unorm
-  vkFormatR10X6UnormPack16Khr: VkFormat = vkFormatR10X6UnormPack16
-  vkFormatR10X6G10X6Unorm_2PACK16Khr: VkFormat = vkFormatR10X6G10X6Unorm_2PACK16
-  vkFormatR10X6G10X6B10X6A10X6Unorm_4PACK16Khr: VkFormat = vkFormatR10X6G10X6B10X6A10X6Unorm_4PACK16
-  vkFormatG10X6B10X6G10X6R10X6_422Unorm_4PACK16Khr: VkFormat = vkFormatG10X6B10X6G10X6R10X6_422Unorm_4PACK16
-  vkFormatB10X6G10X6R10X6G10X6_422Unorm_4PACK16Khr: VkFormat = vkFormatB10X6G10X6R10X6G10X6_422Unorm_4PACK16
-  vkFormatG10X6B10X6R10X6_3PLANE_420Unorm_3PACK16Khr: VkFormat = vkFormatG10X6B10X6R10X6_3PLANE_420Unorm_3PACK16
-  vkFormatG10X6B10X6R10X6_2PLANE_420Unorm_3PACK16Khr: VkFormat = vkFormatG10X6B10X6R10X6_2PLANE_420Unorm_3PACK16
-  vkFormatG10X6B10X6R10X6_3PLANE_422Unorm_3PACK16Khr: VkFormat = vkFormatG10X6B10X6R10X6_3PLANE_422Unorm_3PACK16
-  vkFormatG10X6B10X6R10X6_2PLANE_422Unorm_3PACK16Khr: VkFormat = vkFormatG10X6B10X6R10X6_2PLANE_422Unorm_3PACK16
-  vkFormatG10X6B10X6R10X6_3PLANE_444Unorm_3PACK16Khr: VkFormat = vkFormatG10X6B10X6R10X6_3PLANE_444Unorm_3PACK16
-  vkFormatR12X4UnormPack16Khr: VkFormat = vkFormatR12X4UnormPack16
-  vkFormatR12X4G12X4Unorm_2PACK16Khr: VkFormat = vkFormatR12X4G12X4Unorm_2PACK16
-  vkFormatR12X4G12X4B12X4A12X4Unorm_4PACK16Khr: VkFormat = vkFormatR12X4G12X4B12X4A12X4Unorm_4PACK16
-  vkFormatG12X4B12X4G12X4R12X4_422Unorm_4PACK16Khr: VkFormat = vkFormatG12X4B12X4G12X4R12X4_422Unorm_4PACK16
-  vkFormatB12X4G12X4R12X4G12X4_422Unorm_4PACK16Khr: VkFormat = vkFormatB12X4G12X4R12X4G12X4_422Unorm_4PACK16
-  vkFormatG12X4B12X4R12X4_3PLANE_420Unorm_3PACK16Khr: VkFormat = vkFormatG12X4B12X4R12X4_3PLANE_420Unorm_3PACK16
-  vkFormatG12X4B12X4R12X4_2PLANE_420Unorm_3PACK16Khr: VkFormat = vkFormatG12X4B12X4R12X4_2PLANE_420Unorm_3PACK16
-  vkFormatG12X4B12X4R12X4_3PLANE_422Unorm_3PACK16Khr: VkFormat = vkFormatG12X4B12X4R12X4_3PLANE_422Unorm_3PACK16
-  vkFormatG12X4B12X4R12X4_2PLANE_422Unorm_3PACK16Khr: VkFormat = vkFormatG12X4B12X4R12X4_2PLANE_422Unorm_3PACK16
-  vkFormatG12X4B12X4R12X4_3PLANE_444Unorm_3PACK16Khr: VkFormat = vkFormatG12X4B12X4R12X4_3PLANE_444Unorm_3PACK16
-  vkFormatG16B16G16R16_422UnormKhr: VkFormat = vkFormatG16B16G16R16_422Unorm
-  vkFormatB16G16R16G16_422UnormKhr: VkFormat = vkFormatB16G16R16G16_422Unorm
-  vkFormatG16B16R16_3PLANE_420UnormKhr: VkFormat = vkFormatG16B16R16_3PLANE_420Unorm
-  vkFormatG16B16R16_2PLANE_420UnormKhr: VkFormat = vkFormatG16B16R16_2PLANE_420Unorm
-  vkFormatG16B16R16_3PLANE_422UnormKhr: VkFormat = vkFormatG16B16R16_3PLANE_422Unorm
-  vkFormatG16B16R16_2PLANE_422UnormKhr: VkFormat = vkFormatG16B16R16_2PLANE_422Unorm
-  vkFormatG16B16R16_3PLANE_444UnormKhr: VkFormat = vkFormatG16B16R16_3PLANE_444Unorm
+  vkFormatEacR11g11UnormBlock* = 155.VkFormat
+  vkFormatEacR11g11SnormBlock* = 156.VkFormat
+  vkFormatAstc4x4UnormBlock* = 157.VkFormat
+  vkFormatAstc4x4SrgbBlock* = 158.VkFormat
+  vkFormatAstc5x4UnormBlock* = 159.VkFormat
+  vkFormatAstc5x4SrgbBlock* = 160.VkFormat
+  vkFormatAstc5x5UnormBlock* = 161.VkFormat
+  vkFormatAstc5x5SrgbBlock* = 162.VkFormat
+  vkFormatAstc6x5UnormBlock* = 163.VkFormat
+  vkFormatAstc6x5SrgbBlock* = 164.VkFormat
+  vkFormatAstc6x6UnormBlock* = 165.VkFormat
+  vkFormatAstc6x6SrgbBlock* = 166.VkFormat
+  vkFormatAstc8x5UnormBlock* = 167.VkFormat
+  vkFormatAstc8x5SrgbBlock* = 168.VkFormat
+  vkFormatAstc8x6UnormBlock* = 169.VkFormat
+  vkFormatAstc8x6SrgbBlock* = 170.VkFormat
+  vkFormatAstc8x8UnormBlock* = 171.VkFormat
+  vkFormatAstc8x8SrgbBlock* = 172.VkFormat
+  vkFormatAstc10x5UnormBlock* = 173.VkFormat
+  vkFormatAstc10x5SrgbBlock* = 174.VkFormat
+  vkFormatAstc10x6UnormBlock* = 175.VkFormat
+  vkFormatAstc10x6SrgbBlock* = 176.VkFormat
+  vkFormatAstc10x8UnormBlock* = 177.VkFormat
+  vkFormatAstc10x8SrgbBlock* = 178.VkFormat
+  vkFormatAstc10x10UnormBlock* = 179.VkFormat
+  vkFormatAstc10x10SrgbBlock* = 180.VkFormat
+  vkFormatAstc12x10UnormBlock* = 181.VkFormat
+  vkFormatAstc12x10SrgbBlock* = 182.VkFormat
+  vkFormatAstc12x12UnormBlock* = 183.VkFormat
+  vkFormatAstc12x12SrgbBlock* = 184.VkFormat
+  vkFormatPvrtc12bppUnormBlockImg* = 1000054000.VkFormat
+  vkFormatPvrtc14bppUnormBlockImg* = 1000054001.VkFormat
+  vkFormatPvrtc22bppUnormBlockImg* = 1000054002.VkFormat
+  vkFormatPvrtc24bppUnormBlockImg* = 1000054003.VkFormat
+  vkFormatPvrtc12bppSrgbBlockImg* = 1000054004.VkFormat
+  vkFormatPvrtc14bppSrgbBlockImg* = 1000054005.VkFormat
+  vkFormatPvrtc22bppSrgbBlockImg* = 1000054006.VkFormat
+  vkFormatPvrtc24bppSrgbBlockImg* = 1000054007.VkFormat
+  vkFormatG8b8g8r8422UnormKhr: VkFormat = vkFormatG8b8g8r8422Unorm
+  vkFormatB8g8r8g8422UnormKhr: VkFormat = vkFormatB8g8r8g8422Unorm
+  vkFormatG8B8R83plane420UnormKhr: VkFormat = vkFormatG8B8R83plane420Unorm
+  vkFormatG8B8r82plane420UnormKhr: VkFormat = vkFormatG8B8r82plane420Unorm
+  vkFormatG8B8R83plane422UnormKhr: VkFormat = vkFormatG8B8R83plane422Unorm
+  vkFormatG8B8r82plane422UnormKhr: VkFormat = vkFormatG8B8r82plane422Unorm
+  vkFormatG8B8R83plane444UnormKhr: VkFormat = vkFormatG8B8R83plane444Unorm
+  vkFormatR10x6UnormPack16Khr: VkFormat = vkFormatR10x6UnormPack16
+  vkFormatR10x6g10x6Unorm2pack16Khr: VkFormat = vkFormatR10x6g10x6Unorm2pack16
+  vkFormatR10x6g10x6b10x6a10x6Unorm4pack16Khr: VkFormat = vkFormatR10x6g10x6b10x6a10x6Unorm4pack16
+  vkFormatG10x6b10x6g10x6r10x6422Unorm4pack16Khr: VkFormat = vkFormatG10x6b10x6g10x6r10x6422Unorm4pack16
+  vkFormatB10x6g10x6r10x6g10x6422Unorm4pack16Khr: VkFormat = vkFormatB10x6g10x6r10x6g10x6422Unorm4pack16
+  vkFormatG10x6B10x6R10x63plane420Unorm3pack16Khr: VkFormat = vkFormatG10x6B10x6R10x63plane420Unorm3pack16
+  vkFormatG10x6B10x6r10x62plane420Unorm3pack16Khr: VkFormat = vkFormatG10x6B10x6r10x62plane420Unorm3pack16
+  vkFormatG10x6B10x6R10x63plane422Unorm3pack16Khr: VkFormat = vkFormatG10x6B10x6R10x63plane422Unorm3pack16
+  vkFormatG10x6B10x6r10x62plane422Unorm3pack16Khr: VkFormat = vkFormatG10x6B10x6r10x62plane422Unorm3pack16
+  vkFormatG10x6B10x6R10x63plane444Unorm3pack16Khr: VkFormat = vkFormatG10x6B10x6R10x63plane444Unorm3pack16
+  vkFormatR12x4UnormPack16Khr: VkFormat = vkFormatR12x4UnormPack16
+  vkFormatR12x4g12x4Unorm2pack16Khr: VkFormat = vkFormatR12x4g12x4Unorm2pack16
+  vkFormatR12x4g12x4b12x4a12x4Unorm4pack16Khr: VkFormat = vkFormatR12x4g12x4b12x4a12x4Unorm4pack16
+  vkFormatG12x4b12x4g12x4r12x4422Unorm4pack16Khr: VkFormat = vkFormatG12x4b12x4g12x4r12x4422Unorm4pack16
+  vkFormatB12x4g12x4r12x4g12x4422Unorm4pack16Khr: VkFormat = vkFormatB12x4g12x4r12x4g12x4422Unorm4pack16
+  vkFormatG12x4B12x4R12x43plane420Unorm3pack16Khr: VkFormat = vkFormatG12x4B12x4R12x43plane420Unorm3pack16
+  vkFormatG12x4B12x4r12x42plane420Unorm3pack16Khr: VkFormat = vkFormatG12x4B12x4r12x42plane420Unorm3pack16
+  vkFormatG12x4B12x4R12x43plane422Unorm3pack16Khr: VkFormat = vkFormatG12x4B12x4R12x43plane422Unorm3pack16
+  vkFormatG12x4B12x4r12x42plane422Unorm3pack16Khr: VkFormat = vkFormatG12x4B12x4r12x42plane422Unorm3pack16
+  vkFormatG12x4B12x4R12x43plane444Unorm3pack16Khr: VkFormat = vkFormatG12x4B12x4R12x43plane444Unorm3pack16
+  vkFormatG16b16g16r16422UnormKhr: VkFormat = vkFormatG16b16g16r16422Unorm
+  vkFormatB16g16r16g16422UnormKhr: VkFormat = vkFormatB16g16r16g16422Unorm
+  vkFormatG16B16R163plane420UnormKhr: VkFormat = vkFormatG16B16R163plane420Unorm
+  vkFormatG16B16r162plane420UnormKhr: VkFormat = vkFormatG16B16r162plane420Unorm
+  vkFormatG16B16R163plane422UnormKhr: VkFormat = vkFormatG16B16R163plane422Unorm
+  vkFormatG16B16r162plane422UnormKhr: VkFormat = vkFormatG16B16r162plane422Unorm
+  vkFormatG16B16R163plane444UnormKhr: VkFormat = vkFormatG16B16R163plane444Unorm
   vkFormatBeginRange: VkFormat = vkFormatUndefined
-  vkFormatEndRange: VkFormat = vkFormatAstc_12x12SrgbBlock
-  vkFormatRangeSize: VkFormat = (vkFormatAstc_12x12SrgbBlock - vkFormatUndefined + 1)
-  vkFormatG8B8G8R8_422Unorm* = 1000156000.VkFormat
-  vkFormatB8G8R8G8_422Unorm* = 1000156001.VkFormat
-  vkFormatG8B8R8_3PLANE_420Unorm* = 1000156002.VkFormat
-  vkFormatG8B8R8_2PLANE_420Unorm* = 1000156003.VkFormat
-  vkFormatG8B8R8_3PLANE_422Unorm* = 1000156004.VkFormat
-  vkFormatG8B8R8_2PLANE_422Unorm* = 1000156005.VkFormat
-  vkFormatG8B8R8_3PLANE_444Unorm* = 1000156006.VkFormat
-  vkFormatR10X6UnormPack16* = 1000156007.VkFormat
-  vkFormatR10X6G10X6Unorm_2PACK16* = 1000156008.VkFormat
-  vkFormatR10X6G10X6B10X6A10X6Unorm_4PACK16* = 1000156009.VkFormat
-  vkFormatG10X6B10X6G10X6R10X6_422Unorm_4PACK16* = 1000156010.VkFormat
-  vkFormatB10X6G10X6R10X6G10X6_422Unorm_4PACK16* = 1000156011.VkFormat
-  vkFormatG10X6B10X6R10X6_3PLANE_420Unorm_3PACK16* = 1000156012.VkFormat
-  vkFormatG10X6B10X6R10X6_2PLANE_420Unorm_3PACK16* = 1000156013.VkFormat
-  vkFormatG10X6B10X6R10X6_3PLANE_422Unorm_3PACK16* = 1000156014.VkFormat
-  vkFormatG10X6B10X6R10X6_2PLANE_422Unorm_3PACK16* = 1000156015.VkFormat
-  vkFormatG10X6B10X6R10X6_3PLANE_444Unorm_3PACK16* = 1000156016.VkFormat
-  vkFormatR12X4UnormPack16* = 1000156017.VkFormat
-  vkFormatR12X4G12X4Unorm_2PACK16* = 1000156018.VkFormat
-  vkFormatR12X4G12X4B12X4A12X4Unorm_4PACK16* = 1000156019.VkFormat
-  vkFormatG12X4B12X4G12X4R12X4_422Unorm_4PACK16* = 1000156020.VkFormat
-  vkFormatB12X4G12X4R12X4G12X4_422Unorm_4PACK16* = 1000156021.VkFormat
-  vkFormatG12X4B12X4R12X4_3PLANE_420Unorm_3PACK16* = 1000156022.VkFormat
-  vkFormatG12X4B12X4R12X4_2PLANE_420Unorm_3PACK16* = 1000156023.VkFormat
-  vkFormatG12X4B12X4R12X4_3PLANE_422Unorm_3PACK16* = 1000156024.VkFormat
-  vkFormatG12X4B12X4R12X4_2PLANE_422Unorm_3PACK16* = 1000156025.VkFormat
-  vkFormatG12X4B12X4R12X4_3PLANE_444Unorm_3PACK16* = 1000156026.VkFormat
-  vkFormatG16B16G16R16_422Unorm* = 1000156027.VkFormat
-  vkFormatB16G16R16G16_422Unorm* = 1000156028.VkFormat
-  vkFormatG16B16R16_3PLANE_420Unorm* = 1000156029.VkFormat
-  vkFormatG16B16R16_2PLANE_420Unorm* = 1000156030.VkFormat
-  vkFormatG16B16R16_3PLANE_422Unorm* = 1000156031.VkFormat
-  vkFormatG16B16R16_2PLANE_422Unorm* = 1000156032.VkFormat
-  vkFormatG16B16R16_3PLANE_444Unorm* = 1000156033.VkFormat
+  vkFormatEndRange: VkFormat = vkFormatAstc12x12SrgbBlock
+  vkFormatRangeSize: VkFormat = (vkFormatAstc12x12SrgbBlock - vkFormatUndefined + 1)
+  vkFormatG8b8g8r8422Unorm* = 1000156000.VkFormat
+  vkFormatB8g8r8g8422Unorm* = 1000156001.VkFormat
+  vkFormatG8B8R83plane420Unorm* = 1000156002.VkFormat
+  vkFormatG8B8r82plane420Unorm* = 1000156003.VkFormat
+  vkFormatG8B8R83plane422Unorm* = 1000156004.VkFormat
+  vkFormatG8B8r82plane422Unorm* = 1000156005.VkFormat
+  vkFormatG8B8R83plane444Unorm* = 1000156006.VkFormat
+  vkFormatR10x6UnormPack16* = 1000156007.VkFormat
+  vkFormatR10x6g10x6Unorm2pack16* = 1000156008.VkFormat
+  vkFormatR10x6g10x6b10x6a10x6Unorm4pack16* = 1000156009.VkFormat
+  vkFormatG10x6b10x6g10x6r10x6422Unorm4pack16* = 1000156010.VkFormat
+  vkFormatB10x6g10x6r10x6g10x6422Unorm4pack16* = 1000156011.VkFormat
+  vkFormatG10x6B10x6R10x63plane420Unorm3pack16* = 1000156012.VkFormat
+  vkFormatG10x6B10x6r10x62plane420Unorm3pack16* = 1000156013.VkFormat
+  vkFormatG10x6B10x6R10x63plane422Unorm3pack16* = 1000156014.VkFormat
+  vkFormatG10x6B10x6r10x62plane422Unorm3pack16* = 1000156015.VkFormat
+  vkFormatG10x6B10x6R10x63plane444Unorm3pack16* = 1000156016.VkFormat
+  vkFormatR12x4UnormPack16* = 1000156017.VkFormat
+  vkFormatR12x4g12x4Unorm2pack16* = 1000156018.VkFormat
+  vkFormatR12x4g12x4b12x4a12x4Unorm4pack16* = 1000156019.VkFormat
+  vkFormatG12x4b12x4g12x4r12x4422Unorm4pack16* = 1000156020.VkFormat
+  vkFormatB12x4g12x4r12x4g12x4422Unorm4pack16* = 1000156021.VkFormat
+  vkFormatG12x4B12x4R12x43plane420Unorm3pack16* = 1000156022.VkFormat
+  vkFormatG12x4B12x4r12x42plane420Unorm3pack16* = 1000156023.VkFormat
+  vkFormatG12x4B12x4R12x43plane422Unorm3pack16* = 1000156024.VkFormat
+  vkFormatG12x4B12x4r12x42plane422Unorm3pack16* = 1000156025.VkFormat
+  vkFormatG12x4B12x4R12x43plane444Unorm3pack16* = 1000156026.VkFormat
+  vkFormatG16b16g16r16422Unorm* = 1000156027.VkFormat
+  vkFormatB16g16r16g16422Unorm* = 1000156028.VkFormat
+  vkFormatG16B16R163plane420Unorm* = 1000156029.VkFormat
+  vkFormatG16B16r162plane420Unorm* = 1000156030.VkFormat
+  vkFormatG16B16R163plane422Unorm* = 1000156031.VkFormat
+  vkFormatG16B16r162plane422Unorm* = 1000156032.VkFormat
+  vkFormatG16B16R163plane444Unorm* = 1000156033.VkFormat
   vkFormatMaxEnum* = 0x7FFFFFFF.VkFormat
 
 const
-  vkImageType_1D* = 0.VkImageType
-  vkImageType_2D* = 1.VkImageType
-  vkImageType_3D* = 2.VkImageType
-  vkImageTypeBeginRange: VkImageType = vkImageType_1D
-  vkImageTypeEndRange: VkImageType = vkImageType_3D
-  vkImageTypeRangeSize: VkImageType = (vkImageType_3D - vkImageType_1D + 1)
+  vkImageType1d* = 0.VkImageType
+  vkImageType2d* = 1.VkImageType
+  vkImageType3d* = 2.VkImageType
+  vkImageTypeBeginRange: VkImageType = vkImageType1d
+  vkImageTypeEndRange: VkImageType = vkImageType3d
+  vkImageTypeRangeSize: VkImageType = (vkImageType3d - vkImageType1d + 1)
   vkImageTypeMaxEnum* = 0x7FFFFFFF.VkImageType
 
 const
@@ -2403,6 +2425,7 @@ const
   vkImageLayoutDepthReadOnlyStencilAttachmentOptimal* = 1000117000.VkImageLayout
   vkImageLayoutDepthAttachmentStencilReadOnlyOptimal* = 1000117001.VkImageLayout
   vkImageLayoutShadingRateOptimalNv* = 1000164003.VkImageLayout
+  vkImageLayoutFragmentDensityMapOptimalExt* = 1000218000.VkImageLayout
   vkImageLayoutDepthReadOnlyStencilAttachmentOptimalKhr: VkImageLayout = vkImageLayoutDepthReadOnlyStencilAttachmentOptimal
   vkImageLayoutDepthAttachmentStencilReadOnlyOptimalKhr: VkImageLayout = vkImageLayoutDepthAttachmentStencilReadOnlyOptimal
   vkImageLayoutBeginRange: VkImageLayout = vkImageLayoutUndefined
@@ -2411,16 +2434,16 @@ const
   vkImageLayoutMaxEnum* = 0x7FFFFFFF.VkImageLayout
 
 const
-  vkImageViewType_1D* = 0.VkImageViewType
-  vkImageViewType_2D* = 1.VkImageViewType
-  vkImageViewType_3D* = 2.VkImageViewType
+  vkImageViewType1d* = 0.VkImageViewType
+  vkImageViewType2d* = 1.VkImageViewType
+  vkImageViewType3d* = 2.VkImageViewType
   vkImageViewTypeCube* = 3.VkImageViewType
-  vkImageViewType_1DArray* = 4.VkImageViewType
-  vkImageViewType_2DArray* = 5.VkImageViewType
+  vkImageViewType1dArray* = 4.VkImageViewType
+  vkImageViewType2dArray* = 5.VkImageViewType
   vkImageViewTypeCubeArray* = 6.VkImageViewType
-  vkImageViewTypeBeginRange: VkImageViewType = vkImageViewType_1D
+  vkImageViewTypeBeginRange: VkImageViewType = vkImageViewType1d
   vkImageViewTypeEndRange: VkImageViewType = vkImageViewTypeCubeArray
-  vkImageViewTypeRangeSize: VkImageViewType = (vkImageViewTypeCubeArray - vkImageViewType_1D + 1)
+  vkImageViewTypeRangeSize: VkImageViewType = (vkImageViewTypeCubeArray - vkImageViewType1d + 1)
   vkImageViewTypeMaxEnum* = 0x7FFFFFFF.VkImageViewType
 
 const
@@ -2815,6 +2838,14 @@ const
   vkFormatFeatureTransferSrcBit* = 0x00004000.VkFormatFeatureFlagBits
   vkFormatFeatureTransferDstBit* = 0x00008000.VkFormatFeatureFlagBits
   vkFormatFeatureSampledImageFilterMinmaxBitExt* = 0x00010000.VkFormatFeatureFlagBits
+  vkFormatFeatureMidpointChromaSamplesBit* = 0x00020000.VkFormatFeatureFlagBits
+  vkFormatFeatureSampledImageYcbcrConversionLinearFilterBit* = 0x00040000.VkFormatFeatureFlagBits
+  vkFormatFeatureSampledImageYcbcrConversionSeparateReconstructionFilterBit* = 0x00080000.VkFormatFeatureFlagBits
+  vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitBit* = 0x00100000.VkFormatFeatureFlagBits
+  vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBit* = 0x00200000.VkFormatFeatureFlagBits
+  vkFormatFeatureDisjointBit* = 0x00400000.VkFormatFeatureFlagBits
+  vkFormatFeatureCositedChromaSamplesBit* = 0x00800000.VkFormatFeatureFlagBits
+  vkFormatFeatureFragmentDensityMapBitExt* = 0x01000000.VkFormatFeatureFlagBits
   vkFormatFeatureTransferSrcBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureTransferSrcBit
   vkFormatFeatureTransferDstBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureTransferDstBit
   vkFormatFeatureMidpointChromaSamplesBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureMidpointChromaSamplesBit
@@ -2824,13 +2855,6 @@ const
   vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBit
   vkFormatFeatureDisjointBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureDisjointBit
   vkFormatFeatureCositedChromaSamplesBitKhr: VkFormatFeatureFlagBits = vkFormatFeatureCositedChromaSamplesBit
-  vkFormatFeatureMidpointChromaSamplesBit* = 0x00020000.VkFormatFeatureFlagBits
-  vkFormatFeatureSampledImageYcbcrConversionLinearFilterBit* = 0x00040000.VkFormatFeatureFlagBits
-  vkFormatFeatureSampledImageYcbcrConversionSeparateReconstructionFilterBit* = 0x00080000.VkFormatFeatureFlagBits
-  vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitBit* = 0x00100000.VkFormatFeatureFlagBits
-  vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBit* = 0x00200000.VkFormatFeatureFlagBits
-  vkFormatFeatureDisjointBit* = 0x00400000.VkFormatFeatureFlagBits
-  vkFormatFeatureCositedChromaSamplesBit* = 0x00800000.VkFormatFeatureFlagBits
   vkFormatFeatureFlagBitsMaxEnum* = 0x7FFFFFFF.VkFormatFeatureFlagBits
 
 const
@@ -2843,6 +2867,7 @@ const
   vkImageUsageTransientAttachmentBit* = 0x00000040.VkImageUsageFlagBits
   vkImageUsageInputAttachmentBit* = 0x00000080.VkImageUsageFlagBits
   vkImageUsageShadingRateImageBitNv* = 0x00000100.VkImageUsageFlagBits
+  vkImageUsageFragmentDensityMapBitExt* = 0x00000200.VkImageUsageFlagBits
   vkImageUsageFlagBitsMaxEnum* = 0x7FFFFFFF.VkImageUsageFlagBits
 
 const
@@ -2851,7 +2876,7 @@ const
   vkImageCreateSparseAliasedBit* = 0x00000004.VkImageCreateFlagBits
   vkImageCreateMutableFormatBit* = 0x00000008.VkImageCreateFlagBits
   vkImageCreateCubeCompatibleBit* = 0x00000010.VkImageCreateFlagBits
-  vkImageCreate_2DArrayCompatibleBit* = 0x00000020.VkImageCreateFlagBits
+  vkImageCreate2dArrayCompatibleBit* = 0x00000020.VkImageCreateFlagBits
   vkImageCreateSplitInstanceBindRegionsBit* = 0x00000040.VkImageCreateFlagBits
   vkImageCreateBlockTexelViewCompatibleBit* = 0x00000080.VkImageCreateFlagBits
   vkImageCreateExtendedUsageBit* = 0x00000100.VkImageCreateFlagBits
@@ -2859,23 +2884,24 @@ const
   vkImageCreateAliasBit* = 0x00000400.VkImageCreateFlagBits
   vkImageCreateProtectedBit* = 0x00000800.VkImageCreateFlagBits
   vkImageCreateSampleLocationsCompatibleDepthBitExt* = 0x00001000.VkImageCreateFlagBits
+  vkImageCreateCornerSampledBitNv* = 0x00002000.VkImageCreateFlagBits
+  vkImageCreateSubsampledBitExt* = 0x00004000.VkImageCreateFlagBits
   vkImageCreateSplitInstanceBindRegionsBitKhr: VkImageCreateFlagBits = vkImageCreateSplitInstanceBindRegionsBit
-  vkImageCreate_2DArrayCompatibleBitKhr: VkImageCreateFlagBits = vkImageCreate_2DArrayCompatibleBit
+  vkImageCreate2dArrayCompatibleBitKhr: VkImageCreateFlagBits = vkImageCreate2dArrayCompatibleBit
   vkImageCreateBlockTexelViewCompatibleBitKhr: VkImageCreateFlagBits = vkImageCreateBlockTexelViewCompatibleBit
   vkImageCreateExtendedUsageBitKhr: VkImageCreateFlagBits = vkImageCreateExtendedUsageBit
   vkImageCreateDisjointBitKhr: VkImageCreateFlagBits = vkImageCreateDisjointBit
   vkImageCreateAliasBitKhr: VkImageCreateFlagBits = vkImageCreateAliasBit
-  vkImageCreateCornerSampledBitNv* = 0x00002000.VkImageCreateFlagBits
   vkImageCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkImageCreateFlagBits
 
 const
-  vkSampleCount_1Bit* = 0x00000001.VkSampleCountFlagBits
-  vkSampleCount_2Bit* = 0x00000002.VkSampleCountFlagBits
-  vkSampleCount_4Bit* = 0x00000004.VkSampleCountFlagBits
-  vkSampleCount_8Bit* = 0x00000008.VkSampleCountFlagBits
-  vkSampleCount_16Bit* = 0x00000010.VkSampleCountFlagBits
-  vkSampleCount_32Bit* = 0x00000020.VkSampleCountFlagBits
-  vkSampleCount_64Bit* = 0x00000040.VkSampleCountFlagBits
+  vkSampleCount1Bit* = 0x00000001.VkSampleCountFlagBits
+  vkSampleCount2Bit* = 0x00000002.VkSampleCountFlagBits
+  vkSampleCount4Bit* = 0x00000004.VkSampleCountFlagBits
+  vkSampleCount8Bit* = 0x00000008.VkSampleCountFlagBits
+  vkSampleCount16Bit* = 0x00000010.VkSampleCountFlagBits
+  vkSampleCount32Bit* = 0x00000020.VkSampleCountFlagBits
+  vkSampleCount64Bit* = 0x00000040.VkSampleCountFlagBits
   vkSampleCountFlagBitsMaxEnum* = 0x7FFFFFFF.VkSampleCountFlagBits
 
 const
@@ -2929,6 +2955,7 @@ const
   vkPipelineStageMeshShaderBitNv* = 0x00100000.VkPipelineStageFlagBits
   vkPipelineStageRayTracingShaderBitNv* = 0x00200000.VkPipelineStageFlagBits
   vkPipelineStageShadingRateImageBitNv* = 0x00400000.VkPipelineStageFlagBits
+  vkPipelineStageFragmentDensityProcessBitExt* = 0x00800000.VkPipelineStageFlagBits
   vkPipelineStageTransformFeedbackBitExt* = 0x01000000.VkPipelineStageFlagBits
   vkPipelineStageAccelerationStructureBuildBitNv* = 0x02000000.VkPipelineStageFlagBits
   vkPipelineStageFlagBitsMaxEnum* = 0x7FFFFFFF.VkPipelineStageFlagBits
@@ -2938,16 +2965,16 @@ const
   vkImageAspectDepthBit* = 0x00000002.VkImageAspectFlagBits
   vkImageAspectStencilBit* = 0x00000004.VkImageAspectFlagBits
   vkImageAspectMetadataBit* = 0x00000008.VkImageAspectFlagBits
-  vkImageAspectPlane_0Bit* = 0x00000010.VkImageAspectFlagBits
-  vkImageAspectPlane_1Bit* = 0x00000020.VkImageAspectFlagBits
-  vkImageAspectPlane_2Bit* = 0x00000040.VkImageAspectFlagBits
-  vkImageAspectMemoryPlane_0BitExt* = 0x00000080.VkImageAspectFlagBits
-  vkImageAspectMemoryPlane_1BitExt* = 0x00000100.VkImageAspectFlagBits
-  vkImageAspectMemoryPlane_2BitExt* = 0x00000200.VkImageAspectFlagBits
-  vkImageAspectMemoryPlane_3BitExt* = 0x00000400.VkImageAspectFlagBits
-  vkImageAspectPlane_0BitKhr: VkImageAspectFlagBits = vkImageAspectPlane_0Bit
-  vkImageAspectPlane_1BitKhr: VkImageAspectFlagBits = vkImageAspectPlane_1Bit
-  vkImageAspectPlane_2BitKhr: VkImageAspectFlagBits = vkImageAspectPlane_2Bit
+  vkImageAspectPlane0Bit* = 0x00000010.VkImageAspectFlagBits
+  vkImageAspectPlane1Bit* = 0x00000020.VkImageAspectFlagBits
+  vkImageAspectPlane2Bit* = 0x00000040.VkImageAspectFlagBits
+  vkImageAspectMemoryPlane0BitExt* = 0x00000080.VkImageAspectFlagBits
+  vkImageAspectMemoryPlane1BitExt* = 0x00000100.VkImageAspectFlagBits
+  vkImageAspectMemoryPlane2BitExt* = 0x00000200.VkImageAspectFlagBits
+  vkImageAspectMemoryPlane3BitExt* = 0x00000400.VkImageAspectFlagBits
+  vkImageAspectPlane0BitKhr: VkImageAspectFlagBits = vkImageAspectPlane0Bit
+  vkImageAspectPlane1BitKhr: VkImageAspectFlagBits = vkImageAspectPlane1Bit
+  vkImageAspectPlane2BitKhr: VkImageAspectFlagBits = vkImageAspectPlane2Bit
   vkImageAspectFlagBitsMaxEnum* = 0x7FFFFFFF.VkImageAspectFlagBits
 
 const
@@ -2979,7 +3006,7 @@ const
   vkQueryPipelineStatisticFlagBitsMaxEnum* = 0x7FFFFFFF.VkQueryPipelineStatisticFlagBits
 
 const
-  vkQueryResult_64Bit* = 0x00000001.VkQueryResultFlagBits
+  vkQueryResult64Bit* = 0x00000001.VkQueryResultFlagBits
   vkQueryResultWaitBit* = 0x00000002.VkQueryResultFlagBits
   vkQueryResultWithAvailabilityBit* = 0x00000004.VkQueryResultFlagBits
   vkQueryResultPartialBit* = 0x00000008.VkQueryResultFlagBits
@@ -2990,6 +3017,7 @@ const
   vkBufferCreateSparseResidencyBit* = 0x00000002.VkBufferCreateFlagBits
   vkBufferCreateSparseAliasedBit* = 0x00000004.VkBufferCreateFlagBits
   vkBufferCreateProtectedBit* = 0x00000008.VkBufferCreateFlagBits
+  vkBufferCreateDeviceAddressCaptureReplayBitExt* = 0x00000010.VkBufferCreateFlagBits
   vkBufferCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkBufferCreateFlagBits
 
 const
@@ -3006,7 +3034,12 @@ const
   vkBufferUsageRayTracingBitNv* = 0x00000400.VkBufferUsageFlagBits
   vkBufferUsageTransformFeedbackBufferBitExt* = 0x00000800.VkBufferUsageFlagBits
   vkBufferUsageTransformFeedbackCounterBufferBitExt* = 0x00001000.VkBufferUsageFlagBits
+  vkBufferUsageShaderDeviceAddressBitExt* = 0x00020000.VkBufferUsageFlagBits
   vkBufferUsageFlagBitsMaxEnum* = 0x7FFFFFFF.VkBufferUsageFlagBits
+
+const
+  vkImageViewCreateFragmentDensityMapDynamicBitExt* = 0x00000001.VkImageViewCreateFlagBits
+  vkImageViewCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkImageViewCreateFlagBits
 
 const
   vkPipelineCreateDisableOptimizationBit* = 0x00000001.VkPipelineCreateFlagBits
@@ -3053,6 +3086,11 @@ const
   vkColorComponentFlagBitsMaxEnum* = 0x7FFFFFFF.VkColorComponentFlagBits
 
 const
+  vkSamplerCreateSubsampledBitExt* = 0x00000001.VkSamplerCreateFlagBits
+  vkSamplerCreateSubsampledCoarseReconstructionBitExt* = 0x00000002.VkSamplerCreateFlagBits
+  vkSamplerCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkSamplerCreateFlagBits
+
+const
   vkDescriptorSetLayoutCreatePushDescriptorBitKhr* = 0x00000001.VkDescriptorSetLayoutCreateFlagBits
   vkDescriptorSetLayoutCreateUpdateAfterBindPoolBitExt* = 0x00000002.VkDescriptorSetLayoutCreateFlagBits
   vkDescriptorSetLayoutCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkDescriptorSetLayoutCreateFlagBits
@@ -3096,6 +3134,7 @@ const
   vkAccessAccelerationStructureReadBitNv* = 0x00200000.VkAccessFlagBits
   vkAccessAccelerationStructureWriteBitNv* = 0x00400000.VkAccessFlagBits
   vkAccessShadingRateImageReadBitNv* = 0x00800000.VkAccessFlagBits
+  vkAccessFragmentDensityMapReadBitExt* = 0x01000000.VkAccessFlagBits
   vkAccessTransformFeedbackWriteBitExt* = 0x02000000.VkAccessFlagBits
   vkAccessTransformFeedbackCounterReadBitExt* = 0x04000000.VkAccessFlagBits
   vkAccessTransformFeedbackCounterWriteBitExt* = 0x08000000.VkAccessFlagBits
@@ -3138,9 +3177,6 @@ const
   vkStencilFaceBackBit* = 0x00000002.VkStencilFaceFlagBits
   vkStencilFrontAndBack* = 0x00000003.VkStencilFaceFlagBits
   vkStencilFaceFlagBitsMaxEnum* = 0x7FFFFFFF.VkStencilFaceFlagBits
-
-const
-  vkRenderPassCreateFlagBitsMaxEnum* = 0x7FFFFFFF.VkRenderPassCreateFlagBits
 
 when not defined(vkNoPrototypes):
   proc vkCreateInstance*(pCreateInfo: ptr VkInstanceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pInstance: ptr VkInstance): VkResult {.cdecl, importc.}
@@ -3281,12 +3317,12 @@ when not defined(vkNoPrototypes):
   proc vkCmdEndRenderPass*(commandBuffer: VkCommandBuffer) {.cdecl, importc.}
   proc vkCmdExecuteCommands*(commandBuffer: VkCommandBuffer; commandBufferCount: uint32; pCommandBuffers: ptr VkCommandBuffer) {.cdecl, importc.}
 const
-  vkVersion_1_1* = 1
+  vkVersion11* = 1
 
 ##  Vulkan 1.1 version number
 
 const
-  vkApiVersion_1_1* = vkMakeVersion(1, 1, 0) ##  Patch version should always be set to 0
+  vkApiVersion11* = vkMakeVersion(1, 1, 0) ##  Patch version should always be set to 0
 
 type
   VkSamplerYcbcrConversion* = VkNonDispatchableHandle
@@ -3797,17 +3833,17 @@ const
 const
   vkSamplerYcbcrModelConversionRgbIdentity* = 0.VkSamplerYcbcrModelConversion
   vkSamplerYcbcrModelConversionYcbcrIdentity* = 1.VkSamplerYcbcrModelConversion
-  vkSamplerYcbcrModelConversionYcbcr_709* = 2.VkSamplerYcbcrModelConversion
-  vkSamplerYcbcrModelConversionYcbcr_601* = 3.VkSamplerYcbcrModelConversion
-  vkSamplerYcbcrModelConversionYcbcr_2020* = 4.VkSamplerYcbcrModelConversion
+  vkSamplerYcbcrModelConversionYcbcr709* = 2.VkSamplerYcbcrModelConversion
+  vkSamplerYcbcrModelConversionYcbcr601* = 3.VkSamplerYcbcrModelConversion
+  vkSamplerYcbcrModelConversionYcbcr2020* = 4.VkSamplerYcbcrModelConversion
   vkSamplerYcbcrModelConversionRgbIdentityKhr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionRgbIdentity
   vkSamplerYcbcrModelConversionYcbcrIdentityKhr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcrIdentity
-  vkSamplerYcbcrModelConversionYcbcr_709Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr_709
-  vkSamplerYcbcrModelConversionYcbcr_601Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr_601
-  vkSamplerYcbcrModelConversionYcbcr_2020Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr_2020
+  vkSamplerYcbcrModelConversionYcbcr709Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr709
+  vkSamplerYcbcrModelConversionYcbcr601Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr601
+  vkSamplerYcbcrModelConversionYcbcr2020Khr: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr2020
   vkSamplerYcbcrModelConversionBeginRange: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionRgbIdentity
-  vkSamplerYcbcrModelConversionEndRange: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr_2020
-  vkSamplerYcbcrModelConversionRangeSize: VkSamplerYcbcrModelConversion = (vkSamplerYcbcrModelConversionYcbcr_2020 - vkSamplerYcbcrModelConversionRgbIdentity + 1)
+  vkSamplerYcbcrModelConversionEndRange: VkSamplerYcbcrModelConversion = vkSamplerYcbcrModelConversionYcbcr2020
+  vkSamplerYcbcrModelConversionRangeSize: VkSamplerYcbcrModelConversion = (vkSamplerYcbcrModelConversionYcbcr2020 - vkSamplerYcbcrModelConversionRgbIdentity + 1)
   vkSamplerYcbcrModelConversionMaxEnum* = 0x7FFFFFFF.VkSamplerYcbcrModelConversion
 
 const
@@ -3871,19 +3907,19 @@ const
   vkExternalMemoryHandleTypeOpaqueFdBit* = 0x00000001.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeOpaqueWin32Bit* = 0x00000002.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeOpaqueWin32KmtBit* = 0x00000004.VkExternalMemoryHandleTypeFlagBits
-  vkExternalMemoryHandleTypeD3D11TextureBit* = 0x00000008.VkExternalMemoryHandleTypeFlagBits
-  vkExternalMemoryHandleTypeD3D11TextureKmtBit* = 0x00000010.VkExternalMemoryHandleTypeFlagBits
-  vkExternalMemoryHandleTypeD3D12HeapBit* = 0x00000020.VkExternalMemoryHandleTypeFlagBits
-  vkExternalMemoryHandleTypeD3D12ResourceBit* = 0x00000040.VkExternalMemoryHandleTypeFlagBits
+  vkExternalMemoryHandleTypeD3d11TextureBit* = 0x00000008.VkExternalMemoryHandleTypeFlagBits
+  vkExternalMemoryHandleTypeD3d11TextureKmtBit* = 0x00000010.VkExternalMemoryHandleTypeFlagBits
+  vkExternalMemoryHandleTypeD3d12HeapBit* = 0x00000020.VkExternalMemoryHandleTypeFlagBits
+  vkExternalMemoryHandleTypeD3d12ResourceBit* = 0x00000040.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeHostAllocationBitExt* = 0x00000080.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeHostMappedForeignMemoryBitExt* = 0x00000100.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeOpaqueFdBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeOpaqueFdBit
   vkExternalMemoryHandleTypeOpaqueWin32BitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeOpaqueWin32Bit
   vkExternalMemoryHandleTypeOpaqueWin32KmtBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeOpaqueWin32KmtBit
-  vkExternalMemoryHandleTypeD3D11TextureBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3D11TextureBit
-  vkExternalMemoryHandleTypeD3D11TextureKmtBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3D11TextureKmtBit
-  vkExternalMemoryHandleTypeD3D12HeapBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3D12HeapBit
-  vkExternalMemoryHandleTypeD3D12ResourceBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3D12ResourceBit
+  vkExternalMemoryHandleTypeD3d11TextureBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3d11TextureBit
+  vkExternalMemoryHandleTypeD3d11TextureKmtBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3d11TextureKmtBit
+  vkExternalMemoryHandleTypeD3d12HeapBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3d12HeapBit
+  vkExternalMemoryHandleTypeD3d12ResourceBitKhr: VkExternalMemoryHandleTypeFlagBits = vkExternalMemoryHandleTypeD3d12ResourceBit
   vkExternalMemoryHandleTypeDmaBufBitExt* = 0x00000200.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeAndroidHardwareBufferBitAndroid* = 0x00000400.VkExternalMemoryHandleTypeFlagBits
   vkExternalMemoryHandleTypeFlagBitsMaxEnum* = 0x7FFFFFFF.VkExternalMemoryHandleTypeFlagBits
@@ -3929,12 +3965,12 @@ const
   vkExternalSemaphoreHandleTypeOpaqueFdBit* = 0x00000001.VkExternalSemaphoreHandleTypeFlagBits
   vkExternalSemaphoreHandleTypeOpaqueWin32Bit* = 0x00000002.VkExternalSemaphoreHandleTypeFlagBits
   vkExternalSemaphoreHandleTypeOpaqueWin32KmtBit* = 0x00000004.VkExternalSemaphoreHandleTypeFlagBits
-  vkExternalSemaphoreHandleTypeD3D12FenceBit* = 0x00000008.VkExternalSemaphoreHandleTypeFlagBits
+  vkExternalSemaphoreHandleTypeD3d12FenceBit* = 0x00000008.VkExternalSemaphoreHandleTypeFlagBits
   vkExternalSemaphoreHandleTypeSyncFdBit* = 0x00000010.VkExternalSemaphoreHandleTypeFlagBits
   vkExternalSemaphoreHandleTypeOpaqueFdBitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeOpaqueFdBit
   vkExternalSemaphoreHandleTypeOpaqueWin32BitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeOpaqueWin32Bit
   vkExternalSemaphoreHandleTypeOpaqueWin32KmtBitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeOpaqueWin32KmtBit
-  vkExternalSemaphoreHandleTypeD3D12FenceBitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeD3D12FenceBit
+  vkExternalSemaphoreHandleTypeD3d12FenceBitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeD3d12FenceBit
   vkExternalSemaphoreHandleTypeSyncFdBitKhr: VkExternalSemaphoreHandleTypeFlagBits = vkExternalSemaphoreHandleTypeSyncFdBit
   vkExternalSemaphoreHandleTypeFlagBitsMaxEnum* = 0x7FFFFFFF.VkExternalSemaphoreHandleTypeFlagBits
 
@@ -3982,7 +4018,7 @@ type
 
 const
   vkKhrSurfaceSpecVersion* = 25
-  vkKhrSurfaceExtensionName* = "vkKhrSurface"
+  vkKhrSurfaceExtensionName* = "VK_KHR_surface"
 
 type
   VkColorSpaceKHR* = distinct cint
@@ -4029,6 +4065,7 @@ const
   vkColorSpaceAdobergbNonlinearExt* = 1000104012.VkColorSpaceKHR
   vkColorSpacePassThroughExt* = 1000104013.VkColorSpaceKHR
   vkColorSpaceExtendedSrgbNonlinearExt* = 1000104014.VkColorSpaceKHR
+  vkColorspaceSrgbNonlinearKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceBeginRangeKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceEndRangeKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceRangeSizeKhr: VkColorSpaceKHR = (vkColorSpaceSrgbNonlinearKhr - vkColorSpaceSrgbNonlinearKhr + 1)
@@ -4048,13 +4085,13 @@ const
 
 const
   vkSurfaceTransformIdentityBitKhr* = 0x00000001.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformRotate_90BitKhr* = 0x00000002.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformRotate_180BitKhr* = 0x00000004.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformRotate_270BitKhr* = 0x00000008.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformRotate90BitKhr* = 0x00000002.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformRotate180BitKhr* = 0x00000004.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformRotate270BitKhr* = 0x00000008.VkSurfaceTransformFlagBitsKHR
   vkSurfaceTransformHorizontalMirrorBitKhr* = 0x00000010.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformHorizontalMirrorRotate_90BitKhr* = 0x00000020.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformHorizontalMirrorRotate_180BitKhr* = 0x00000040.VkSurfaceTransformFlagBitsKHR
-  vkSurfaceTransformHorizontalMirrorRotate_270BitKhr* = 0x00000080.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformHorizontalMirrorRotate90BitKhr* = 0x00000020.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformHorizontalMirrorRotate180BitKhr* = 0x00000040.VkSurfaceTransformFlagBitsKHR
+  vkSurfaceTransformHorizontalMirrorRotate270BitKhr* = 0x00000080.VkSurfaceTransformFlagBitsKHR
   vkSurfaceTransformInheritBitKhr* = 0x00000100.VkSurfaceTransformFlagBitsKHR
   vkSurfaceTransformFlagBitsMaxEnumKhr* = 0x7FFFFFFF.VkSurfaceTransformFlagBitsKHR
 
@@ -4079,7 +4116,7 @@ type
 
 const
   vkKhrSwapchainSpecVersion* = 70
-  vkKhrSwapchainExtensionName* = "vkKhrSwapchain"
+  vkKhrSwapchainExtensionName* = "VK_KHR_swapchain"
 
 type
   VkSwapchainCreateFlagBitsKHR* = distinct cint
@@ -4162,11 +4199,12 @@ type
   PFNVkgetdevicegrouppresentcapabilitieskhr* = proc (device: VkDevice; pDeviceGroupPresentCapabilities: ptr VkDeviceGroupPresentCapabilitiesKHR): VkResult {.cdecl.}
   PFNVkgetdevicegroupsurfacepresentmodeskhr* = proc (device: VkDevice; surface: VkSurfaceKHR; pModes: ptr VkDeviceGroupPresentModeFlagsKHR): VkResult {.cdecl.}
   PFNVkgetphysicaldevicepresentrectangleskhr* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pRectCount: ptr uint32; pRects: ptr VkRect2D): VkResult {.cdecl.}
-  PFNVkacquirenextimage2KHR* = proc (device: VkDevice; pAcquireInfo: ptr VkAcquireNextImageInfoKHR; pImageIndex: ptr uint32): VkResult {.cdecl.}
+  PFNVkacquirenextimage2khr* = proc (device: VkDevice; pAcquireInfo: ptr VkAcquireNextImageInfoKHR; pImageIndex: ptr uint32): VkResult {.cdecl.}
 
 const
   vkSwapchainCreateSplitInstanceBindRegionsBitKhr* = 0x00000001.VkSwapchainCreateFlagBitsKHR
   vkSwapchainCreateProtectedBitKhr* = 0x00000002.VkSwapchainCreateFlagBitsKHR
+  vkSwapchainCreateMutableFormatBitKhr* = 0x00000004.VkSwapchainCreateFlagBitsKHR
   vkSwapchainCreateFlagBitsMaxEnumKhr* = 0x7FFFFFFF.VkSwapchainCreateFlagBitsKHR
 
 const
@@ -4195,7 +4233,7 @@ type
 
 const
   vkKhrDisplaySpecVersion* = 21
-  vkKhrDisplayExtensionName* = "vkKhrDisplay"
+  vkKhrDisplayExtensionName* = "VK_KHR_display"
 
 type
   VkDisplayPlaneAlphaFlagBitsKHR* = distinct cint
@@ -4278,7 +4316,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrDisplaySwapchain* = 1
   vkKhrDisplaySwapchainSpecVersion* = 9
-  vkKhrDisplaySwapchainExtensionName* = "vkKhrDisplaySwapchain"
+  vkKhrDisplaySwapchainExtensionName* = "VK_KHR_display_swapchain"
 
 type
   VkDisplayPresentInfoKHR* {.bycopy.} = object
@@ -4295,10 +4333,10 @@ when not defined(vkNoPrototypes):
 const
   vkKhrSamplerMirrorClampoEdge* = 1
   vkKhrSamplerMirrorClampToEdgeSpecVersion* = 1
-  vkKhrSamplerMirrorClampToEdgeExtensionName* = "vkKhrSamplerMirrorClampoEdge"
+  vkKhrSamplerMirrorClampToEdgeExtensionName* = "VK_KHR_sampler_mirror_clampo_edge"
   vkKhrMultiview* = 1
   vkKhrMultiviewSpecVersion* = 1
-  vkKhrMultiviewExtensionName* = "vkKhrMultiview"
+  vkKhrMultiviewExtensionName* = "VK_KHR_multiview"
 
 type
   VkRenderPassMultiviewCreateInfoKHR* = VkRenderPassMultiviewCreateInfo
@@ -4307,8 +4345,8 @@ type
 
 const
   vkKhrGetPhysicalDeviceProperties2* = 1
-  vkKhrGetPhysicalDeviceProperties_2SpecVersion* = 1
-  vkKhrGetPhysicalDeviceProperties_2ExtensionName* = "vkKhrGetPhysicalDeviceProperties2"
+  vkKhrGetPhysicalDeviceProperties2SpecVersion* = 1
+  vkKhrGetPhysicalDeviceProperties2ExtensionName* = "VK_KHR_get_physical_device_properties2"
 
 type
   VkPhysicalDeviceFeatures2KHR* = VkPhysicalDeviceFeatures2
@@ -4320,13 +4358,13 @@ type
   VkPhysicalDeviceMemoryProperties2KHR* = VkPhysicalDeviceMemoryProperties2
   VkSparseImageFormatProperties2KHR* = VkSparseImageFormatProperties2
   VkPhysicalDeviceSparseImageFormatInfo2KHR* = VkPhysicalDeviceSparseImageFormatInfo2
-  PFNVkgetphysicaldevicefeatures2KHR* = proc (physicalDevice: VkPhysicalDevice; pFeatures: ptr VkPhysicalDeviceFeatures2) {.cdecl.}
-  PFNVkgetphysicaldeviceproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pProperties: ptr VkPhysicalDeviceProperties2) {.cdecl.}
-  PFNVkgetphysicaldeviceformatproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; format: VkFormat; pFormatProperties: ptr VkFormatProperties2) {.cdecl.}
-  PFNVkgetphysicaldeviceimageformatproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pImageFormatInfo: ptr VkPhysicalDeviceImageFormatInfo2; pImageFormatProperties: ptr VkImageFormatProperties2): VkResult {.cdecl.}
-  PFNVkgetphysicaldevicequeuefamilyproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pQueueFamilyPropertyCount: ptr uint32; pQueueFamilyProperties: ptr VkQueueFamilyProperties2) {.cdecl.}
-  PFNVkgetphysicaldevicememoryproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pMemoryProperties: ptr VkPhysicalDeviceMemoryProperties2) {.cdecl.}
-  PFNVkgetphysicaldevicesparseimageformatproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pFormatInfo: ptr VkPhysicalDeviceSparseImageFormatInfo2; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties2) {.cdecl.}
+  PFNVkgetphysicaldevicefeatures2khr* = proc (physicalDevice: VkPhysicalDevice; pFeatures: ptr VkPhysicalDeviceFeatures2) {.cdecl.}
+  PFNVkgetphysicaldeviceproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pProperties: ptr VkPhysicalDeviceProperties2) {.cdecl.}
+  PFNVkgetphysicaldeviceformatproperties2khr* = proc (physicalDevice: VkPhysicalDevice; format: VkFormat; pFormatProperties: ptr VkFormatProperties2) {.cdecl.}
+  PFNVkgetphysicaldeviceimageformatproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pImageFormatInfo: ptr VkPhysicalDeviceImageFormatInfo2; pImageFormatProperties: ptr VkImageFormatProperties2): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicequeuefamilyproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pQueueFamilyPropertyCount: ptr uint32; pQueueFamilyProperties: ptr VkQueueFamilyProperties2) {.cdecl.}
+  PFNVkgetphysicaldevicememoryproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pMemoryProperties: ptr VkPhysicalDeviceMemoryProperties2) {.cdecl.}
+  PFNVkgetphysicaldevicesparseimageformatproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pFormatInfo: ptr VkPhysicalDeviceSparseImageFormatInfo2; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties2) {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceFeatures2KHR*(physicalDevice: VkPhysicalDevice; pFeatures: ptr VkPhysicalDeviceFeatures2) {.cdecl, importc.}
@@ -4339,7 +4377,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrDeviceGroup* = 1
   vkKhrDeviceGroupSpecVersion* = 3
-  vkKhrDeviceGroupExtensionName* = "vkKhrDeviceGroup"
+  vkKhrDeviceGroupExtensionName* = "VK_KHR_device_group"
 
 type
   VkPeerMemoryFeatureFlagsKHR* = VkPeerMemoryFeatureFlags
@@ -4364,10 +4402,10 @@ when not defined(vkNoPrototypes):
 const
   vkKhrShaderDrawParameters* = 1
   vkKhrShaderDrawParametersSpecVersion* = 1
-  vkKhrShaderDrawParametersExtensionName* = "vkKhrShaderDrawParameters"
+  vkKhrShaderDrawParametersExtensionName* = "VK_KHR_shader_draw_parameters"
   vkKhrMaintenance1* = 1
   vkKhrMaintenance1SpecVersion* = 2
-  vkKhrMaintenance1ExtensionName* = "vkKhrMaintenance1"
+  vkKhrMaintenance1ExtensionName* = "VK_KHR_maintenance1"
 
 type
   VkCommandPoolTrimFlagsKHR* = VkCommandPoolTrimFlags
@@ -4378,7 +4416,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrDeviceGroupCreation* = 1
   vkKhrDeviceGroupCreationSpecVersion* = 1
-  vkKhrDeviceGroupCreationExtensionName* = "vkKhrDeviceGroupCreation"
+  vkKhrDeviceGroupCreationExtensionName* = "VK_KHR_device_group_creation"
   vkMaxDeviceGroupSizeKhr* = vkMaxDeviceGroupSize
 
 type
@@ -4391,7 +4429,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalMemoryCapabilities* = 1
   vkKhrExternalMemoryCapabilitiesSpecVersion* = 1
-  vkKhrExternalMemoryCapabilitiesExtensionName* = "vkKhrExternalMemoryCapabilities"
+  vkKhrExternalMemoryCapabilitiesExtensionName* = "VK_KHR_external_memory_capabilities"
   vkLuidSizeKhr* = vkLuidSize
 
 type
@@ -4412,7 +4450,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalMemory* = 1
   vkKhrExternalMemorySpecVersion* = 1
-  vkKhrExternalMemoryExtensionName* = "vkKhrExternalMemory"
+  vkKhrExternalMemoryExtensionName* = "VK_KHR_external_memory"
   vkQueueFamilyExternalKhr* = vkQueueFamilyExternal
 
 type
@@ -4423,7 +4461,7 @@ type
 const
   vkKhrExternalMemoryFd* = 1
   vkKhrExternalMemoryFdSpecVersion* = 1
-  vkKhrExternalMemoryFdExtensionName* = "vkKhrExternalMemoryFd"
+  vkKhrExternalMemoryFdExtensionName* = "VK_KHR_external_memory_fd"
 
 type
   VkImportMemoryFdInfoKHR* {.bycopy.} = object
@@ -4452,7 +4490,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalSemaphoreCapabilities* = 1
   vkKhrExternalSemaphoreCapabilitiesSpecVersion* = 1
-  vkKhrExternalSemaphoreCapabilitiesExtensionName* = "vkKhrExternalSemaphoreCapabilities"
+  vkKhrExternalSemaphoreCapabilitiesExtensionName* = "VK_KHR_external_semaphore_capabilities"
 
 type
   VkExternalSemaphoreHandleTypeFlagsKHR* = VkExternalSemaphoreHandleTypeFlags
@@ -4468,7 +4506,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalSemaphore* = 1
   vkKhrExternalSemaphoreSpecVersion* = 1
-  vkKhrExternalSemaphoreExtensionName* = "vkKhrExternalSemaphore"
+  vkKhrExternalSemaphoreExtensionName* = "VK_KHR_external_semaphore"
 
 type
   VkSemaphoreImportFlagsKHR* = VkSemaphoreImportFlags
@@ -4478,7 +4516,7 @@ type
 const
   vkKhrExternalSemaphoreFd* = 1
   vkKhrExternalSemaphoreFdSpecVersion* = 1
-  vkKhrExternalSemaphoreFdExtensionName* = "vkKhrExternalSemaphoreFd"
+  vkKhrExternalSemaphoreFdExtensionName* = "VK_KHR_external_semaphore_fd"
 
 type
   VkImportSemaphoreFdInfoKHR* {.bycopy.} = object
@@ -4504,7 +4542,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrPushDescriptor* = 1
   vkKhrPushDescriptorSpecVersion* = 2
-  vkKhrPushDescriptorExtensionName* = "vkKhrPushDescriptor"
+  vkKhrPushDescriptorExtensionName* = "VK_KHR_push_descriptor"
 
 type
   VkPhysicalDevicePushDescriptorPropertiesKHR* {.bycopy.} = object
@@ -4519,9 +4557,22 @@ when not defined(vkNoPrototypes):
   proc vkCmdPushDescriptorSetKHR*(commandBuffer: VkCommandBuffer; pipelineBindPoint: VkPipelineBindPoint; layout: VkPipelineLayout; set: uint32; descriptorWriteCount: uint32; pDescriptorWrites: ptr VkWriteDescriptorSet) {.cdecl, importc.}
   proc vkCmdPushDescriptorSetWithTemplateKHR*(commandBuffer: VkCommandBuffer; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; layout: VkPipelineLayout; set: uint32; pData: pointer) {.cdecl, importc.}
 const
-  vkKhr_16bitStorage* = 1
-  vkKhr_16BITStorageSpecVersion* = 1
-  vkKhr_16BITStorageExtensionName* = "vkKhr_16bitStorage"
+  vkKhrShaderFloat16Int8* = 1
+  vkKhrShaderFloat16Int8SpecVersion* = 1
+  vkKhrShaderFloat16Int8ExtensionName* = "VK_KHR_shader_float16_int8"
+
+type
+  VkPhysicalDeviceFloat16Int8FeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shaderFloat16*: VkBool32
+    shaderInt8*: VkBool32
+
+
+const
+  vkKhr16bitStorage* = 1
+  vkKhr16bitStorageSpecVersion* = 1
+  vkKhr16bitStorageExtensionName* = "VK_KHR_16bit_storage"
 
 type
   VkPhysicalDevice16BitStorageFeaturesKHR* = VkPhysicalDevice16BitStorageFeatures
@@ -4529,7 +4580,7 @@ type
 const
   vkKhrIncrementalPresent* = 1
   vkKhrIncrementalPresentSpecVersion* = 1
-  vkKhrIncrementalPresentExtensionName* = "vkKhrIncrementalPresent"
+  vkKhrIncrementalPresentExtensionName* = "VK_KHR_incremental_present"
 
 type
   VkRectLayerKHR* {.bycopy.} = object
@@ -4556,7 +4607,7 @@ type
 
 const
   vkKhrDescriptorUpdateTemplateSpecVersion* = 1
-  vkKhrDescriptorUpdateTemplateExtensionName* = "vkKhrDescriptorUpdateTemplate"
+  vkKhrDescriptorUpdateTemplateExtensionName* = "VK_KHR_descriptor_update_template"
 
 type
   VkDescriptorUpdateTemplateTypeKHR* = VkDescriptorUpdateTemplateType
@@ -4573,8 +4624,8 @@ when not defined(vkNoPrototypes):
   proc vkUpdateDescriptorSetWithTemplateKHR*(device: VkDevice; descriptorSet: VkDescriptorSet; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pData: pointer) {.cdecl, importc.}
 const
   vkKhrCreateRenderpass2* = 1
-  vkKhrCreateRenderpass_2SpecVersion* = 1
-  vkKhrCreateRenderpass_2ExtensionName* = "vkKhrCreateRenderpass2"
+  vkKhrCreateRenderpass2SpecVersion* = 1
+  vkKhrCreateRenderpass2ExtensionName* = "VK_KHR_create_renderpass2"
 
 type
   VkAttachmentDescription2KHR* {.bycopy.} = object
@@ -4646,10 +4697,10 @@ type
     sType*: VkStructureType
     pNext*: pointer
 
-  PFNVkcreaterenderpass2KHR* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
-  PFNVkcmdbeginrenderpass2KHR* = proc (commandBuffer: VkCommandBuffer; pRenderPassBegin: ptr VkRenderPassBeginInfo; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR) {.cdecl.}
-  PFNVkcmdnextsubpass2KHR* = proc (commandBuffer: VkCommandBuffer; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
-  PFNVkcmdendrenderpass2KHR* = proc (commandBuffer: VkCommandBuffer; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
+  PFNVkcreaterenderpass2khr* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
+  PFNVkcmdbeginrenderpass2khr* = proc (commandBuffer: VkCommandBuffer; pRenderPassBegin: ptr VkRenderPassBeginInfo; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR) {.cdecl.}
+  PFNVkcmdnextsubpass2khr* = proc (commandBuffer: VkCommandBuffer; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
+  PFNVkcmdendrenderpass2khr* = proc (commandBuffer: VkCommandBuffer; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkCreateRenderPass2KHR*(device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl, importc.}
@@ -4659,7 +4710,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrSharedPresentableImage* = 1
   vkKhrSharedPresentableImageSpecVersion* = 1
-  vkKhrSharedPresentableImageExtensionName* = "vkKhrSharedPresentableImage"
+  vkKhrSharedPresentableImageExtensionName* = "VK_KHR_shared_presentable_image"
 
 type
   VkSharedPresentSurfaceCapabilitiesKHR* {.bycopy.} = object
@@ -4674,7 +4725,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalFenceCapabilities* = 1
   vkKhrExternalFenceCapabilitiesSpecVersion* = 1
-  vkKhrExternalFenceCapabilitiesExtensionName* = "vkKhrExternalFenceCapabilities"
+  vkKhrExternalFenceCapabilitiesExtensionName* = "VK_KHR_external_fence_capabilities"
 
 type
   VkExternalFenceHandleTypeFlagsKHR* = VkExternalFenceHandleTypeFlags
@@ -4690,7 +4741,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrExternalFence* = 1
   vkKhrExternalFenceSpecVersion* = 1
-  vkKhrExternalFenceExtensionName* = "vkKhrExternalFence"
+  vkKhrExternalFenceExtensionName* = "VK_KHR_external_fence"
 
 type
   VkFenceImportFlagsKHR* = VkFenceImportFlags
@@ -4700,7 +4751,7 @@ type
 const
   vkKhrExternalFenceFd* = 1
   vkKhrExternalFenceFdSpecVersion* = 1
-  vkKhrExternalFenceFdExtensionName* = "vkKhrExternalFenceFd"
+  vkKhrExternalFenceFdExtensionName* = "VK_KHR_external_fence_fd"
 
 type
   VkImportFenceFdInfoKHR* {.bycopy.} = object
@@ -4726,7 +4777,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrMaintenance2* = 1
   vkKhrMaintenance2SpecVersion* = 1
-  vkKhrMaintenance2ExtensionName* = "vkKhrMaintenance2"
+  vkKhrMaintenance2ExtensionName* = "VK_KHR_maintenance2"
 
 type
   VkPointClippingBehaviorKHR* = VkPointClippingBehavior
@@ -4739,8 +4790,8 @@ type
 
 const
   vkKhrGetSurfaceCapabilities2* = 1
-  vkKhrGetSurfaceCapabilities_2SpecVersion* = 1
-  vkKhrGetSurfaceCapabilities_2ExtensionName* = "vkKhrGetSurfaceCapabilities2"
+  vkKhrGetSurfaceCapabilities2SpecVersion* = 1
+  vkKhrGetSurfaceCapabilities2ExtensionName* = "VK_KHR_get_surface_capabilities2"
 
 type
   VkPhysicalDeviceSurfaceInfo2KHR* {.bycopy.} = object
@@ -4758,8 +4809,8 @@ type
     pNext*: pointer
     surfaceFormat*: VkSurfaceFormatKHR
 
-  PFNVkgetphysicaldevicesurfacecapabilities2KHR* = proc (physicalDevice: VkPhysicalDevice; pSurfaceInfo: ptr VkPhysicalDeviceSurfaceInfo2KHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2KHR): VkResult {.cdecl.}
-  PFNVkgetphysicaldevicesurfaceformats2KHR* = proc (physicalDevice: VkPhysicalDevice; pSurfaceInfo: ptr VkPhysicalDeviceSurfaceInfo2KHR; pSurfaceFormatCount: ptr uint32; pSurfaceFormats: ptr VkSurfaceFormat2KHR): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicesurfacecapabilities2khr* = proc (physicalDevice: VkPhysicalDevice; pSurfaceInfo: ptr VkPhysicalDeviceSurfaceInfo2KHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2KHR): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicesurfaceformats2khr* = proc (physicalDevice: VkPhysicalDevice; pSurfaceInfo: ptr VkPhysicalDeviceSurfaceInfo2KHR; pSurfaceFormatCount: ptr uint32; pSurfaceFormats: ptr VkSurfaceFormat2KHR): VkResult {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceSurfaceCapabilities2KHR*(physicalDevice: VkPhysicalDevice; pSurfaceInfo: ptr VkPhysicalDeviceSurfaceInfo2KHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2KHR): VkResult {.cdecl, importc.}
@@ -4767,15 +4818,15 @@ when not defined(vkNoPrototypes):
 const
   vkKhrVariablePointers* = 1
   vkKhrVariablePointersSpecVersion* = 1
-  vkKhrVariablePointersExtensionName* = "vkKhrVariablePointers"
+  vkKhrVariablePointersExtensionName* = "VK_KHR_variable_pointers"
 
 type
   VkPhysicalDeviceVariablePointerFeaturesKHR* = VkPhysicalDeviceVariablePointerFeatures
 
 const
   vkKhrGetDisplayProperties2* = 1
-  vkKhrGetDisplayProperties_2SpecVersion* = 1
-  vkKhrGetDisplayProperties_2ExtensionName* = "vkKhrGetDisplayProperties2"
+  vkKhrGetDisplayProperties2SpecVersion* = 1
+  vkKhrGetDisplayProperties2ExtensionName* = "VK_KHR_get_display_properties2"
 
 type
   VkDisplayProperties2KHR* {.bycopy.} = object
@@ -4804,10 +4855,10 @@ type
     pNext*: pointer
     capabilities*: VkDisplayPlaneCapabilitiesKHR
 
-  PFNVkgetphysicaldevicedisplayproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayProperties2KHR): VkResult {.cdecl.}
-  PFNVkgetphysicaldevicedisplayplaneproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayPlaneProperties2KHR): VkResult {.cdecl.}
-  PFNVkgetdisplaymodeproperties2KHR* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayModeProperties2KHR): VkResult {.cdecl.}
-  PFNVkgetdisplayplanecapabilities2KHR* = proc (physicalDevice: VkPhysicalDevice; pDisplayPlaneInfo: ptr VkDisplayPlaneInfo2KHR; pCapabilities: ptr VkDisplayPlaneCapabilities2KHR): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicedisplayproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayProperties2KHR): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicedisplayplaneproperties2khr* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayPlaneProperties2KHR): VkResult {.cdecl.}
+  PFNVkgetdisplaymodeproperties2khr* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayModeProperties2KHR): VkResult {.cdecl.}
+  PFNVkgetdisplayplanecapabilities2khr* = proc (physicalDevice: VkPhysicalDevice; pDisplayPlaneInfo: ptr VkDisplayPlaneInfo2KHR; pCapabilities: ptr VkDisplayPlaneCapabilities2KHR): VkResult {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceDisplayProperties2KHR*(physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayProperties2KHR): VkResult {.cdecl, importc.}
@@ -4817,7 +4868,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrDedicatedAllocation* = 1
   vkKhrDedicatedAllocationSpecVersion* = 3
-  vkKhrDedicatedAllocationExtensionName* = "vkKhrDedicatedAllocation"
+  vkKhrDedicatedAllocationExtensionName* = "VK_KHR_dedicated_allocation"
 
 type
   VkMemoryDedicatedRequirementsKHR* = VkMemoryDedicatedRequirements
@@ -4826,22 +4877,22 @@ type
 const
   vkKhrStorageBufferStorageClass* = 1
   vkKhrStorageBufferStorageClassSpecVersion* = 1
-  vkKhrStorageBufferStorageClassExtensionName* = "vkKhrStorageBufferStorageClass"
+  vkKhrStorageBufferStorageClassExtensionName* = "VK_KHR_storage_buffer_storage_class"
   vkKhrRelaxedBlockLayout* = 1
   vkKhrRelaxedBlockLayoutSpecVersion* = 1
-  vkKhrRelaxedBlockLayoutExtensionName* = "vkKhrRelaxedBlockLayout"
+  vkKhrRelaxedBlockLayoutExtensionName* = "VK_KHR_relaxed_block_layout"
   vkKhrGetMemoryRequirements2* = 1
-  vkKhrGetMemoryRequirements_2SpecVersion* = 1
-  vkKhrGetMemoryRequirements_2ExtensionName* = "vkKhrGetMemoryRequirements2"
+  vkKhrGetMemoryRequirements2SpecVersion* = 1
+  vkKhrGetMemoryRequirements2ExtensionName* = "VK_KHR_get_memory_requirements2"
 
 type
   VkBufferMemoryRequirementsInfo2KHR* = VkBufferMemoryRequirementsInfo2
   VkImageMemoryRequirementsInfo2KHR* = VkImageMemoryRequirementsInfo2
   VkImageSparseMemoryRequirementsInfo2KHR* = VkImageSparseMemoryRequirementsInfo2
   VkSparseImageMemoryRequirements2KHR* = VkSparseImageMemoryRequirements2
-  PFNVkgetimagememoryrequirements2KHR* = proc (device: VkDevice; pInfo: ptr VkImageMemoryRequirementsInfo2; pMemoryRequirements: ptr VkMemoryRequirements2) {.cdecl.}
-  PFNVkgetbuffermemoryrequirements2KHR* = proc (device: VkDevice; pInfo: ptr VkBufferMemoryRequirementsInfo2; pMemoryRequirements: ptr VkMemoryRequirements2) {.cdecl.}
-  PFNVkgetimagesparsememoryrequirements2KHR* = proc (device: VkDevice; pInfo: ptr VkImageSparseMemoryRequirementsInfo2; pSparseMemoryRequirementCount: ptr uint32; pSparseMemoryRequirements: ptr VkSparseImageMemoryRequirements2) {.cdecl.}
+  PFNVkgetimagememoryrequirements2khr* = proc (device: VkDevice; pInfo: ptr VkImageMemoryRequirementsInfo2; pMemoryRequirements: ptr VkMemoryRequirements2) {.cdecl.}
+  PFNVkgetbuffermemoryrequirements2khr* = proc (device: VkDevice; pInfo: ptr VkBufferMemoryRequirementsInfo2; pMemoryRequirements: ptr VkMemoryRequirements2) {.cdecl.}
+  PFNVkgetimagesparsememoryrequirements2khr* = proc (device: VkDevice; pInfo: ptr VkImageSparseMemoryRequirementsInfo2; pSparseMemoryRequirementCount: ptr uint32; pSparseMemoryRequirements: ptr VkSparseImageMemoryRequirements2) {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkGetImageMemoryRequirements2KHR*(device: VkDevice; pInfo: ptr VkImageMemoryRequirementsInfo2; pMemoryRequirements: ptr VkMemoryRequirements2) {.cdecl, importc.}
@@ -4850,7 +4901,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrImageFormatList* = 1
   vkKhrImageFormatListSpecVersion* = 1
-  vkKhrImageFormatListExtensionName* = "vkKhrImageFormatList"
+  vkKhrImageFormatListExtensionName* = "VK_KHR_image_format_list"
 
 type
   VkImageFormatListCreateInfoKHR* {.bycopy.} = object
@@ -4868,7 +4919,7 @@ type
 
 const
   vkKhrSamplerYcbcrConversionSpecVersion* = 1
-  vkKhrSamplerYcbcrConversionExtensionName* = "vkKhrSamplerYcbcrConversion"
+  vkKhrSamplerYcbcrConversionExtensionName* = "VK_KHR_sampler_ycbcr_conversion"
 
 type
   VkSamplerYcbcrModelConversionKHR* = VkSamplerYcbcrModelConversion
@@ -4888,14 +4939,14 @@ when not defined(vkNoPrototypes):
   proc vkDestroySamplerYcbcrConversionKHR*(device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
 const
   vkKhrBindMemory2* = 1
-  vkKhrBindMemory_2SpecVersion* = 1
-  vkKhrBindMemory_2ExtensionName* = "vkKhrBindMemory2"
+  vkKhrBindMemory2SpecVersion* = 1
+  vkKhrBindMemory2ExtensionName* = "VK_KHR_bind_memory2"
 
 type
   VkBindBufferMemoryInfoKHR* = VkBindBufferMemoryInfo
   VkBindImageMemoryInfoKHR* = VkBindImageMemoryInfo
-  PFNVkbindbuffermemory2KHR* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindBufferMemoryInfo): VkResult {.cdecl.}
-  PFNVkbindimagememory2KHR* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindImageMemoryInfo): VkResult {.cdecl.}
+  PFNVkbindbuffermemory2khr* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindBufferMemoryInfo): VkResult {.cdecl.}
+  PFNVkbindimagememory2khr* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindImageMemoryInfo): VkResult {.cdecl.}
 
 when not defined(vkNoPrototypes):
   proc vkBindBufferMemory2KHR*(device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindBufferMemoryInfo): VkResult {.cdecl, importc.}
@@ -4903,7 +4954,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrMaintenance3* = 1
   vkKhrMaintenance3SpecVersion* = 1
-  vkKhrMaintenance3ExtensionName* = "vkKhrMaintenance3"
+  vkKhrMaintenance3ExtensionName* = "VK_KHR_maintenance3"
 
 type
   VkPhysicalDeviceMaintenance3PropertiesKHR* = VkPhysicalDeviceMaintenance3Properties
@@ -4915,7 +4966,7 @@ when not defined(vkNoPrototypes):
 const
   vkKhrDrawIndirectCount* = 1
   vkKhrDrawIndirectCountSpecVersion* = 1
-  vkKhrDrawIndirectCountExtensionName* = "vkKhrDrawIndirectCount"
+  vkKhrDrawIndirectCountExtensionName* = "VK_KHR_draw_indirect_count"
 
 type
   PFNVkcmddrawindirectcountkhr* = proc (commandBuffer: VkCommandBuffer; buffer: VkBuffer; offset: VkDeviceSize; countBuffer: VkBuffer; countBufferOffset: VkDeviceSize; maxDrawCount: uint32; stride: uint32) {.cdecl.}
@@ -4925,9 +4976,9 @@ when not defined(vkNoPrototypes):
   proc vkCmdDrawIndirectCountKHR*(commandBuffer: VkCommandBuffer; buffer: VkBuffer; offset: VkDeviceSize; countBuffer: VkBuffer; countBufferOffset: VkDeviceSize; maxDrawCount: uint32; stride: uint32) {.cdecl, importc.}
   proc vkCmdDrawIndexedIndirectCountKHR*(commandBuffer: VkCommandBuffer; buffer: VkBuffer; offset: VkDeviceSize; countBuffer: VkBuffer; countBufferOffset: VkDeviceSize; maxDrawCount: uint32; stride: uint32) {.cdecl, importc.}
 const
-  vkKhr_8bitStorage* = 1
-  vkKhr_8BITStorageSpecVersion* = 1
-  vkKhr_8BITStorageExtensionName* = "vkKhr_8bitStorage"
+  vkKhr8bitStorage* = 1
+  vkKhr8bitStorageSpecVersion* = 1
+  vkKhr8bitStorageExtensionName* = "VK_KHR_8bit_storage"
 
 type
   VkPhysicalDevice8BitStorageFeaturesKHR* {.bycopy.} = object
@@ -4941,7 +4992,7 @@ type
 const
   vkKhrShaderAtomicInt64* = 1
   vkKhrShaderAtomicInt64SpecVersion* = 1
-  vkKhrShaderAtomicInt64ExtensionName* = "vkKhrShaderAtomicInt64"
+  vkKhrShaderAtomicInt64ExtensionName* = "VK_KHR_shader_atomic_int64"
 
 type
   VkPhysicalDeviceShaderAtomicInt64FeaturesKHR* {.bycopy.} = object
@@ -4956,7 +5007,7 @@ const
   vkMaxDriverNameSizeKhr* = 256
   vkMaxDriverInfoSizeKhr* = 256
   vkKhrDriverPropertiesSpecVersion* = 1
-  vkKhrDriverPropertiesExtensionName* = "vkKhrDriverProperties"
+  vkKhrDriverPropertiesExtensionName* = "VK_KHR_driver_properties"
 
 type
   VkDriverIdKHR* = distinct cint
@@ -4985,15 +5036,79 @@ const
   vkDriverIdImaginationProprietaryKhr* = 7.VkDriverIdKHR
   vkDriverIdQualcommProprietaryKhr* = 8.VkDriverIdKHR
   vkDriverIdArmProprietaryKhr* = 9.VkDriverIdKHR
+  vkDriverIdGooglePastelKhr* = 10.VkDriverIdKHR
   vkDriverIdBeginRangeKhr: VkDriverIdKHR = vkDriverIdAmdProprietaryKhr
-  vkDriverIdEndRangeKhr: VkDriverIdKHR = vkDriverIdArmProprietaryKhr
-  vkDriverIdRangeSizeKhr: VkDriverIdKHR = (vkDriverIdArmProprietaryKhr - vkDriverIdAmdProprietaryKhr + 1)
+  vkDriverIdEndRangeKhr: VkDriverIdKHR = vkDriverIdGooglePastelKhr
+  vkDriverIdRangeSizeKhr: VkDriverIdKHR = (vkDriverIdGooglePastelKhr - vkDriverIdAmdProprietaryKhr + 1)
   vkDriverIdMaxEnumKhr* = 0x7FFFFFFF.VkDriverIdKHR
 
 const
+  vkKhrShaderFloatControls* = 1
+  vkKhrShaderFloatControlsSpecVersion* = 1
+  vkKhrShaderFloatControlsExtensionName* = "VK_KHR_shader_float_controls"
+
+type
+  VkPhysicalDeviceFloatControlsPropertiesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    separateDenormSettings*: VkBool32
+    separateRoundingModeSettings*: VkBool32
+    shaderSignedZeroInfNanPreserveFloat16*: VkBool32
+    shaderSignedZeroInfNanPreserveFloat32*: VkBool32
+    shaderSignedZeroInfNanPreserveFloat64*: VkBool32
+    shaderDenormPreserveFloat16*: VkBool32
+    shaderDenormPreserveFloat32*: VkBool32
+    shaderDenormPreserveFloat64*: VkBool32
+    shaderDenormFlushToZeroFloat16*: VkBool32
+    shaderDenormFlushToZeroFloat32*: VkBool32
+    shaderDenormFlushToZeroFloat64*: VkBool32
+    shaderRoundingModeRTEFloat16*: VkBool32
+    shaderRoundingModeRTEFloat32*: VkBool32
+    shaderRoundingModeRTEFloat64*: VkBool32
+    shaderRoundingModeRTZFloat16*: VkBool32
+    shaderRoundingModeRTZFloat32*: VkBool32
+    shaderRoundingModeRTZFloat64*: VkBool32
+
+
+const
+  vkKhrDepthStencilResolve* = 1
+  vkKhrDepthStencilResolveSpecVersion* = 1
+  vkKhrDepthStencilResolveExtensionName* = "VK_KHR_depth_stencil_resolve"
+
+type
+  VkResolveModeFlagBitsKHR* = distinct cint
+  VkResolveModeFlagsKHR* = VkFlags
+  VkSubpassDescriptionDepthStencilResolveKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    depthResolveMode*: VkResolveModeFlagBitsKHR
+    stencilResolveMode*: VkResolveModeFlagBitsKHR
+    pDepthStencilResolveAttachment*: ptr VkAttachmentReference2KHR
+
+  VkPhysicalDeviceDepthStencilResolvePropertiesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    supportedDepthResolveModes*: VkResolveModeFlagsKHR
+    supportedStencilResolveModes*: VkResolveModeFlagsKHR
+    independentResolveNone*: VkBool32
+    independentResolve*: VkBool32
+
+
+const
+  vkResolveModeNoneKhr* = 0.VkResolveModeFlagBitsKHR
+  vkResolveModeSampleZeroBitKhr* = 0x00000001.VkResolveModeFlagBitsKHR
+  vkResolveModeAverageBitKhr* = 0x00000002.VkResolveModeFlagBitsKHR
+  vkResolveModeMinBitKhr* = 0x00000004.VkResolveModeFlagBitsKHR
+  vkResolveModeMaxBitKhr* = 0x00000008.VkResolveModeFlagBitsKHR
+  vkResolveModeFlagBitsMaxEnumKhr* = 0x7FFFFFFF.VkResolveModeFlagBitsKHR
+
+const
+  vkKhrSwapchainMutableFormat* = 1
+  vkKhrSwapchainMutableFormatSpecVersion* = 1
+  vkKhrSwapchainMutableFormatExtensionName* = "VK_KHR_swapchain_mutable_format"
   vkKhrVulkanMemoryModel* = 1
   vkKhrVulkanMemoryModelSpecVersion* = 2
-  vkKhrVulkanMemoryModelExtensionName* = "vkKhrVulkanMemoryModel"
+  vkKhrVulkanMemoryModelExtensionName* = "VK_KHR_vulkan_memory_model"
 
 type
   VkPhysicalDeviceVulkanMemoryModelFeaturesKHR* {.bycopy.} = object
@@ -5011,7 +5126,7 @@ type
 
 const
   vkExtDebugReportSpecVersion* = 9
-  vkExtDebugReportExtensionName* = "vkExtDebugReport"
+  vkExtDebugReportExtensionName* = "VK_EXT_debug_report"
 
 type
   VkDebugReportObjectTypeEXT* = distinct cint
@@ -5091,16 +5206,16 @@ when not defined(vkNoPrototypes):
 const
   vkNvGlslShader* = 1
   vkNvGlslShaderSpecVersion* = 1
-  vkNvGlslShaderExtensionName* = "vkNvGlslShader"
+  vkNvGlslShaderExtensionName* = "VK_NV_glsl_shader"
   vkExtDepthRangeUnrestricted* = 1
   vkExtDepthRangeUnrestrictedSpecVersion* = 1
-  vkExtDepthRangeUnrestrictedExtensionName* = "vkExtDepthRangeUnrestricted"
+  vkExtDepthRangeUnrestrictedExtensionName* = "VK_EXT_depth_range_unrestricted"
   vkImgFilterCubic* = 1
   vkImgFilterCubicSpecVersion* = 1
-  vkImgFilterCubicExtensionName* = "vkImgFilterCubic"
+  vkImgFilterCubicExtensionName* = "VK_IMG_filter_cubic"
   vkAmdRasterizationOrder* = 1
   vkAmdRasterizationOrderSpecVersion* = 1
-  vkAmdRasterizationOrderExtensionName* = "vkAmdRasterizationOrder"
+  vkAmdRasterizationOrderExtensionName* = "VK_AMD_rasterization_order"
 
 type
   VkRasterizationOrderAMD* = distinct cint
@@ -5121,13 +5236,13 @@ const
 const
   vkAmdShaderrinaryMinmax* = 1
   vkAmdShaderTrinaryMinmaxSpecVersion* = 1
-  vkAmdShaderTrinaryMinmaxExtensionName* = "vkAmdShaderrinaryMinmax"
+  vkAmdShaderTrinaryMinmaxExtensionName* = "VK_AMD_shaderrinary_minmax"
   vkAmdShaderExplicitVertexParameter* = 1
   vkAmdShaderExplicitVertexParameterSpecVersion* = 1
-  vkAmdShaderExplicitVertexParameterExtensionName* = "vkAmdShaderExplicitVertexParameter"
+  vkAmdShaderExplicitVertexParameterExtensionName* = "VK_AMD_shader_explicit_vertex_parameter"
   vkExtDebugMarker* = 1
   vkExtDebugMarkerSpecVersion* = 4
-  vkExtDebugMarkerExtensionName* = "vkExtDebugMarker"
+  vkExtDebugMarkerExtensionName* = "VK_EXT_debug_marker"
 
 type
   VkDebugMarkerObjectNameInfoEXT* {.bycopy.} = object
@@ -5167,10 +5282,10 @@ when not defined(vkNoPrototypes):
 const
   vkAmdGcnShader* = 1
   vkAmdGcnShaderSpecVersion* = 1
-  vkAmdGcnShaderExtensionName* = "vkAmdGcnShader"
+  vkAmdGcnShaderExtensionName* = "VK_AMD_gcn_shader"
   vkNvDedicatedAllocation* = 1
   vkNvDedicatedAllocationSpecVersion* = 1
-  vkNvDedicatedAllocationExtensionName* = "vkNvDedicatedAllocation"
+  vkNvDedicatedAllocationExtensionName* = "VK_NV_dedicated_allocation"
 
 type
   VkDedicatedAllocationImageCreateInfoNV* {.bycopy.} = object
@@ -5193,7 +5308,7 @@ type
 const
   vkExtransformFeedback* = 1
   vkExtTransformFeedbackSpecVersion* = 1
-  vkExtTransformFeedbackExtensionName* = "vkExtransformFeedback"
+  vkExtTransformFeedbackExtensionName* = "VK_EXTransform_feedback"
 
 type
   VkPipelineRasterizationStateStreamCreateFlagsEXT* = VkFlags
@@ -5240,7 +5355,7 @@ when not defined(vkNoPrototypes):
 const
   vkAmdDrawIndirectCount* = 1
   vkAmdDrawIndirectCountSpecVersion* = 1
-  vkAmdDrawIndirectCountExtensionName* = "vkAmdDrawIndirectCount"
+  vkAmdDrawIndirectCountExtensionName* = "VK_AMD_draw_indirect_count"
 
 type
   PFNVkcmddrawindirectcountamd* = proc (commandBuffer: VkCommandBuffer; buffer: VkBuffer; offset: VkDeviceSize; countBuffer: VkBuffer; countBufferOffset: VkDeviceSize; maxDrawCount: uint32; stride: uint32) {.cdecl.}
@@ -5252,16 +5367,16 @@ when not defined(vkNoPrototypes):
 const
   vkAmdNegativeViewportHeight* = 1
   vkAmdNegativeViewportHeightSpecVersion* = 1
-  vkAmdNegativeViewportHeightExtensionName* = "vkAmdNegativeViewportHeight"
+  vkAmdNegativeViewportHeightExtensionName* = "VK_AMD_negative_viewport_height"
   vkAmdGpuShaderHalfFloat* = 1
   vkAmdGpuShaderHalfFloatSpecVersion* = 1
-  vkAmdGpuShaderHalfFloatExtensionName* = "vkAmdGpuShaderHalfFloat"
+  vkAmdGpuShaderHalfFloatExtensionName* = "VK_AMD_gpu_shader_half_float"
   vkAmdShaderBallot* = 1
   vkAmdShaderBallotSpecVersion* = 1
-  vkAmdShaderBallotExtensionName* = "vkAmdShaderBallot"
+  vkAmdShaderBallotExtensionName* = "VK_AMD_shader_ballot"
   vkAmdextureGatherBiasLod* = 1
   vkAmdTextureGatherBiasLodSpecVersion* = 1
-  vkAmdTextureGatherBiasLodExtensionName* = "vkAmdextureGatherBiasLod"
+  vkAmdTextureGatherBiasLodExtensionName* = "VK_AMDexture_gather_bias_lod"
 
 type
   VkTextureLODGatherFormatPropertiesAMD* {.bycopy.} = object
@@ -5273,7 +5388,7 @@ type
 const
   vkAmdShaderInfo* = 1
   vkAmdShaderInfoSpecVersion* = 1
-  vkAmdShaderInfoExtensionName* = "vkAmdShaderInfo"
+  vkAmdShaderInfoExtensionName* = "VK_AMD_shader_info"
 
 type
   VkShaderInfoTypeAMD* = distinct cint
@@ -5309,10 +5424,10 @@ when not defined(vkNoPrototypes):
 const
   vkAmdShaderImageLoadStoreLod* = 1
   vkAmdShaderImageLoadStoreLodSpecVersion* = 1
-  vkAmdShaderImageLoadStoreLodExtensionName* = "vkAmdShaderImageLoadStoreLod"
+  vkAmdShaderImageLoadStoreLodExtensionName* = "VK_AMD_shader_image_load_store_lod"
   vkNvCornerSampledImage* = 1
   vkNvCornerSampledImageSpecVersion* = 2
-  vkNvCornerSampledImageExtensionName* = "vkNvCornerSampledImage"
+  vkNvCornerSampledImageExtensionName* = "VK_NV_corner_sampled_image"
 
 type
   VkPhysicalDeviceCornerSampledImageFeaturesNV* {.bycopy.} = object
@@ -5324,10 +5439,10 @@ type
 const
   vkImgFormatPvrtc* = 1
   vkImgFormatPvrtcSpecVersion* = 1
-  vkImgFormatPvrtcExtensionName* = "vkImgFormatPvrtc"
+  vkImgFormatPvrtcExtensionName* = "VK_IMG_format_pvrtc"
   vkNvExternalMemoryCapabilities* = 1
   vkNvExternalMemoryCapabilitiesSpecVersion* = 1
-  vkNvExternalMemoryCapabilitiesExtensionName* = "vkNvExternalMemoryCapabilities"
+  vkNvExternalMemoryCapabilitiesExtensionName* = "VK_NV_external_memory_capabilities"
 
 type
   VkExternalMemoryHandleTypeFlagBitsNV* = distinct cint
@@ -5345,8 +5460,8 @@ type
 const
   vkExternalMemoryHandleTypeOpaqueWin32BitNv* = 0x00000001.VkExternalMemoryHandleTypeFlagBitsNV
   vkExternalMemoryHandleTypeOpaqueWin32KmtBitNv* = 0x00000002.VkExternalMemoryHandleTypeFlagBitsNV
-  vkExternalMemoryHandleTypeD3D11ImageBitNv* = 0x00000004.VkExternalMemoryHandleTypeFlagBitsNV
-  vkExternalMemoryHandleTypeD3D11ImageKmtBitNv* = 0x00000008.VkExternalMemoryHandleTypeFlagBitsNV
+  vkExternalMemoryHandleTypeD3d11ImageBitNv* = 0x00000004.VkExternalMemoryHandleTypeFlagBitsNV
+  vkExternalMemoryHandleTypeD3d11ImageKmtBitNv* = 0x00000008.VkExternalMemoryHandleTypeFlagBitsNV
   vkExternalMemoryHandleTypeFlagBitsMaxEnumNv* = 0x7FFFFFFF.VkExternalMemoryHandleTypeFlagBitsNV
 
 const
@@ -5360,7 +5475,7 @@ when not defined(vkNoPrototypes):
 const
   vkNvExternalMemory* = 1
   vkNvExternalMemorySpecVersion* = 1
-  vkNvExternalMemoryExtensionName* = "vkNvExternalMemory"
+  vkNvExternalMemoryExtensionName* = "VK_NV_external_memory"
 
 type
   VkExternalMemoryImageCreateInfoNV* {.bycopy.} = object
@@ -5377,7 +5492,7 @@ type
 const
   vkExtValidationFlags* = 1
   vkExtValidationFlagsSpecVersion* = 1
-  vkExtValidationFlagsExtensionName* = "vkExtValidationFlags"
+  vkExtValidationFlagsExtensionName* = "VK_EXT_validation_flags"
 
 type
   VkValidationCheckEXT* = distinct cint
@@ -5399,13 +5514,13 @@ const
 const
   vkExtShaderSubgroupBallot* = 1
   vkExtShaderSubgroupBallotSpecVersion* = 1
-  vkExtShaderSubgroupBallotExtensionName* = "vkExtShaderSubgroupBallot"
+  vkExtShaderSubgroupBallotExtensionName* = "VK_EXT_shader_subgroup_ballot"
   vkExtShaderSubgroupVote* = 1
   vkExtShaderSubgroupVoteSpecVersion* = 1
-  vkExtShaderSubgroupVoteExtensionName* = "vkExtShaderSubgroupVote"
+  vkExtShaderSubgroupVoteExtensionName* = "VK_EXT_shader_subgroup_vote"
   vkExtAstcDecodeMode* = 1
   vkExtAstcDecodeModeSpecVersion* = 1
-  vkExtAstcDecodeModeExtensionName* = "vkExtAstcDecodeMode"
+  vkExtAstcDecodeModeExtensionName* = "VK_EXT_astc_decode_mode"
 
 type
   VkImageViewASTCDecodeModeEXT* {.bycopy.} = object
@@ -5422,7 +5537,7 @@ type
 const
   vkExtConditionalRendering* = 1
   vkExtConditionalRenderingSpecVersion* = 1
-  vkExtConditionalRenderingExtensionName* = "vkExtConditionalRendering"
+  vkExtConditionalRenderingExtensionName* = "VK_EXT_conditional_rendering"
 
 type
   VkConditionalRenderingFlagBitsEXT* = distinct cint
@@ -5464,7 +5579,7 @@ type
 
 const
   vkNvxDeviceGeneratedCommandsSpecVersion* = 3
-  vkNvxDeviceGeneratedCommandsExtensionName* = "vkNvxDeviceGeneratedCommands"
+  vkNvxDeviceGeneratedCommandsExtensionName* = "VK_NVX_device_generated_commands"
 
 type
   VkIndirectCommandsTokenTypeNVX* = distinct cint
@@ -5632,7 +5747,7 @@ when not defined(vkNoPrototypes):
 const
   vkNvClipSpaceWScaling* = 1
   vkNvClipSpaceWScalingSpecVersion* = 1
-  vkNvClipSpaceWScalingExtensionName* = "vkNvClipSpaceWScaling"
+  vkNvClipSpaceWScalingExtensionName* = "VK_NV_clip_space_w_scaling"
 
 type
   VkViewportWScalingNV* {.bycopy.} = object
@@ -5653,7 +5768,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtDirectModeDisplay* = 1
   vkExtDirectModeDisplaySpecVersion* = 1
-  vkExtDirectModeDisplayExtensionName* = "vkExtDirectModeDisplay"
+  vkExtDirectModeDisplayExtensionName* = "VK_EXT_direct_mode_display"
 
 type
   PFNVkreleasedisplayext* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR): VkResult {.cdecl.}
@@ -5663,7 +5778,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtDisplaySurfaceCounter* = 1
   vkExtDisplaySurfaceCounterSpecVersion* = 1
-  vkExtDisplaySurfaceCounterExtensionName* = "vkExtDisplaySurfaceCounter"
+  vkExtDisplaySurfaceCounterExtensionName* = "VK_EXT_display_surface_counter"
 
 type
   VkSurfaceCounterFlagBitsEXT* = distinct cint
@@ -5683,7 +5798,7 @@ type
     supportedUsageFlags*: VkImageUsageFlags
     supportedSurfaceCounters*: VkSurfaceCounterFlagsEXT
 
-  PFNVkgetphysicaldevicesurfacecapabilities2EXT* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2EXT): VkResult {.cdecl.}
+  PFNVkgetphysicaldevicesurfacecapabilities2ext* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2EXT): VkResult {.cdecl.}
 
 const
   vkSurfaceCounterVblankExt* = 0x00000001.VkSurfaceCounterFlagBitsEXT
@@ -5694,7 +5809,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtDisplayControl* = 1
   vkExtDisplayControlSpecVersion* = 1
-  vkExtDisplayControlExtensionName* = "vkExtDisplayControl"
+  vkExtDisplayControlExtensionName* = "VK_EXT_display_control"
 
 type
   VkDisplayPowerStateEXT* = distinct cint
@@ -5756,7 +5871,7 @@ when not defined(vkNoPrototypes):
 const
   vkGoogleDisplayiming* = 1
   vkGoogleDisplayTimingSpecVersion* = 1
-  vkGoogleDisplayTimingExtensionName* = "vkGoogleDisplayiming"
+  vkGoogleDisplayTimingExtensionName* = "VK_GOOGLE_displayiming"
 
 type
   VkRefreshCycleDurationGOOGLE* {.bycopy.} = object
@@ -5788,16 +5903,16 @@ when not defined(vkNoPrototypes):
 const
   vkNvSampleMaskOverrideCoverage* = 1
   vkNvSampleMaskOverrideCoverageSpecVersion* = 1
-  vkNvSampleMaskOverrideCoverageExtensionName* = "vkNvSampleMaskOverrideCoverage"
+  vkNvSampleMaskOverrideCoverageExtensionName* = "VK_NV_sample_mask_override_coverage"
   vkNvGeometryShaderPassthrough* = 1
   vkNvGeometryShaderPassthroughSpecVersion* = 1
-  vkNvGeometryShaderPassthroughExtensionName* = "vkNvGeometryShaderPassthrough"
+  vkNvGeometryShaderPassthroughExtensionName* = "VK_NV_geometry_shader_passthrough"
   vkNvViewportArray2* = 1
   vkNvViewportArray2SpecVersion* = 1
-  vkNvViewportArray2ExtensionName* = "vkNvViewportArray2"
+  vkNvViewportArray2ExtensionName* = "VK_NV_viewport_array2"
   vkNvxMultiviewPerViewAttributes* = 1
   vkNvxMultiviewPerViewAttributesSpecVersion* = 1
-  vkNvxMultiviewPerViewAttributesExtensionName* = "vkNvxMultiviewPerViewAttributes"
+  vkNvxMultiviewPerViewAttributesExtensionName* = "VK_NVX_multiview_per_view_attributes"
 
 type
   VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX* {.bycopy.} = object
@@ -5809,7 +5924,7 @@ type
 const
   vkNvViewportSwizzle* = 1
   vkNvViewportSwizzleSpecVersion* = 1
-  vkNvViewportSwizzleExtensionName* = "vkNvViewportSwizzle"
+  vkNvViewportSwizzleExtensionName* = "VK_NV_viewport_swizzle"
 
 type
   VkViewportCoordinateSwizzleNV* = distinct cint
@@ -5845,7 +5960,7 @@ const
 const
   vkExtDiscardRectangles* = 1
   vkExtDiscardRectanglesSpecVersion* = 1
-  vkExtDiscardRectanglesExtensionName* = "vkExtDiscardRectangles"
+  vkExtDiscardRectanglesExtensionName* = "VK_EXT_discard_rectangles"
 
 type
   VkDiscardRectangleModeEXT* = distinct cint
@@ -5878,7 +5993,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtConservativeRasterization* = 1
   vkExtConservativeRasterizationSpecVersion* = 1
-  vkExtConservativeRasterizationExtensionName* = "vkExtConservativeRasterization"
+  vkExtConservativeRasterizationExtensionName* = "VK_EXT_conservative_rasterization"
 
 type
   VkConservativeRasterizationModeEXT* = distinct cint
@@ -5916,10 +6031,10 @@ const
 const
   vkExtSwapchainColorspace* = 1
   vkExtSwapchainColorSpaceSpecVersion* = 3
-  vkExtSwapchainColorSpaceExtensionName* = "vkExtSwapchainColorspace"
+  vkExtSwapchainColorSpaceExtensionName* = "VK_EXT_swapchain_colorspace"
   vkExtHdrMetadata* = 1
   vkExtHdrMetadataSpecVersion* = 1
-  vkExtHdrMetadataExtensionName* = "vkExtHdrMetadata"
+  vkExtHdrMetadataExtensionName* = "VK_EXT_hdr_metadata"
 
 type
   VkXYColorEXT* {.bycopy.} = object
@@ -5945,10 +6060,10 @@ when not defined(vkNoPrototypes):
 const
   vkExtExternalMemoryDmaBuf* = 1
   vkExtExternalMemoryDmaBufSpecVersion* = 1
-  vkExtExternalMemoryDmaBufExtensionName* = "vkExtExternalMemoryDmaBuf"
+  vkExtExternalMemoryDmaBufExtensionName* = "VK_EXT_external_memory_dma_buf"
   vkExtQueueFamilyForeign* = 1
   vkExtQueueFamilyForeignSpecVersion* = 1
-  vkExtQueueFamilyForeignExtensionName* = "vkExtQueueFamilyForeign"
+  vkExtQueueFamilyForeignExtensionName* = "VK_EXT_queue_family_foreign"
   vkQueueFamilyForeignExt* = (not 0 - 2)
   vkExtDebugUtils* = 1
 
@@ -5957,7 +6072,7 @@ type
 
 const
   vkExtDebugUtilsSpecVersion* = 1
-  vkExtDebugUtilsExtensionName* = "vkExtDebugUtils"
+  vkExtDebugUtilsExtensionName* = "VK_EXT_debug_utils"
 
 type
   VkDebugUtilsMessengerCallbackDataFlagsEXT* = VkFlags
@@ -6052,7 +6167,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtSamplerFilterMinmax* = 1
   vkExtSamplerFilterMinmaxSpecVersion* = 1
-  vkExtSamplerFilterMinmaxExtensionName* = "vkExtSamplerFilterMinmax"
+  vkExtSamplerFilterMinmaxExtensionName* = "VK_EXT_sampler_filter_minmax"
 
 type
   VkSamplerReductionModeEXT* = distinct cint
@@ -6080,16 +6195,16 @@ const
 const
   vkAmdGpuShaderInt16* = 1
   vkAmdGpuShaderInt16SpecVersion* = 1
-  vkAmdGpuShaderInt16ExtensionName* = "vkAmdGpuShaderInt16"
+  vkAmdGpuShaderInt16ExtensionName* = "VK_AMD_gpu_shader_int16"
   vkAmdMixedAttachmentSamples* = 1
   vkAmdMixedAttachmentSamplesSpecVersion* = 1
-  vkAmdMixedAttachmentSamplesExtensionName* = "vkAmdMixedAttachmentSamples"
+  vkAmdMixedAttachmentSamplesExtensionName* = "VK_AMD_mixed_attachment_samples"
   vkAmdShaderFragmentMask* = 1
   vkAmdShaderFragmentMaskSpecVersion* = 1
-  vkAmdShaderFragmentMaskExtensionName* = "vkAmdShaderFragmentMask"
+  vkAmdShaderFragmentMaskExtensionName* = "VK_AMD_shader_fragment_mask"
   vkExtInlineUniformBlock* = 1
   vkExtInlineUniformBlockSpecVersion* = 1
-  vkExtInlineUniformBlockExtensionName* = "vkExtInlineUniformBlock"
+  vkExtInlineUniformBlockExtensionName* = "VK_EXT_inline_uniform_block"
 
 type
   VkPhysicalDeviceInlineUniformBlockFeaturesEXT* {.bycopy.} = object
@@ -6122,10 +6237,10 @@ type
 const
   vkExtShaderStencilExport* = 1
   vkExtShaderStencilExportSpecVersion* = 1
-  vkExtShaderStencilExportExtensionName* = "vkExtShaderStencilExport"
+  vkExtShaderStencilExportExtensionName* = "VK_EXT_shader_stencil_export"
   vkExtSampleLocations* = 1
   vkExtSampleLocationsSpecVersion* = 1
-  vkExtSampleLocationsExtensionName* = "vkExtSampleLocations"
+  vkExtSampleLocationsExtensionName* = "VK_EXT_sample_locations"
 
 type
   VkSampleLocationEXT* {.bycopy.} = object
@@ -6185,7 +6300,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtBlendOperationAdvanced* = 1
   vkExtBlendOperationAdvancedSpecVersion* = 2
-  vkExtBlendOperationAdvancedExtensionName* = "vkExtBlendOperationAdvanced"
+  vkExtBlendOperationAdvancedExtensionName* = "VK_EXT_blend_operation_advanced"
 
 type
   VkBlendOverlapEXT* = distinct cint
@@ -6224,7 +6339,7 @@ const
 const
   vkNvFragmentCoverageToColor* = 1
   vkNvFragmentCoverageToColorSpecVersion* = 1
-  vkNvFragmentCoverageToColorExtensionName* = "vkNvFragmentCoverageToColor"
+  vkNvFragmentCoverageToColorExtensionName* = "VK_NV_fragment_coverage_to_color"
 
 type
   VkPipelineCoverageToColorStateCreateFlagsNV* = VkFlags
@@ -6239,7 +6354,7 @@ type
 const
   vkNvFramebufferMixedSamples* = 1
   vkNvFramebufferMixedSamplesSpecVersion* = 1
-  vkNvFramebufferMixedSamplesExtensionName* = "vkNvFramebufferMixedSamples"
+  vkNvFramebufferMixedSamplesExtensionName* = "VK_NV_framebuffer_mixed_samples"
 
 type
   VkCoverageModulationModeNV* = distinct cint
@@ -6267,13 +6382,13 @@ const
 const
   vkNvFillRectangle* = 1
   vkNvFillRectangleSpecVersion* = 1
-  vkNvFillRectangleExtensionName* = "vkNvFillRectangle"
+  vkNvFillRectangleExtensionName* = "VK_NV_fill_rectangle"
   vkExtPostDepthCoverage* = 1
   vkExtPostDepthCoverageSpecVersion* = 1
-  vkExtPostDepthCoverageExtensionName* = "vkExtPostDepthCoverage"
+  vkExtPostDepthCoverageExtensionName* = "VK_EXT_post_depth_coverage"
   vkExtImageDrmFormatModifier* = 1
   vkExtImageDrmFormatModifierSpecVersion* = 1
-  vkExtImageDrmFormatModifierExtensionName* = "vkExtImageDrmFormatModifier"
+  vkExtImageDrmFormatModifierExtensionName* = "VK_EXT_image_drm_format_modifier"
 
 type
   VkDrmFormatModifierPropertiesEXT* {.bycopy.} = object
@@ -6325,7 +6440,7 @@ type
 
 const
   vkExtValidationCacheSpecVersion* = 1
-  vkExtValidationCacheExtensionName* = "vkExtValidationCache"
+  vkExtValidationCacheExtensionName* = "VK_EXT_validation_cache"
 
 type
   VkValidationCacheHeaderVersionEXT* = distinct cint
@@ -6362,7 +6477,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtDescriptorIndexing* = 1
   vkExtDescriptorIndexingSpecVersion* = 2
-  vkExtDescriptorIndexingExtensionName* = "vkExtDescriptorIndexing"
+  vkExtDescriptorIndexingExtensionName* = "VK_EXT_descriptor_indexing"
 
 type
   VkDescriptorBindingFlagBitsEXT* = distinct cint
@@ -6446,10 +6561,10 @@ const
 const
   vkExtShaderViewportIndexLayer* = 1
   vkExtShaderViewportIndexLayerSpecVersion* = 1
-  vkExtShaderViewportIndexLayerExtensionName* = "vkExtShaderViewportIndexLayer"
+  vkExtShaderViewportIndexLayerExtensionName* = "VK_EXT_shader_viewport_index_layer"
   vkNvShadingRateImage* = 1
   vkNvShadingRateImageSpecVersion* = 3
-  vkNvShadingRateImageExtensionName* = "vkNvShadingRateImage"
+  vkNvShadingRateImageExtensionName* = "VK_NV_shading_rate_image"
 
 type
   VkShadingRatePaletteEntryNV* = distinct cint
@@ -6502,20 +6617,20 @@ type
 
 const
   vkShadingRatePaletteEntryNoInvocationsNv* = 0.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_16InvocationsPerPixelNv* = 1.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_8InvocationsPerPixelNv* = 2.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_4InvocationsPerPixelNv* = 3.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_2InvocationsPerPixelNv* = 4.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPerPixelNv* = 5.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_2X1PixelsNv* = 6.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_1X2PixelsNv* = 7.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_2X2PixelsNv* = 8.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_4X2PixelsNv* = 9.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_2X4PixelsNv* = 10.VkShadingRatePaletteEntryNV
-  vkShadingRatePaletteEntry_1InvocationPer_4X4PixelsNv* = 11.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry16InvocationsPerPixelNv* = 1.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry8InvocationsPerPixelNv* = 2.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry4InvocationsPerPixelNv* = 3.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry2InvocationsPerPixelNv* = 4.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPerPixelNv* = 5.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer2x1PixelsNv* = 6.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer1x2PixelsNv* = 7.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer2x2PixelsNv* = 8.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer4x2PixelsNv* = 9.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer2x4PixelsNv* = 10.VkShadingRatePaletteEntryNV
+  vkShadingRatePaletteEntry1InvocationPer4x4PixelsNv* = 11.VkShadingRatePaletteEntryNV
   vkShadingRatePaletteEntryBeginRangeNv: VkShadingRatePaletteEntryNV = vkShadingRatePaletteEntryNoInvocationsNv
-  vkShadingRatePaletteEntryEndRangeNv: VkShadingRatePaletteEntryNV = vkShadingRatePaletteEntry_1InvocationPer_4X4PixelsNv
-  vkShadingRatePaletteEntryRangeSizeNv: VkShadingRatePaletteEntryNV = (vkShadingRatePaletteEntry_1InvocationPer_4X4PixelsNv - vkShadingRatePaletteEntryNoInvocationsNv + 1)
+  vkShadingRatePaletteEntryEndRangeNv: VkShadingRatePaletteEntryNV = vkShadingRatePaletteEntry1InvocationPer4x4PixelsNv
+  vkShadingRatePaletteEntryRangeSizeNv: VkShadingRatePaletteEntryNV = (vkShadingRatePaletteEntry1InvocationPer4x4PixelsNv - vkShadingRatePaletteEntryNoInvocationsNv + 1)
   vkShadingRatePaletteEntryMaxEnumNv* = 0x7FFFFFFF.VkShadingRatePaletteEntryNV
 
 const
@@ -6539,8 +6654,8 @@ type
   VkAccelerationStructureNV* = VkNonDispatchableHandle
 
 const
-  vkNvRayTracingSpecVersion* = 2
-  vkNvRayTracingExtensionName* = "vkNvRayracing"
+  vkNvRayTracingSpecVersion* = 3
+  vkNvRayTracingExtensionName* = "VK_NV_rayracing"
   vkShaderUnusedNv* = (not 0)
 
 type
@@ -6750,7 +6865,7 @@ when not defined(vkNoPrototypes):
 const
   vkNvRepresentativeFragmentest* = 1
   vkNvRepresentativeFragmentTestSpecVersion* = 1
-  vkNvRepresentativeFragmentTestExtensionName* = "vkNvRepresentativeFragmentest"
+  vkNvRepresentativeFragmentTestExtensionName* = "VK_NV_representative_fragmentest"
 
 type
   VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV* {.bycopy.} = object
@@ -6767,7 +6882,7 @@ type
 const
   vkExtGlobalPriority* = 1
   vkExtGlobalPrioritySpecVersion* = 2
-  vkExtGlobalPriorityExtensionName* = "vkExtGlobalPriority"
+  vkExtGlobalPriorityExtensionName* = "VK_EXT_global_priority"
 
 type
   VkQueueGlobalPriorityEXT* = distinct cint
@@ -6790,7 +6905,7 @@ const
 const
   vkExtExternalMemoryHost* = 1
   vkExtExternalMemoryHostSpecVersion* = 1
-  vkExtExternalMemoryHostExtensionName* = "vkExtExternalMemoryHost"
+  vkExtExternalMemoryHostExtensionName* = "VK_EXT_external_memory_host"
 
 type
   VkImportMemoryHostPointerInfoEXT* {.bycopy.} = object
@@ -6816,7 +6931,7 @@ when not defined(vkNoPrototypes):
 const
   vkAmdBufferMarker* = 1
   vkAmdBufferMarkerSpecVersion* = 1
-  vkAmdBufferMarkerExtensionName* = "vkAmdBufferMarker"
+  vkAmdBufferMarkerExtensionName* = "VK_AMD_buffer_marker"
 
 type
   PFNVkcmdwritebuffermarkeramd* = proc (commandBuffer: VkCommandBuffer; pipelineStage: VkPipelineStageFlagBits; dstBuffer: VkBuffer; dstOffset: VkDeviceSize; marker: uint32) {.cdecl.}
@@ -6826,7 +6941,7 @@ when not defined(vkNoPrototypes):
 const
   vkExtCalibratedimestamps* = 1
   vkExtCalibratedTimestampsSpecVersion* = 1
-  vkExtCalibratedTimestampsExtensionName* = "vkExtCalibratedimestamps"
+  vkExtCalibratedTimestampsExtensionName* = "VK_EXT_calibratedimestamps"
 
 type
   VkTimeDomainEXT* = distinct cint
@@ -6854,7 +6969,7 @@ when not defined(vkNoPrototypes):
 const
   vkAmdShaderCoreProperties* = 1
   vkAmdShaderCorePropertiesSpecVersion* = 1
-  vkAmdShaderCorePropertiesExtensionName* = "vkAmdShaderCoreProperties"
+  vkAmdShaderCorePropertiesExtensionName* = "VK_AMD_shader_core_properties"
 
 type
   VkPhysicalDeviceShaderCorePropertiesAMD* {.bycopy.} = object
@@ -6879,7 +6994,7 @@ type
 const
   vkAmdMemoryOverallocationBehavior* = 1
   vkAmdMemoryOverallocationBehaviorSpecVersion* = 1
-  vkAmdMemoryOverallocationBehaviorExtensionName* = "vkAmdMemoryOverallocationBehavior"
+  vkAmdMemoryOverallocationBehaviorExtensionName* = "VK_AMD_memory_overallocation_behavior"
 
 type
   VkMemoryOverallocationBehaviorAMD* = distinct cint
@@ -6901,7 +7016,7 @@ const
 const
   vkExtVertexAttributeDivisor* = 1
   vkExtVertexAttributeDivisorSpecVersion* = 3
-  vkExtVertexAttributeDivisorExtensionName* = "vkExtVertexAttributeDivisor"
+  vkExtVertexAttributeDivisorExtensionName* = "VK_EXT_vertex_attribute_divisor"
 
 type
   VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT* {.bycopy.} = object
@@ -6929,10 +7044,10 @@ type
 const
   vkNvShaderSubgroupPartitioned* = 1
   vkNvShaderSubgroupPartitionedSpecVersion* = 1
-  vkNvShaderSubgroupPartitionedExtensionName* = "vkNvShaderSubgroupPartitioned"
+  vkNvShaderSubgroupPartitionedExtensionName* = "VK_NV_shader_subgroup_partitioned"
   vkNvComputeShaderDerivatives* = 1
   vkNvComputeShaderDerivativesSpecVersion* = 1
-  vkNvComputeShaderDerivativesExtensionName* = "vkNvComputeShaderDerivatives"
+  vkNvComputeShaderDerivativesExtensionName* = "VK_NV_compute_shader_derivatives"
 
 type
   VkPhysicalDeviceComputeShaderDerivativesFeaturesNV* {.bycopy.} = object
@@ -6945,7 +7060,7 @@ type
 const
   vkNvMeshShader* = 1
   vkNvMeshShaderSpecVersion* = 1
-  vkNvMeshShaderExtensionName* = "vkNvMeshShader"
+  vkNvMeshShaderExtensionName* = "VK_NV_mesh_shader"
 
 type
   VkPhysicalDeviceMeshShaderFeaturesNV* {.bycopy.} = object
@@ -6986,7 +7101,7 @@ when not defined(vkNoPrototypes):
 const
   vkNvFragmentShaderBarycentric* = 1
   vkNvFragmentShaderBarycentricSpecVersion* = 1
-  vkNvFragmentShaderBarycentricExtensionName* = "vkNvFragmentShaderBarycentric"
+  vkNvFragmentShaderBarycentricExtensionName* = "VK_NV_fragment_shader_barycentric"
 
 type
   VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV* {.bycopy.} = object
@@ -6998,7 +7113,7 @@ type
 const
   vkNvShaderImageFootprint* = 1
   vkNvShaderImageFootprintSpecVersion* = 1
-  vkNvShaderImageFootprintExtensionName* = "vkNvShaderImageFootprint"
+  vkNvShaderImageFootprintExtensionName* = "VK_NV_shader_image_footprint"
 
 type
   VkPhysicalDeviceShaderImageFootprintFeaturesNV* {.bycopy.} = object
@@ -7010,7 +7125,7 @@ type
 const
   vkNvScissorExclusive* = 1
   vkNvScissorExclusiveSpecVersion* = 1
-  vkNvScissorExclusiveExtensionName* = "vkNvScissorExclusive"
+  vkNvScissorExclusiveExtensionName* = "VK_NV_scissor_exclusive"
 
 type
   VkPipelineViewportExclusiveScissorStateCreateInfoNV* {.bycopy.} = object
@@ -7031,7 +7146,7 @@ when not defined(vkNoPrototypes):
 const
   vkNvDeviceDiagnosticCheckpoints* = 1
   vkNvDeviceDiagnosticCheckpointsSpecVersion* = 2
-  vkNvDeviceDiagnosticCheckpointsExtensionName* = "vkNvDeviceDiagnosticCheckpoints"
+  vkNvDeviceDiagnosticCheckpointsExtensionName* = "VK_NV_device_diagnostic_checkpoints"
 
 type
   VkQueueFamilyCheckpointPropertiesNV* {.bycopy.} = object
@@ -7053,26 +7168,174 @@ when not defined(vkNoPrototypes):
   proc vkGetQueueCheckpointDataNV*(queue: VkQueue; pCheckpointDataCount: ptr uint32; pCheckpointData: ptr VkCheckpointDataNV) {.cdecl, importc.}
 const
   vkExtPciBusInfo* = 1
-  vkExtPciBusInfoSpecVersion* = 1
-  vkExtPciBusInfoExtensionName* = "vkExtPciBusInfo"
+  vkExtPciBusInfoSpecVersion* = 2
+  vkExtPciBusInfoExtensionName* = "VK_EXT_pci_bus_info"
 
 type
   VkPhysicalDevicePCIBusInfoPropertiesEXT* {.bycopy.} = object
     sType*: VkStructureType
     pNext*: pointer
-    pciDomain*: uint16
-    pciBus*: uint8
-    pciDevice*: uint8
-    pciFunction*: uint8
+    pciDomain*: uint32
+    pciBus*: uint32
+    pciDevice*: uint32
+    pciFunction*: uint32
+
+
+const
+  vkExtFragmentDensityMap* = 1
+  vkExtFragmentDensityMapSpecVersion* = 1
+  vkExtFragmentDensityMapExtensionName* = "VK_EXT_fragment_density_map"
+
+type
+  VkPhysicalDeviceFragmentDensityMapFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    fragmentDensityMap*: VkBool32
+    fragmentDensityMapDynamic*: VkBool32
+    fragmentDensityMapNonSubsampledImages*: VkBool32
+
+  VkPhysicalDeviceFragmentDensityMapPropertiesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    minFragmentDensityTexelSize*: VkExtent2D
+    maxFragmentDensityTexelSize*: VkExtent2D
+    fragmentDensityInvocations*: VkBool32
+
+  VkRenderPassFragmentDensityMapCreateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    fragmentDensityMapAttachment*: VkAttachmentReference
+
+
+const
+  vkExtScalarBlockLayout* = 1
+  vkExtScalarBlockLayoutSpecVersion* = 1
+  vkExtScalarBlockLayoutExtensionName* = "VK_EXT_scalar_block_layout"
+
+type
+  VkPhysicalDeviceScalarBlockLayoutFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    scalarBlockLayout*: VkBool32
 
 
 const
   vkGoogleHlslFunctionality1* = 1
-  vkGoogleHlslFunctionality1SpecVersion* = 0
-  vkGoogleHlslFunctionality1ExtensionName* = "vkGoogleHlslFunctionality1"
+  vkGoogleHlslFunctionality1SpecVersion* = 1
+  vkGoogleHlslFunctionality1ExtensionName* = "VK_GOOGLE_hlsl_functionality1"
   vkGoogleDecorateString* = 1
-  vkGoogleDecorateStringSpecVersion* = 0
-  vkGoogleDecorateStringExtensionName* = "vkGoogleDecorateString"
+  vkGoogleDecorateStringSpecVersion* = 1
+  vkGoogleDecorateStringExtensionName* = "VK_GOOGLE_decorate_string"
+  vkExtMemoryBudget* = 1
+  vkExtMemoryBudgetSpecVersion* = 1
+  vkExtMemoryBudgetExtensionName* = "VK_EXT_memory_budget"
+
+type
+  VkPhysicalDeviceMemoryBudgetPropertiesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    heapBudget*: array[vkMaxMemoryHeaps, VkDeviceSize]
+    heapUsage*: array[vkMaxMemoryHeaps, VkDeviceSize]
+
+
+const
+  vkExtMemoryPriority* = 1
+  vkExtMemoryPrioritySpecVersion* = 1
+  vkExtMemoryPriorityExtensionName* = "VK_EXT_memory_priority"
+
+type
+  VkPhysicalDeviceMemoryPriorityFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    memoryPriority*: VkBool32
+
+  VkMemoryPriorityAllocateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    priority*: cfloat
+
+
+const
+  vkExtBufferDeviceAddress* = 1
+
+type
+  VkDeviceAddress* = uint64
+
+const
+  vkExtBufferDeviceAddressSpecVersion* = 2
+  vkExtBufferDeviceAddressExtensionName* = "VK_EXT_buffer_device_address"
+
+type
+  VkPhysicalDeviceBufferAddressFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    bufferDeviceAddress*: VkBool32
+    bufferDeviceAddressCaptureReplay*: VkBool32
+    bufferDeviceAddressMultiDevice*: VkBool32
+
+  VkBufferDeviceAddressInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    buffer*: VkBuffer
+
+  VkBufferDeviceAddressCreateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    deviceAddress*: VkDeviceSize
+
+  PFNVkgetbufferdeviceaddressext* = proc (device: VkDevice; pInfo: ptr VkBufferDeviceAddressInfoEXT): VkDeviceAddress {.cdecl.}
+
+when not defined(vkNoPrototypes):
+  proc vkGetBufferDeviceAddressEXT*(device: VkDevice; pInfo: ptr VkBufferDeviceAddressInfoEXT): VkDeviceAddress {.cdecl, importc.}
+const
+  vkExtSeparateStencilUsage* = 1
+  vkExtSeparateStencilUsageSpecVersion* = 1
+  vkExtSeparateStencilUsageExtensionName* = "VK_EXT_separate_stencil_usage"
+
+type
+  VkImageStencilUsageCreateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    stencilUsage*: VkImageUsageFlags
+
+
+const
+  vkExtValidationFeatures* = 1
+  vkExtValidationFeaturesSpecVersion* = 1
+  vkExtValidationFeaturesExtensionName* = "VK_EXT_validation_features"
+
+type
+  VkValidationFeatureEnableEXT* = distinct cint
+  VkValidationFeatureDisableEXT* = distinct cint
+  VkValidationFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    enabledValidationFeatureCount*: uint32
+    pEnabledValidationFeatures*: ptr VkValidationFeatureEnableEXT
+    disabledValidationFeatureCount*: uint32
+    pDisabledValidationFeatures*: ptr VkValidationFeatureDisableEXT
+
+
+const
+  vkValidationFeatureEnableGpuAssistedExt* = 0.VkValidationFeatureEnableEXT
+  vkValidationFeatureEnableGpuAssistedReserveBindingSlotExt* = 1.VkValidationFeatureEnableEXT
+  vkValidationFeatureEnableBeginRangeExt: VkValidationFeatureEnableEXT = vkValidationFeatureEnableGpuAssistedExt
+  vkValidationFeatureEnableEndRangeExt: VkValidationFeatureEnableEXT = vkValidationFeatureEnableGpuAssistedReserveBindingSlotExt
+  vkValidationFeatureEnableRangeSizeExt: VkValidationFeatureEnableEXT = (vkValidationFeatureEnableGpuAssistedReserveBindingSlotExt - vkValidationFeatureEnableGpuAssistedExt + 1)
+  vkValidationFeatureEnableMaxEnumExt* = 0x7FFFFFFF.VkValidationFeatureEnableEXT
+
+const
+  vkValidationFeatureDisableAllExt* = 0.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableShadersExt* = 1.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableThreadSafetyExt* = 2.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableApiParametersExt* = 3.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableObjectLifetimesExt* = 4.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableCoreChecksExt* = 5.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableUniqueHandlesExt* = 6.VkValidationFeatureDisableEXT
+  vkValidationFeatureDisableBeginRangeExt: VkValidationFeatureDisableEXT = vkValidationFeatureDisableAllExt
+  vkValidationFeatureDisableEndRangeExt: VkValidationFeatureDisableEXT = vkValidationFeatureDisableUniqueHandlesExt
+  vkValidationFeatureDisableRangeSizeExt: VkValidationFeatureDisableEXT = (vkValidationFeatureDisableUniqueHandlesExt - vkValidationFeatureDisableAllExt + 1)
+  vkValidationFeatureDisableMaxEnumExt* = 0x7FFFFFFF.VkValidationFeatureDisableEXT
 
 from strutils import replace
 
@@ -7125,10 +7388,12 @@ genFlagConverters:
   VkQueryResultFlagBits
   VkBufferCreateFlagBits
   VkBufferUsageFlagBits
+  VkImageViewCreateFlagBits
   VkPipelineCreateFlagBits
   VkShaderStageFlagBits
   VkCullModeFlagBits
   VkColorComponentFlagBits
+  VkSamplerCreateFlagBits
   VkDescriptorSetLayoutCreateFlagBits
   VkDescriptorPoolCreateFlagBits
   VkAttachmentDescriptionFlagBits
@@ -7141,7 +7406,6 @@ genFlagConverters:
   VkQueryControlFlagBits
   VkCommandBufferResetFlagBits
   VkStencilFaceFlagBits
-  VkRenderPassCreateFlagBits
   VkSubgroupFeatureFlagBits
   VkPeerMemoryFeatureFlagBits
   VkMemoryAllocateFlagBits
@@ -7158,6 +7422,7 @@ genFlagConverters:
   VkSwapchainCreateFlagBitsKHR
   VkDeviceGroupPresentModeFlagBitsKHR
   VkDisplayPlaneAlphaFlagBitsKHR
+  VkResolveModeFlagBitsKHR
   VkDebugReportFlagBitsEXT
   VkExternalMemoryHandleTypeFlagBitsNV
   VkExternalMemoryFeatureFlagBitsNV
