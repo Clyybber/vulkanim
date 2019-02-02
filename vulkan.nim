@@ -385,14 +385,14 @@ type
 
 const
   vkLodClampNone* = 1000.0
-  vkRemainingMipLevels* = (not 0)
-  vkRemainingArrayLayers* = (not 0)
-  vkWholeSize* = (not 0)
-  vkAttachmentUnused* = (not 0)
+  vkRemainingMipLevels* = (not 0'u32)
+  vkRemainingArrayLayers* = (not 0'u32)
+  vkWholeSize* = (not 0'u32)
+  vkAttachmentUnused* = (not 0'u32)
   vkTrue* = 1
   vkFalse* = 0
-  vkQueueFamilyIgnored* = (not 0)
-  vkSubpassExternal* = (not 0)
+  vkQueueFamilyIgnored* = (not 0'u32)
+  vkSubpassExternal* = (not 0'u32)
   vkMaxPhysicalDeviceNameSize* = 256
   vkUuidSize* = 16
   vkMaxMemoryTypes* = 32
@@ -2046,7 +2046,6 @@ const
   vkStructureTypeExportSemaphoreCreateInfoKhr: VkStructureType = vkStructureTypeExportSemaphoreCreateInfo
   vkStructureTypePhysicalDevice16bitStorageFeaturesKhr: VkStructureType = vkStructureTypePhysicalDevice16bitStorageFeatures
   vkStructureTypeDescriptorUpdateTemplateCreateInfoKhr: VkStructureType = vkStructureTypeDescriptorUpdateTemplateCreateInfo
-  vkStructureTypeSurfaceCapabilities2Ext: VkStructureType = vkStructureTypeSurfaceCapabilities2Ext
   vkStructureTypePhysicalDeviceExternalFenceInfoKhr: VkStructureType = vkStructureTypePhysicalDeviceExternalFenceInfo
   vkStructureTypeExternalFencePropertiesKhr: VkStructureType = vkStructureTypeExternalFenceProperties
   vkStructureTypeExportFenceCreateInfoKhr: VkStructureType = vkStructureTypeExportFenceCreateInfo
@@ -4065,7 +4064,6 @@ const
   vkColorSpaceAdobergbNonlinearExt* = 1000104012.VkColorSpaceKHR
   vkColorSpacePassThroughExt* = 1000104013.VkColorSpaceKHR
   vkColorSpaceExtendedSrgbNonlinearExt* = 1000104014.VkColorSpaceKHR
-  vkColorspaceSrgbNonlinearKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceBeginRangeKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceEndRangeKhr: VkColorSpaceKHR = vkColorSpaceSrgbNonlinearKhr
   vkColorSpaceRangeSizeKhr: VkColorSpaceKHR = (vkColorSpaceSrgbNonlinearKhr - vkColorSpaceSrgbNonlinearKhr + 1)
