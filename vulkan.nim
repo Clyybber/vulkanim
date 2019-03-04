@@ -305,6 +305,8 @@ genDistinctOps:
   VkMemoryOverallocationBehaviorAMD
   VkValidationFeatureEnableEXT
   VkValidationFeatureDisableEXT
+  VkComponentTypeNV
+  VkScopeNV
 ## * Copyright (c) 2015-2019 The Khronos Group Inc.
 ## *
 ## * Licensed under the Apache License, Version 2.0 (the "License");
@@ -349,7 +351,7 @@ template vkVersionPatch*(version: untyped): untyped =
 ##  Version of this file
 
 const
-  vkHeaderVersion* = 97
+  vkHeaderVersion* = 102
   vkNullHandle* = 0
 
 type
@@ -1768,6 +1770,7 @@ const
   vkStructureTypePhysicalDeviceTransformFeedbackFeaturesExt* {.used.} = 1000028000.VkStructureType
   vkStructureTypePhysicalDeviceTransformFeedbackPropertiesExt* {.used.} = 1000028001.VkStructureType
   vkStructureTypePipelineRasterizationStateStreamCreateInfoExt* {.used.} = 1000028002.VkStructureType
+  vkStructureTypeImageViewHandleInfoNvx* {.used.} = 1000030000.VkStructureType
   vkStructureTypeTextureLodGatherFormatPropertiesAmd* {.used.} = 1000041000.VkStructureType
   vkStructureTypePhysicalDeviceCornerSampledImageFeaturesNv* {.used.} = 1000050000.VkStructureType
   vkStructureTypeRenderPassMultiviewCreateInfo* {.used.} = 1000053000.VkStructureType
@@ -1860,6 +1863,8 @@ const
   vkStructureTypePipelineDiscardRectangleStateCreateInfoExt* {.used.} = 1000099001.VkStructureType
   vkStructureTypePhysicalDeviceConservativeRasterizationPropertiesExt* {.used.} = 1000101000.VkStructureType
   vkStructureTypePipelineRasterizationConservativeStateCreateInfoExt* {.used.} = 1000101001.VkStructureType
+  vkStructureTypePhysicalDeviceDepthClipEnableFeaturesExt* {.used.} = 1000102000.VkStructureType
+  vkStructureTypePipelineRasterizationDepthClipStateCreateInfoExt* {.used.} = 1000102001.VkStructureType
   vkStructureTypeHdrMetadataExt* {.used.} = 1000105000.VkStructureType
   vkStructureTypeAttachmentDescription2Khr* {.used.} = 1000109000.VkStructureType
   vkStructureTypeAttachmentReference2Khr* {.used.} = 1000109001.VkStructureType
@@ -1971,6 +1976,8 @@ const
   vkStructureTypePipelineRepresentativeFragmentTestStateCreateInfoNv* {.used.} = 1000166001.VkStructureType
   vkStructureTypePhysicalDeviceMaintenance3Properties* {.used.} = 1000168000.VkStructureType
   vkStructureTypeDescriptorSetLayoutSupport* {.used.} = 1000168001.VkStructureType
+  vkStructureTypePhysicalDeviceImageViewImageFormatInfoExt* {.used.} = 1000170000.VkStructureType
+  vkStructureTypeFilterCubicImageViewImageFormatPropertiesExt* {.used.} = 1000170001.VkStructureType
   vkStructureTypeDeviceQueueGlobalPriorityCreateInfoExt* {.used.} = 1000174000.VkStructureType
   vkStructureTypePhysicalDevice8bitStorageFeaturesKhr* {.used.} = 1000177000.VkStructureType
   vkStructureTypeImportMemoryHostPointerInfoExt* {.used.} = 1000178000.VkStructureType
@@ -1999,6 +2006,7 @@ const
   vkStructureTypePhysicalDeviceVulkanMemoryModelFeaturesKhr* {.used.} = 1000211000.VkStructureType
   vkStructureTypePhysicalDevicePciBusInfoPropertiesExt* {.used.} = 1000212000.VkStructureType
   vkStructureTypeImagepipeSurfaceCreateInfoFuchsia* {.used.} = 1000214000.VkStructureType
+  vkStructureTypeMetalSurfaceCreateInfoExt* {.used.} = 1000217000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMapFeaturesExt* {.used.} = 1000218000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMapPropertiesExt* {.used.} = 1000218001.VkStructureType
   vkStructureTypeRenderPassFragmentDensityMapCreateInfoExt* {.used.} = 1000218002.VkStructureType
@@ -2006,11 +2014,16 @@ const
   vkStructureTypePhysicalDeviceMemoryBudgetPropertiesExt* {.used.} = 1000237000.VkStructureType
   vkStructureTypePhysicalDeviceMemoryPriorityFeaturesExt* {.used.} = 1000238000.VkStructureType
   vkStructureTypeMemoryPriorityAllocateInfoExt* {.used.} = 1000238001.VkStructureType
+  vkStructureTypePhysicalDeviceDedicatedAllocationImageAliasingFeaturesNv* {.used.} = 1000240000.VkStructureType
   vkStructureTypePhysicalDeviceBufferAddressFeaturesExt* {.used.} = 1000244000.VkStructureType
   vkStructureTypeBufferDeviceAddressInfoExt* {.used.} = 1000244001.VkStructureType
   vkStructureTypeBufferDeviceAddressCreateInfoExt* {.used.} = 1000244002.VkStructureType
   vkStructureTypeImageStencilUsageCreateInfoExt* {.used.} = 1000246000.VkStructureType
   vkStructureTypeValidationFeaturesExt* {.used.} = 1000247000.VkStructureType
+  vkStructureTypePhysicalDeviceCooperativeMatrixFeaturesNv* {.used.} = 1000249000.VkStructureType
+  vkStructureTypeCooperativeMatrixPropertiesNv* {.used.} = 1000249001.VkStructureType
+  vkStructureTypePhysicalDeviceCooperativeMatrixPropertiesNv* {.used.} = 1000249002.VkStructureType
+  vkStructureTypePhysicalDeviceYcbcrImageArraysFeaturesExt* {.used.} = 1000252000.VkStructureType
   vkStructureTypeDebugReportCreateInfoExt* {.used.}: VkStructureType = vkStructureTypeDebugReportCallbackCreateInfoExt
   vkStructureTypeRenderPassMultiviewCreateInfoKhr* {.used.}: VkStructureType = vkStructureTypeRenderPassMultiviewCreateInfo
   vkStructureTypePhysicalDeviceMultiviewFeaturesKhr* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceMultiviewFeatures
@@ -2658,6 +2671,7 @@ const
   vkFilterNearest* {.used.} = 0.VkFilter
   vkFilterLinear* {.used.} = 1.VkFilter
   vkFilterCubicImg* {.used.} = 1000015000.VkFilter
+  vkFilterCubicExt* {.used.}: VkFilter = vkFilterCubicImg
   vkFilterBeginRange* {.used.}: VkFilter = vkFilterNearest
   vkFilterEndRange* {.used.}: VkFilter = vkFilterLinear
   vkFilterRangeSize* {.used.}: VkFilter = (vkFilterLinear - vkFilterNearest + 1)
@@ -2854,6 +2868,7 @@ const
   vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureSampledImageYcbcrConversionChromaReconstructionExplicitForceableBit
   vkFormatFeatureDisjointBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureDisjointBit
   vkFormatFeatureCositedChromaSamplesBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureCositedChromaSamplesBit
+  vkFormatFeatureSampledImageFilterCubicBitExt* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureSampledImageFilterCubicBitImg
   vkFormatFeatureFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkFormatFeatureFlagBits
 
 const
@@ -5105,7 +5120,7 @@ const
   vkKhrSwapchainMutableFormatSpecVersion* = 1
   vkKhrSwapchainMutableFormatExtensionName* = "VK_KHR_swapchain_mutable_format"
   vkKhrVulkanMemoryModel* = 1
-  vkKhrVulkanMemoryModelSpecVersion* = 2
+  vkKhrVulkanMemoryModelSpecVersion* = 3
   vkKhrVulkanMemoryModelExtensionName* = "VK_KHR_vulkan_memory_model"
 
 type
@@ -5114,6 +5129,7 @@ type
     pNext*: pointer
     vulkanMemoryModel*: VkBool32
     vulkanMemoryModelDeviceScope*: VkBool32
+    vulkanMemoryModelAvailabilityVisibilityChains*: VkBool32
 
 
 const
@@ -5350,6 +5366,23 @@ when not defined(vkNoPrototypes):
   proc vkCmdBeginQueryIndexedEXT*(commandBuffer: VkCommandBuffer; queryPool: VkQueryPool; query: uint32; flags: VkQueryControlFlags; index: uint32) {.cdecl, importc.}
   proc vkCmdEndQueryIndexedEXT*(commandBuffer: VkCommandBuffer; queryPool: VkQueryPool; query: uint32; index: uint32) {.cdecl, importc.}
   proc vkCmdDrawIndirectByteCountEXT*(commandBuffer: VkCommandBuffer; instanceCount: uint32; firstInstance: uint32; counterBuffer: VkBuffer; counterBufferOffset: VkDeviceSize; counterOffset: uint32; vertexStride: uint32) {.cdecl, importc.}
+const
+  vkNvxImageViewHandle* = 1
+  vkNvxImageViewHandleSpecVersion* = 1
+  vkNvxImageViewHandleExtensionName* = "VK_NVX_image_view_handle"
+
+type
+  VkImageViewHandleInfoNVX* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    imageView*: VkImageView
+    descriptorType*: VkDescriptorType
+    sampler*: VkSampler
+
+  PFNVkgetimageviewhandlenvx* = proc (device: VkDevice; pInfo: ptr VkImageViewHandleInfoNVX): uint32 {.cdecl.}
+
+when not defined(vkNoPrototypes):
+  proc vkGetImageViewHandleNVX*(device: VkDevice; pInfo: ptr VkImageViewHandleInfoNVX): uint32 {.cdecl, importc.}
 const
   vkAmdDrawIndirectCount* = 1
   vkAmdDrawIndirectCountSpecVersion* = 1
@@ -6025,6 +6058,25 @@ const
   vkConservativeRasterizationModeEndRangeExt* {.used.}: VkConservativeRasterizationModeEXT = vkConservativeRasterizationModeUnderestimateExt
   vkConservativeRasterizationModeRangeSizeExt* {.used.}: VkConservativeRasterizationModeEXT = (vkConservativeRasterizationModeUnderestimateExt - vkConservativeRasterizationModeDisabledExt + 1)
   vkConservativeRasterizationModeMaxEnumExt* {.used.} = 0x7FFFFFFF.VkConservativeRasterizationModeEXT
+
+const
+  vkExtDepthClipEnable* = 1
+  vkExtDepthClipEnableSpecVersion* = 1
+  vkExtDepthClipEnableExtensionName* = "VK_EXT_depth_clip_enable"
+
+type
+  VkPipelineRasterizationDepthClipStateCreateFlagsEXT* = VkFlags
+  VkPhysicalDeviceDepthClipEnableFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    depthClipEnable*: VkBool32
+
+  VkPipelineRasterizationDepthClipStateCreateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    flags*: VkPipelineRasterizationDepthClipStateCreateFlagsEXT
+    depthClipEnable*: VkBool32
+
 
 const
   vkExtSwapchainColorspace* = 1
@@ -6878,6 +6930,24 @@ type
 
 
 const
+  vkExtFilterCubic* = 1
+  vkExtFilterCubicSpecVersion* = 1
+  vkExtFilterCubicExtensionName* = "VK_EXT_filter_cubic"
+
+type
+  VkPhysicalDeviceImageViewImageFormatInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    imageViewType*: VkImageViewType
+
+  VkFilterCubicImageViewImageFormatPropertiesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    filterCubic*: VkBool32
+    filterCubicMinmax*: VkBool32
+
+
+const
   vkExtGlobalPriority* = 1
   vkExtGlobalPrioritySpecVersion* = 2
   vkExtGlobalPriorityExtensionName* = "VK_EXT_global_priority"
@@ -7254,6 +7324,18 @@ type
 
 
 const
+  vkNvDedicatedAllocationImageAliasing* = 1
+  vkNvDedicatedAllocationImageAliasingSpecVersion* = 1
+  vkNvDedicatedAllocationImageAliasingExtensionName* = "VK_NV_dedicated_allocation_image_aliasing"
+
+type
+  VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    dedicatedAllocationImageAliasing*: VkBool32
+
+
+const
   vkExtBufferDeviceAddress* = 1
 
 type
@@ -7334,6 +7416,80 @@ const
   vkValidationFeatureDisableEndRangeExt* {.used.}: VkValidationFeatureDisableEXT = vkValidationFeatureDisableUniqueHandlesExt
   vkValidationFeatureDisableRangeSizeExt* {.used.}: VkValidationFeatureDisableEXT = (vkValidationFeatureDisableUniqueHandlesExt - vkValidationFeatureDisableAllExt + 1)
   vkValidationFeatureDisableMaxEnumExt* {.used.} = 0x7FFFFFFF.VkValidationFeatureDisableEXT
+
+const
+  vkNvCooperativeMatrix* = 1
+  vkNvCooperativeMatrixSpecVersion* = 1
+  vkNvCooperativeMatrixExtensionName* = "VK_NV_cooperative_matrix"
+
+type
+  VkComponentTypeNV* = distinct cint
+  VkScopeNV* = distinct cint
+  VkCooperativeMatrixPropertiesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    MSize*: uint32
+    NSize*: uint32
+    KSize*: uint32
+    AType*: VkComponentTypeNV
+    BType*: VkComponentTypeNV
+    CType*: VkComponentTypeNV
+    DType*: VkComponentTypeNV
+    scope*: VkScopeNV
+
+  VkPhysicalDeviceCooperativeMatrixFeaturesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    cooperativeMatrix*: VkBool32
+    cooperativeMatrixRobustBufferAccess*: VkBool32
+
+  VkPhysicalDeviceCooperativeMatrixPropertiesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    cooperativeMatrixSupportedStages*: VkShaderStageFlags
+
+  PFNVkgetphysicaldevicecooperativematrixpropertiesnv* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkCooperativeMatrixPropertiesNV): VkResult {.cdecl.}
+
+const
+  vkComponentTypeFloat16Nv* {.used.} = 0.VkComponentTypeNV
+  vkComponentTypeFloat32Nv* {.used.} = 1.VkComponentTypeNV
+  vkComponentTypeFloat64Nv* {.used.} = 2.VkComponentTypeNV
+  vkComponentTypeSint8Nv* {.used.} = 3.VkComponentTypeNV
+  vkComponentTypeSint16Nv* {.used.} = 4.VkComponentTypeNV
+  vkComponentTypeSint32Nv* {.used.} = 5.VkComponentTypeNV
+  vkComponentTypeSint64Nv* {.used.} = 6.VkComponentTypeNV
+  vkComponentTypeUint8Nv* {.used.} = 7.VkComponentTypeNV
+  vkComponentTypeUint16Nv* {.used.} = 8.VkComponentTypeNV
+  vkComponentTypeUint32Nv* {.used.} = 9.VkComponentTypeNV
+  vkComponentTypeUint64Nv* {.used.} = 10.VkComponentTypeNV
+  vkComponentTypeBeginRangeNv* {.used.}: VkComponentTypeNV = vkComponentTypeFloat16Nv
+  vkComponentTypeEndRangeNv* {.used.}: VkComponentTypeNV = vkComponentTypeUint64Nv
+  vkComponentTypeRangeSizeNv* {.used.}: VkComponentTypeNV = (vkComponentTypeUint64Nv - vkComponentTypeFloat16Nv + 1)
+  vkComponentTypeMaxEnumNv* {.used.} = 0x7FFFFFFF.VkComponentTypeNV
+
+const
+  vkScopeDeviceNv* {.used.} = 1.VkScopeNV
+  vkScopeWorkgroupNv* {.used.} = 2.VkScopeNV
+  vkScopeSubgroupNv* {.used.} = 3.VkScopeNV
+  vkScopeQueueFamilyNv* {.used.} = 5.VkScopeNV
+  vkScopeBeginRangeNv* {.used.}: VkScopeNV = vkScopeDeviceNv
+  vkScopeEndRangeNv* {.used.}: VkScopeNV = vkScopeQueueFamilyNv
+  vkScopeRangeSizeNv* {.used.}: VkScopeNV = (vkScopeQueueFamilyNv - vkScopeDeviceNv + 1)
+  vkScopeMaxEnumNv* {.used.} = 0x7FFFFFFF.VkScopeNV
+
+when not defined(vkNoPrototypes):
+  proc vkGetPhysicalDeviceCooperativeMatrixPropertiesNV*(physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkCooperativeMatrixPropertiesNV): VkResult {.cdecl, importc.}
+const
+  vkExtYcbcrImageArrays* = 1
+  vkExtYcbcrImageArraysSpecVersion* = 1
+  vkExtYcbcrImageArraysExtensionName* = "VK_EXT_ycbcr_image_arrays"
+
+type
+  VkPhysicalDeviceYcbcrImageArraysFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    ycbcrImageArrays*: VkBool32
+
 
 from strutils import replace
 
