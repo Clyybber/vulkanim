@@ -1535,8 +1535,8 @@ type
     sType*: VkStructureType
     pNext*: ptr VkBaseInStructure
 
-  PFNVkcreateinstance* = proc (pCreateInfo: ptr VkInstanceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pInstance: ptr VkInstance): VkResult {.cdecl.}
-  PFNVkdestroyinstance* = proc (instance: VkInstance; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateinstance* = proc (pCreateInfo: ptr VkInstanceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pInstance: ptr VkInstance): VkResult {.cdecl.}
+  PFNVkdestroyinstance* = proc (instance: VkInstance; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkenumeratephysicaldevices* = proc (instance: VkInstance; pPhysicalDeviceCount: ptr uint32; pPhysicalDevices: ptr VkPhysicalDevice): VkResult {.cdecl.}
   PFNVkgetphysicaldevicefeatures* = proc (physicalDevice: VkPhysicalDevice; pFeatures: ptr VkPhysicalDeviceFeatures) {.cdecl.}
   PFNVkgetphysicaldeviceformatproperties* = proc (physicalDevice: VkPhysicalDevice; format: VkFormat; pFormatProperties: ptr VkFormatProperties) {.cdecl.}
@@ -1546,8 +1546,8 @@ type
   PFNVkgetphysicaldevicememoryproperties* = proc (physicalDevice: VkPhysicalDevice; pMemoryProperties: ptr VkPhysicalDeviceMemoryProperties) {.cdecl.}
   PFNVkgetinstanceprocaddr* = proc (instance: VkInstance; pName: cstring): PFNVkvoidfunction {.cdecl.}
   PFNVkgetdeviceprocaddr* = proc (device: VkDevice; pName: cstring): PFNVkvoidfunction {.cdecl.}
-  PFNVkcreatedevice* = proc (physicalDevice: VkPhysicalDevice; pCreateInfo: ptr VkDeviceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDevice: ptr VkDevice): VkResult {.cdecl.}
-  PFNVkdestroydevice* = proc (device: VkDevice; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatedevice* = proc (physicalDevice: VkPhysicalDevice; pCreateInfo: ptr VkDeviceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDevice: ptr VkDevice): VkResult {.cdecl.}
+  PFNVkdestroydevice* = proc (device: VkDevice; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkenumerateinstanceextensionproperties* = proc (pLayerName: cstring; pPropertyCount: ptr uint32; pProperties: ptr VkExtensionProperties): VkResult {.cdecl.}
   PFNVkenumeratedeviceextensionproperties* = proc (physicalDevice: VkPhysicalDevice; pLayerName: cstring; pPropertyCount: ptr uint32; pProperties: ptr VkExtensionProperties): VkResult {.cdecl.}
   PFNVkenumerateinstancelayerproperties* = proc (pPropertyCount: ptr uint32; pProperties: ptr VkLayerProperties): VkResult {.cdecl.}
@@ -1556,8 +1556,8 @@ type
   PFNVkqueuesubmit* = proc (queue: VkQueue; submitCount: uint32; pSubmits: ptr VkSubmitInfo; fence: VkFence): VkResult {.cdecl.}
   PFNVkqueuewaitidle* = proc (queue: VkQueue): VkResult {.cdecl.}
   PFNVkdevicewaitidle* = proc (device: VkDevice): VkResult {.cdecl.}
-  PFNVkallocatememory* = proc (device: VkDevice; pAllocateInfo: ptr VkMemoryAllocateInfo; pAllocator: ptr VkAllocationCallbacks; pMemory: ptr VkDeviceMemory): VkResult {.cdecl.}
-  PFNVkfreememory* = proc (device: VkDevice; memory: VkDeviceMemory; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkallocatememory* = proc (device: VkDevice; pAllocateInfo: ptr VkMemoryAllocateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pMemory: ptr VkDeviceMemory): VkResult {.cdecl.}
+  PFNVkfreememory* = proc (device: VkDevice; memory: VkDeviceMemory; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkmapmemory* = proc (device: VkDevice; memory: VkDeviceMemory; offset: VkDeviceSize; size: VkDeviceSize; flags: VkMemoryMapFlags; ppData: ptr pointer): VkResult {.cdecl.}
   PFNVkunmapmemory* = proc (device: VkDevice; memory: VkDeviceMemory) {.cdecl.}
   PFNVkflushmappedmemoryranges* = proc (device: VkDevice; memoryRangeCount: uint32; pMemoryRanges: ptr VkMappedMemoryRange): VkResult {.cdecl.}
@@ -1570,58 +1570,58 @@ type
   PFNVkgetimagesparsememoryrequirements* = proc (device: VkDevice; image: VkImage; pSparseMemoryRequirementCount: ptr uint32; pSparseMemoryRequirements: ptr VkSparseImageMemoryRequirements) {.cdecl.}
   PFNVkgetphysicaldevicesparseimageformatproperties* = proc (physicalDevice: VkPhysicalDevice; format: VkFormat; `type`: VkImageType; samples: VkSampleCountFlagBits; usage: VkImageUsageFlags; tiling: VkImageTiling; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties) {.cdecl.}
   PFNVkqueuebindsparse* = proc (queue: VkQueue; bindInfoCount: uint32; pBindInfo: ptr VkBindSparseInfo; fence: VkFence): VkResult {.cdecl.}
-  PFNVkcreatefence* = proc (device: VkDevice; pCreateInfo: ptr VkFenceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl.}
-  PFNVkdestroyfence* = proc (device: VkDevice; fence: VkFence; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatefence* = proc (device: VkDevice; pCreateInfo: ptr VkFenceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl.}
+  PFNVkdestroyfence* = proc (device: VkDevice; fence: VkFence; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkresetfences* = proc (device: VkDevice; fenceCount: uint32; pFences: ptr VkFence): VkResult {.cdecl.}
   PFNVkgetfencestatus* = proc (device: VkDevice; fence: VkFence): VkResult {.cdecl.}
   PFNVkwaitforfences* = proc (device: VkDevice; fenceCount: uint32; pFences: ptr VkFence; waitAll: VkBool32; timeout: uint64): VkResult {.cdecl.}
-  PFNVkcreatesemaphore* = proc (device: VkDevice; pCreateInfo: ptr VkSemaphoreCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSemaphore: ptr VkSemaphore): VkResult {.cdecl.}
-  PFNVkdestroysemaphore* = proc (device: VkDevice; semaphore: VkSemaphore; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreateevent* = proc (device: VkDevice; pCreateInfo: ptr VkEventCreateInfo; pAllocator: ptr VkAllocationCallbacks; pEvent: ptr VkEvent): VkResult {.cdecl.}
-  PFNVkdestroyevent* = proc (device: VkDevice; event: VkEvent; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatesemaphore* = proc (device: VkDevice; pCreateInfo: ptr VkSemaphoreCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSemaphore: ptr VkSemaphore): VkResult {.cdecl.}
+  PFNVkdestroysemaphore* = proc (device: VkDevice; semaphore: VkSemaphore; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreateevent* = proc (device: VkDevice; pCreateInfo: ptr VkEventCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pEvent: ptr VkEvent): VkResult {.cdecl.}
+  PFNVkdestroyevent* = proc (device: VkDevice; event: VkEvent; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgeteventstatus* = proc (device: VkDevice; event: VkEvent): VkResult {.cdecl.}
   PFNVksetevent* = proc (device: VkDevice; event: VkEvent): VkResult {.cdecl.}
   PFNVkresetevent* = proc (device: VkDevice; event: VkEvent): VkResult {.cdecl.}
-  PFNVkcreatequerypool* = proc (device: VkDevice; pCreateInfo: ptr VkQueryPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pQueryPool: ptr VkQueryPool): VkResult {.cdecl.}
-  PFNVkdestroyquerypool* = proc (device: VkDevice; queryPool: VkQueryPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatequerypool* = proc (device: VkDevice; pCreateInfo: ptr VkQueryPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pQueryPool: ptr VkQueryPool): VkResult {.cdecl.}
+  PFNVkdestroyquerypool* = proc (device: VkDevice; queryPool: VkQueryPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetquerypoolresults* = proc (device: VkDevice; queryPool: VkQueryPool; firstQuery: uint32; queryCount: uint32; dataSize: csize_t; pData: pointer; stride: VkDeviceSize; flags: VkQueryResultFlags): VkResult {.cdecl.}
-  PFNVkcreatebuffer* = proc (device: VkDevice; pCreateInfo: ptr VkBufferCreateInfo; pAllocator: ptr VkAllocationCallbacks; pBuffer: ptr VkBuffer): VkResult {.cdecl.}
-  PFNVkdestroybuffer* = proc (device: VkDevice; buffer: VkBuffer; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatebufferview* = proc (device: VkDevice; pCreateInfo: ptr VkBufferViewCreateInfo; pAllocator: ptr VkAllocationCallbacks; pView: ptr VkBufferView): VkResult {.cdecl.}
-  PFNVkdestroybufferview* = proc (device: VkDevice; bufferView: VkBufferView; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreateimage* = proc (device: VkDevice; pCreateInfo: ptr VkImageCreateInfo; pAllocator: ptr VkAllocationCallbacks; pImage: ptr VkImage): VkResult {.cdecl.}
-  PFNVkdestroyimage* = proc (device: VkDevice; image: VkImage; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatebuffer* = proc (device: VkDevice; pCreateInfo: ptr VkBufferCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pBuffer: ptr VkBuffer): VkResult {.cdecl.}
+  PFNVkdestroybuffer* = proc (device: VkDevice; buffer: VkBuffer; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatebufferview* = proc (device: VkDevice; pCreateInfo: ptr VkBufferViewCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pView: ptr VkBufferView): VkResult {.cdecl.}
+  PFNVkdestroybufferview* = proc (device: VkDevice; bufferView: VkBufferView; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreateimage* = proc (device: VkDevice; pCreateInfo: ptr VkImageCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pImage: ptr VkImage): VkResult {.cdecl.}
+  PFNVkdestroyimage* = proc (device: VkDevice; image: VkImage; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetimagesubresourcelayout* = proc (device: VkDevice; image: VkImage; pSubresource: ptr VkImageSubresource; pLayout: ptr VkSubresourceLayout) {.cdecl.}
-  PFNVkcreateimageview* = proc (device: VkDevice; pCreateInfo: ptr VkImageViewCreateInfo; pAllocator: ptr VkAllocationCallbacks; pView: ptr VkImageView): VkResult {.cdecl.}
-  PFNVkdestroyimageview* = proc (device: VkDevice; imageView: VkImageView; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreateshadermodule* = proc (device: VkDevice; pCreateInfo: ptr VkShaderModuleCreateInfo; pAllocator: ptr VkAllocationCallbacks; pShaderModule: ptr VkShaderModule): VkResult {.cdecl.}
-  PFNVkdestroyshadermodule* = proc (device: VkDevice; shaderModule: VkShaderModule; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatepipelinecache* = proc (device: VkDevice; pCreateInfo: ptr VkPipelineCacheCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelineCache: ptr VkPipelineCache): VkResult {.cdecl.}
-  PFNVkdestroypipelinecache* = proc (device: VkDevice; pipelineCache: VkPipelineCache; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateimageview* = proc (device: VkDevice; pCreateInfo: ptr VkImageViewCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pView: ptr VkImageView): VkResult {.cdecl.}
+  PFNVkdestroyimageview* = proc (device: VkDevice; imageView: VkImageView; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreateshadermodule* = proc (device: VkDevice; pCreateInfo: ptr VkShaderModuleCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pShaderModule: ptr VkShaderModule): VkResult {.cdecl.}
+  PFNVkdestroyshadermodule* = proc (device: VkDevice; shaderModule: VkShaderModule; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatepipelinecache* = proc (device: VkDevice; pCreateInfo: ptr VkPipelineCacheCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelineCache: ptr VkPipelineCache): VkResult {.cdecl.}
+  PFNVkdestroypipelinecache* = proc (device: VkDevice; pipelineCache: VkPipelineCache; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetpipelinecachedata* = proc (device: VkDevice; pipelineCache: VkPipelineCache; pDataSize: ptr csize_t; pData: pointer): VkResult {.cdecl.}
   PFNVkmergepipelinecaches* = proc (device: VkDevice; dstCache: VkPipelineCache; srcCacheCount: uint32; pSrcCaches: ptr VkPipelineCache): VkResult {.cdecl.}
-  PFNVkcreategraphicspipelines* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkGraphicsPipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
-  PFNVkcreatecomputepipelines* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkComputePipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
-  PFNVkdestroypipeline* = proc (device: VkDevice; pipeline: VkPipeline; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatepipelinelayout* = proc (device: VkDevice; pCreateInfo: ptr VkPipelineLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelineLayout: ptr VkPipelineLayout): VkResult {.cdecl.}
-  PFNVkdestroypipelinelayout* = proc (device: VkDevice; pipelineLayout: VkPipelineLayout; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatesampler* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSampler: ptr VkSampler): VkResult {.cdecl.}
-  PFNVkdestroysampler* = proc (device: VkDevice; sampler: VkSampler; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatedescriptorsetlayout* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorSetLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSetLayout: ptr VkDescriptorSetLayout): VkResult {.cdecl.}
-  PFNVkdestroydescriptorsetlayout* = proc (device: VkDevice; descriptorSetLayout: VkDescriptorSetLayout; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatedescriptorpool* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorPool: ptr VkDescriptorPool): VkResult {.cdecl.}
-  PFNVkdestroydescriptorpool* = proc (device: VkDevice; descriptorPool: VkDescriptorPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreategraphicspipelines* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkGraphicsPipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
+  PFNVkcreatecomputepipelines* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkComputePipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
+  PFNVkdestroypipeline* = proc (device: VkDevice; pipeline: VkPipeline; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatepipelinelayout* = proc (device: VkDevice; pCreateInfo: ptr VkPipelineLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelineLayout: ptr VkPipelineLayout): VkResult {.cdecl.}
+  PFNVkdestroypipelinelayout* = proc (device: VkDevice; pipelineLayout: VkPipelineLayout; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatesampler* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSampler: ptr VkSampler): VkResult {.cdecl.}
+  PFNVkdestroysampler* = proc (device: VkDevice; sampler: VkSampler; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatedescriptorsetlayout* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorSetLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSetLayout: ptr VkDescriptorSetLayout): VkResult {.cdecl.}
+  PFNVkdestroydescriptorsetlayout* = proc (device: VkDevice; descriptorSetLayout: VkDescriptorSetLayout; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatedescriptorpool* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorPool: ptr VkDescriptorPool): VkResult {.cdecl.}
+  PFNVkdestroydescriptorpool* = proc (device: VkDevice; descriptorPool: VkDescriptorPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkresetdescriptorpool* = proc (device: VkDevice; descriptorPool: VkDescriptorPool; flags: VkDescriptorPoolResetFlags): VkResult {.cdecl.}
   PFNVkallocatedescriptorsets* = proc (device: VkDevice; pAllocateInfo: ptr VkDescriptorSetAllocateInfo; pDescriptorSets: ptr VkDescriptorSet): VkResult {.cdecl.}
   PFNVkfreedescriptorsets* = proc (device: VkDevice; descriptorPool: VkDescriptorPool; descriptorSetCount: uint32; pDescriptorSets: ptr VkDescriptorSet): VkResult {.cdecl.}
   PFNVkupdatedescriptorsets* = proc (device: VkDevice; descriptorWriteCount: uint32; pDescriptorWrites: ptr VkWriteDescriptorSet; descriptorCopyCount: uint32; pDescriptorCopies: ptr VkCopyDescriptorSet) {.cdecl.}
-  PFNVkcreateframebuffer* = proc (device: VkDevice; pCreateInfo: ptr VkFramebufferCreateInfo; pAllocator: ptr VkAllocationCallbacks; pFramebuffer: ptr VkFramebuffer): VkResult {.cdecl.}
-  PFNVkdestroyframebuffer* = proc (device: VkDevice; framebuffer: VkFramebuffer; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreaterenderpass* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
-  PFNVkdestroyrenderpass* = proc (device: VkDevice; renderPass: VkRenderPass; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateframebuffer* = proc (device: VkDevice; pCreateInfo: ptr VkFramebufferCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pFramebuffer: ptr VkFramebuffer): VkResult {.cdecl.}
+  PFNVkdestroyframebuffer* = proc (device: VkDevice; framebuffer: VkFramebuffer; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreaterenderpass* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
+  PFNVkdestroyrenderpass* = proc (device: VkDevice; renderPass: VkRenderPass; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetrenderareagranularity* = proc (device: VkDevice; renderPass: VkRenderPass; pGranularity: ptr VkExtent2D) {.cdecl.}
-  PFNVkcreatecommandpool* = proc (device: VkDevice; pCreateInfo: ptr VkCommandPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pCommandPool: ptr VkCommandPool): VkResult {.cdecl.}
-  PFNVkdestroycommandpool* = proc (device: VkDevice; commandPool: VkCommandPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatecommandpool* = proc (device: VkDevice; pCreateInfo: ptr VkCommandPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pCommandPool: ptr VkCommandPool): VkResult {.cdecl.}
+  PFNVkdestroycommandpool* = proc (device: VkDevice; commandPool: VkCommandPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkresetcommandpool* = proc (device: VkDevice; commandPool: VkCommandPool; flags: VkCommandPoolResetFlags): VkResult {.cdecl.}
   PFNVkallocatecommandbuffers* = proc (device: VkDevice; pAllocateInfo: ptr VkCommandBufferAllocateInfo; pCommandBuffers: ptr VkCommandBuffer): VkResult {.cdecl.}
   PFNVkfreecommandbuffers* = proc (device: VkDevice; commandPool: VkCommandPool; commandBufferCount: uint32; pCommandBuffers: ptr VkCommandBuffer) {.cdecl.}
@@ -3307,8 +3307,8 @@ const
   vkStencilFaceFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkStencilFaceFlagBits
 
 when not defined(vkNoPrototypes):
-  proc vkCreateInstance*(pCreateInfo: ptr VkInstanceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pInstance: ptr VkInstance): VkResult {.cdecl, importc.}
-  proc vkDestroyInstance*(instance: VkInstance; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateInstance*(pCreateInfo: ptr VkInstanceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pInstance: ptr VkInstance): VkResult {.cdecl, importc.}
+  proc vkDestroyInstance*(instance: VkInstance; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkEnumeratePhysicalDevices*(instance: VkInstance; pPhysicalDeviceCount: ptr uint32; pPhysicalDevices: ptr VkPhysicalDevice): VkResult {.cdecl, importc.}
   proc vkGetPhysicalDeviceFeatures*(physicalDevice: VkPhysicalDevice; pFeatures: ptr VkPhysicalDeviceFeatures) {.cdecl, importc.}
   proc vkGetPhysicalDeviceFormatProperties*(physicalDevice: VkPhysicalDevice; format: VkFormat; pFormatProperties: ptr VkFormatProperties) {.cdecl, importc.}
@@ -3318,8 +3318,8 @@ when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceMemoryProperties*(physicalDevice: VkPhysicalDevice; pMemoryProperties: ptr VkPhysicalDeviceMemoryProperties) {.cdecl, importc.}
   proc vkGetInstanceProcAddr*(instance: VkInstance; pName: cstring): PFNVkvoidfunction {.cdecl, importc.}
   proc vkGetDeviceProcAddr*(device: VkDevice; pName: cstring): PFNVkvoidfunction {.cdecl, importc.}
-  proc vkCreateDevice*(physicalDevice: VkPhysicalDevice; pCreateInfo: ptr VkDeviceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDevice: ptr VkDevice): VkResult {.cdecl, importc.}
-  proc vkDestroyDevice*(device: VkDevice; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateDevice*(physicalDevice: VkPhysicalDevice; pCreateInfo: ptr VkDeviceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDevice: ptr VkDevice): VkResult {.cdecl, importc.}
+  proc vkDestroyDevice*(device: VkDevice; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkEnumerateInstanceExtensionProperties*(pLayerName: cstring; pPropertyCount: ptr uint32; pProperties: ptr VkExtensionProperties): VkResult {.cdecl, importc.}
   proc vkEnumerateDeviceExtensionProperties*(physicalDevice: VkPhysicalDevice; pLayerName: cstring; pPropertyCount: ptr uint32; pProperties: ptr VkExtensionProperties): VkResult {.cdecl, importc.}
   proc vkEnumerateInstanceLayerProperties*(pPropertyCount: ptr uint32; pProperties: ptr VkLayerProperties): VkResult {.cdecl, importc.}
@@ -3328,8 +3328,8 @@ when not defined(vkNoPrototypes):
   proc vkQueueSubmit*(queue: VkQueue; submitCount: uint32; pSubmits: ptr VkSubmitInfo; fence: VkFence): VkResult {.cdecl, importc.}
   proc vkQueueWaitIdle*(queue: VkQueue): VkResult {.cdecl, importc.}
   proc vkDeviceWaitIdle*(device: VkDevice): VkResult {.cdecl, importc.}
-  proc vkAllocateMemory*(device: VkDevice; pAllocateInfo: ptr VkMemoryAllocateInfo; pAllocator: ptr VkAllocationCallbacks; pMemory: ptr VkDeviceMemory): VkResult {.cdecl, importc.}
-  proc vkFreeMemory*(device: VkDevice; memory: VkDeviceMemory; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkAllocateMemory*(device: VkDevice; pAllocateInfo: ptr VkMemoryAllocateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pMemory: ptr VkDeviceMemory): VkResult {.cdecl, importc.}
+  proc vkFreeMemory*(device: VkDevice; memory: VkDeviceMemory; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkMapMemory*(device: VkDevice; memory: VkDeviceMemory; offset: VkDeviceSize; size: VkDeviceSize; flags: VkMemoryMapFlags; ppData: ptr pointer): VkResult {.cdecl, importc.}
   proc vkUnmapMemory*(device: VkDevice; memory: VkDeviceMemory) {.cdecl, importc.}
   proc vkFlushMappedMemoryRanges*(device: VkDevice; memoryRangeCount: uint32; pMemoryRanges: ptr VkMappedMemoryRange): VkResult {.cdecl, importc.}
@@ -3342,58 +3342,58 @@ when not defined(vkNoPrototypes):
   proc vkGetImageSparseMemoryRequirements*(device: VkDevice; image: VkImage; pSparseMemoryRequirementCount: ptr uint32; pSparseMemoryRequirements: ptr VkSparseImageMemoryRequirements) {.cdecl, importc.}
   proc vkGetPhysicalDeviceSparseImageFormatProperties*(physicalDevice: VkPhysicalDevice; format: VkFormat; `type`: VkImageType; samples: VkSampleCountFlagBits; usage: VkImageUsageFlags; tiling: VkImageTiling; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties) {.cdecl, importc.}
   proc vkQueueBindSparse*(queue: VkQueue; bindInfoCount: uint32; pBindInfo: ptr VkBindSparseInfo; fence: VkFence): VkResult {.cdecl, importc.}
-  proc vkCreateFence*(device: VkDevice; pCreateInfo: ptr VkFenceCreateInfo; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl, importc.}
-  proc vkDestroyFence*(device: VkDevice; fence: VkFence; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateFence*(device: VkDevice; pCreateInfo: ptr VkFenceCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl, importc.}
+  proc vkDestroyFence*(device: VkDevice; fence: VkFence; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkResetFences*(device: VkDevice; fenceCount: uint32; pFences: ptr VkFence): VkResult {.cdecl, importc.}
   proc vkGetFenceStatus*(device: VkDevice; fence: VkFence): VkResult {.cdecl, importc.}
   proc vkWaitForFences*(device: VkDevice; fenceCount: uint32; pFences: ptr VkFence; waitAll: VkBool32; timeout: uint64): VkResult {.cdecl, importc.}
-  proc vkCreateSemaphore*(device: VkDevice; pCreateInfo: ptr VkSemaphoreCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSemaphore: ptr VkSemaphore): VkResult {.cdecl, importc.}
-  proc vkDestroySemaphore*(device: VkDevice; semaphore: VkSemaphore; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateEvent*(device: VkDevice; pCreateInfo: ptr VkEventCreateInfo; pAllocator: ptr VkAllocationCallbacks; pEvent: ptr VkEvent): VkResult {.cdecl, importc.}
-  proc vkDestroyEvent*(device: VkDevice; event: VkEvent; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateSemaphore*(device: VkDevice; pCreateInfo: ptr VkSemaphoreCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSemaphore: ptr VkSemaphore): VkResult {.cdecl, importc.}
+  proc vkDestroySemaphore*(device: VkDevice; semaphore: VkSemaphore; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateEvent*(device: VkDevice; pCreateInfo: ptr VkEventCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pEvent: ptr VkEvent): VkResult {.cdecl, importc.}
+  proc vkDestroyEvent*(device: VkDevice; event: VkEvent; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetEventStatus*(device: VkDevice; event: VkEvent): VkResult {.cdecl, importc.}
   proc vkSetEvent*(device: VkDevice; event: VkEvent): VkResult {.cdecl, importc.}
   proc vkResetEvent*(device: VkDevice; event: VkEvent): VkResult {.cdecl, importc.}
-  proc vkCreateQueryPool*(device: VkDevice; pCreateInfo: ptr VkQueryPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pQueryPool: ptr VkQueryPool): VkResult {.cdecl, importc.}
-  proc vkDestroyQueryPool*(device: VkDevice; queryPool: VkQueryPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateQueryPool*(device: VkDevice; pCreateInfo: ptr VkQueryPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pQueryPool: ptr VkQueryPool): VkResult {.cdecl, importc.}
+  proc vkDestroyQueryPool*(device: VkDevice; queryPool: VkQueryPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetQueryPoolResults*(device: VkDevice; queryPool: VkQueryPool; firstQuery: uint32; queryCount: uint32; dataSize: csize_t; pData: pointer; stride: VkDeviceSize; flags: VkQueryResultFlags): VkResult {.cdecl, importc.}
-  proc vkCreateBuffer*(device: VkDevice; pCreateInfo: ptr VkBufferCreateInfo; pAllocator: ptr VkAllocationCallbacks; pBuffer: ptr VkBuffer): VkResult {.cdecl, importc.}
-  proc vkDestroyBuffer*(device: VkDevice; buffer: VkBuffer; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateBufferView*(device: VkDevice; pCreateInfo: ptr VkBufferViewCreateInfo; pAllocator: ptr VkAllocationCallbacks; pView: ptr VkBufferView): VkResult {.cdecl, importc.}
-  proc vkDestroyBufferView*(device: VkDevice; bufferView: VkBufferView; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateImage*(device: VkDevice; pCreateInfo: ptr VkImageCreateInfo; pAllocator: ptr VkAllocationCallbacks; pImage: ptr VkImage): VkResult {.cdecl, importc.}
-  proc vkDestroyImage*(device: VkDevice; image: VkImage; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateBuffer*(device: VkDevice; pCreateInfo: ptr VkBufferCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pBuffer: ptr VkBuffer): VkResult {.cdecl, importc.}
+  proc vkDestroyBuffer*(device: VkDevice; buffer: VkBuffer; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateBufferView*(device: VkDevice; pCreateInfo: ptr VkBufferViewCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pView: ptr VkBufferView): VkResult {.cdecl, importc.}
+  proc vkDestroyBufferView*(device: VkDevice; bufferView: VkBufferView; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateImage*(device: VkDevice; pCreateInfo: ptr VkImageCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pImage: ptr VkImage): VkResult {.cdecl, importc.}
+  proc vkDestroyImage*(device: VkDevice; image: VkImage; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetImageSubresourceLayout*(device: VkDevice; image: VkImage; pSubresource: ptr VkImageSubresource; pLayout: ptr VkSubresourceLayout) {.cdecl, importc.}
-  proc vkCreateImageView*(device: VkDevice; pCreateInfo: ptr VkImageViewCreateInfo; pAllocator: ptr VkAllocationCallbacks; pView: ptr VkImageView): VkResult {.cdecl, importc.}
-  proc vkDestroyImageView*(device: VkDevice; imageView: VkImageView; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateShaderModule*(device: VkDevice; pCreateInfo: ptr VkShaderModuleCreateInfo; pAllocator: ptr VkAllocationCallbacks; pShaderModule: ptr VkShaderModule): VkResult {.cdecl, importc.}
-  proc vkDestroyShaderModule*(device: VkDevice; shaderModule: VkShaderModule; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreatePipelineCache*(device: VkDevice; pCreateInfo: ptr VkPipelineCacheCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelineCache: ptr VkPipelineCache): VkResult {.cdecl, importc.}
-  proc vkDestroyPipelineCache*(device: VkDevice; pipelineCache: VkPipelineCache; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateImageView*(device: VkDevice; pCreateInfo: ptr VkImageViewCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pView: ptr VkImageView): VkResult {.cdecl, importc.}
+  proc vkDestroyImageView*(device: VkDevice; imageView: VkImageView; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateShaderModule*(device: VkDevice; pCreateInfo: ptr VkShaderModuleCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pShaderModule: ptr VkShaderModule): VkResult {.cdecl, importc.}
+  proc vkDestroyShaderModule*(device: VkDevice; shaderModule: VkShaderModule; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreatePipelineCache*(device: VkDevice; pCreateInfo: ptr VkPipelineCacheCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelineCache: ptr VkPipelineCache): VkResult {.cdecl, importc.}
+  proc vkDestroyPipelineCache*(device: VkDevice; pipelineCache: VkPipelineCache; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetPipelineCacheData*(device: VkDevice; pipelineCache: VkPipelineCache; pDataSize: ptr csize_t; pData: pointer): VkResult {.cdecl, importc.}
   proc vkMergePipelineCaches*(device: VkDevice; dstCache: VkPipelineCache; srcCacheCount: uint32; pSrcCaches: ptr VkPipelineCache): VkResult {.cdecl, importc.}
-  proc vkCreateGraphicsPipelines*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkGraphicsPipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
-  proc vkCreateComputePipelines*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkComputePipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
-  proc vkDestroyPipeline*(device: VkDevice; pipeline: VkPipeline; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreatePipelineLayout*(device: VkDevice; pCreateInfo: ptr VkPipelineLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks; pPipelineLayout: ptr VkPipelineLayout): VkResult {.cdecl, importc.}
-  proc vkDestroyPipelineLayout*(device: VkDevice; pipelineLayout: VkPipelineLayout; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateSampler*(device: VkDevice; pCreateInfo: ptr VkSamplerCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSampler: ptr VkSampler): VkResult {.cdecl, importc.}
-  proc vkDestroySampler*(device: VkDevice; sampler: VkSampler; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateDescriptorSetLayout*(device: VkDevice; pCreateInfo: ptr VkDescriptorSetLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks; pSetLayout: ptr VkDescriptorSetLayout): VkResult {.cdecl, importc.}
-  proc vkDestroyDescriptorSetLayout*(device: VkDevice; descriptorSetLayout: VkDescriptorSetLayout; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateDescriptorPool*(device: VkDevice; pCreateInfo: ptr VkDescriptorPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorPool: ptr VkDescriptorPool): VkResult {.cdecl, importc.}
-  proc vkDestroyDescriptorPool*(device: VkDevice; descriptorPool: VkDescriptorPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateGraphicsPipelines*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkGraphicsPipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
+  proc vkCreateComputePipelines*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkComputePipelineCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
+  proc vkDestroyPipeline*(device: VkDevice; pipeline: VkPipeline; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreatePipelineLayout*(device: VkDevice; pCreateInfo: ptr VkPipelineLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pPipelineLayout: ptr VkPipelineLayout): VkResult {.cdecl, importc.}
+  proc vkDestroyPipelineLayout*(device: VkDevice; pipelineLayout: VkPipelineLayout; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateSampler*(device: VkDevice; pCreateInfo: ptr VkSamplerCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSampler: ptr VkSampler): VkResult {.cdecl, importc.}
+  proc vkDestroySampler*(device: VkDevice; sampler: VkSampler; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateDescriptorSetLayout*(device: VkDevice; pCreateInfo: ptr VkDescriptorSetLayoutCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pSetLayout: ptr VkDescriptorSetLayout): VkResult {.cdecl, importc.}
+  proc vkDestroyDescriptorSetLayout*(device: VkDevice; descriptorSetLayout: VkDescriptorSetLayout; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateDescriptorPool*(device: VkDevice; pCreateInfo: ptr VkDescriptorPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorPool: ptr VkDescriptorPool): VkResult {.cdecl, importc.}
+  proc vkDestroyDescriptorPool*(device: VkDevice; descriptorPool: VkDescriptorPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkResetDescriptorPool*(device: VkDevice; descriptorPool: VkDescriptorPool; flags: VkDescriptorPoolResetFlags): VkResult {.cdecl, importc.}
   proc vkAllocateDescriptorSets*(device: VkDevice; pAllocateInfo: ptr VkDescriptorSetAllocateInfo; pDescriptorSets: ptr VkDescriptorSet): VkResult {.cdecl, importc.}
   proc vkFreeDescriptorSets*(device: VkDevice; descriptorPool: VkDescriptorPool; descriptorSetCount: uint32; pDescriptorSets: ptr VkDescriptorSet): VkResult {.cdecl, importc.}
   proc vkUpdateDescriptorSets*(device: VkDevice; descriptorWriteCount: uint32; pDescriptorWrites: ptr VkWriteDescriptorSet; descriptorCopyCount: uint32; pDescriptorCopies: ptr VkCopyDescriptorSet) {.cdecl, importc.}
-  proc vkCreateFramebuffer*(device: VkDevice; pCreateInfo: ptr VkFramebufferCreateInfo; pAllocator: ptr VkAllocationCallbacks; pFramebuffer: ptr VkFramebuffer): VkResult {.cdecl, importc.}
-  proc vkDestroyFramebuffer*(device: VkDevice; framebuffer: VkFramebuffer; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateRenderPass*(device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl, importc.}
-  proc vkDestroyRenderPass*(device: VkDevice; renderPass: VkRenderPass; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateFramebuffer*(device: VkDevice; pCreateInfo: ptr VkFramebufferCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pFramebuffer: ptr VkFramebuffer): VkResult {.cdecl, importc.}
+  proc vkDestroyFramebuffer*(device: VkDevice; framebuffer: VkFramebuffer; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateRenderPass*(device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pRenderPass: ptr VkRenderPass): VkResult {.cdecl, importc.}
+  proc vkDestroyRenderPass*(device: VkDevice; renderPass: VkRenderPass; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetRenderAreaGranularity*(device: VkDevice; renderPass: VkRenderPass; pGranularity: ptr VkExtent2D) {.cdecl, importc.}
-  proc vkCreateCommandPool*(device: VkDevice; pCreateInfo: ptr VkCommandPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks; pCommandPool: ptr VkCommandPool): VkResult {.cdecl, importc.}
-  proc vkDestroyCommandPool*(device: VkDevice; commandPool: VkCommandPool; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateCommandPool*(device: VkDevice; pCreateInfo: ptr VkCommandPoolCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pCommandPool: ptr VkCommandPool): VkResult {.cdecl, importc.}
+  proc vkDestroyCommandPool*(device: VkDevice; commandPool: VkCommandPool; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkResetCommandPool*(device: VkDevice; commandPool: VkCommandPool; flags: VkCommandPoolResetFlags): VkResult {.cdecl, importc.}
   proc vkAllocateCommandBuffers*(device: VkDevice; pAllocateInfo: ptr VkCommandBufferAllocateInfo; pCommandBuffers: ptr VkCommandBuffer): VkResult {.cdecl, importc.}
   proc vkFreeCommandBuffers*(device: VkDevice; commandPool: VkCommandPool; commandBufferCount: uint32; pCommandBuffers: ptr VkCommandBuffer) {.cdecl, importc.}
@@ -3930,10 +3930,10 @@ type
   PFNVkgetphysicaldevicesparseimageformatproperties2* = proc (physicalDevice: VkPhysicalDevice; pFormatInfo: ptr VkPhysicalDeviceSparseImageFormatInfo2; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties2) {.cdecl.}
   PFNVktrimcommandpool* = proc (device: VkDevice; commandPool: VkCommandPool; flags: VkCommandPoolTrimFlags) {.cdecl.}
   PFNVkgetdevicequeue2* = proc (device: VkDevice; pQueueInfo: ptr VkDeviceQueueInfo2; pQueue: ptr VkQueue) {.cdecl.}
-  PFNVkcreatesamplerycbcrconversion* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl.}
-  PFNVkdestroysamplerycbcrconversion* = proc (device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreatedescriptorupdatetemplate* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl.}
-  PFNVkdestroydescriptorupdatetemplate* = proc (device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatesamplerycbcrconversion* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl.}
+  PFNVkdestroysamplerycbcrconversion* = proc (device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreatedescriptorupdatetemplate* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl.}
+  PFNVkdestroydescriptorupdatetemplate* = proc (device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkupdatedescriptorsetwithtemplate* = proc (device: VkDevice; descriptorSet: VkDescriptorSet; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pData: pointer) {.cdecl.}
   PFNVkgetphysicaldeviceexternalbufferproperties* = proc (physicalDevice: VkPhysicalDevice; pExternalBufferInfo: ptr VkPhysicalDeviceExternalBufferInfo; pExternalBufferProperties: ptr VkExternalBufferProperties) {.cdecl.}
   PFNVkgetphysicaldeviceexternalfenceproperties* = proc (physicalDevice: VkPhysicalDevice; pExternalFenceInfo: ptr VkPhysicalDeviceExternalFenceInfo; pExternalFenceProperties: ptr VkExternalFenceProperties) {.cdecl.}
@@ -4131,10 +4131,10 @@ when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceSparseImageFormatProperties2*(physicalDevice: VkPhysicalDevice; pFormatInfo: ptr VkPhysicalDeviceSparseImageFormatInfo2; pPropertyCount: ptr uint32; pProperties: ptr VkSparseImageFormatProperties2) {.cdecl, importc.}
   proc vkTrimCommandPool*(device: VkDevice; commandPool: VkCommandPool; flags: VkCommandPoolTrimFlags) {.cdecl, importc.}
   proc vkGetDeviceQueue2*(device: VkDevice; pQueueInfo: ptr VkDeviceQueueInfo2; pQueue: ptr VkQueue) {.cdecl, importc.}
-  proc vkCreateSamplerYcbcrConversion*(device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl, importc.}
-  proc vkDestroySamplerYcbcrConversion*(device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateDescriptorUpdateTemplate*(device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl, importc.}
-  proc vkDestroyDescriptorUpdateTemplate*(device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateSamplerYcbcrConversion*(device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl, importc.}
+  proc vkDestroySamplerYcbcrConversion*(device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateDescriptorUpdateTemplate*(device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl, importc.}
+  proc vkDestroyDescriptorUpdateTemplate*(device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkUpdateDescriptorSetWithTemplate*(device: VkDevice; descriptorSet: VkDescriptorSet; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pData: pointer) {.cdecl, importc.}
   proc vkGetPhysicalDeviceExternalBufferProperties*(physicalDevice: VkPhysicalDevice; pExternalBufferInfo: ptr VkPhysicalDeviceExternalBufferInfo; pExternalBufferProperties: ptr VkExternalBufferProperties) {.cdecl, importc.}
   proc vkGetPhysicalDeviceExternalFenceProperties*(physicalDevice: VkPhysicalDevice; pExternalFenceInfo: ptr VkPhysicalDeviceExternalFenceInfo; pExternalFenceProperties: ptr VkExternalFenceProperties) {.cdecl, importc.}
@@ -4173,7 +4173,7 @@ type
     format*: VkFormat
     colorSpace*: VkColorSpaceKHR
 
-  PFNVkdestroysurfacekhr* = proc (instance: VkInstance; surface: VkSurfaceKHR; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkdestroysurfacekhr* = proc (instance: VkInstance; surface: VkSurfaceKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetphysicaldevicesurfacesupportkhr* = proc (physicalDevice: VkPhysicalDevice; queueFamilyIndex: uint32; surface: VkSurfaceKHR; pSupported: ptr VkBool32): VkResult {.cdecl.}
   PFNVkgetphysicaldevicesurfacecapabilitieskhr* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceCapabilities: ptr VkSurfaceCapabilitiesKHR): VkResult {.cdecl.}
   PFNVkgetphysicaldevicesurfaceformatskhr* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceFormatCount: ptr uint32; pSurfaceFormats: ptr VkSurfaceFormatKHR): VkResult {.cdecl.}
@@ -4234,7 +4234,7 @@ const
   vkCompositeAlphaFlagBitsMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkCompositeAlphaFlagBitsKHR
 
 when not defined(vkNoPrototypes):
-  proc vkDestroySurfaceKHR*(instance: VkInstance; surface: VkSurfaceKHR; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkDestroySurfaceKHR*(instance: VkInstance; surface: VkSurfaceKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetPhysicalDeviceSurfaceSupportKHR*(physicalDevice: VkPhysicalDevice; queueFamilyIndex: uint32; surface: VkSurfaceKHR; pSupported: ptr VkBool32): VkResult {.cdecl, importc.}
   proc vkGetPhysicalDeviceSurfaceCapabilitiesKHR*(physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceCapabilities: ptr VkSurfaceCapabilitiesKHR): VkResult {.cdecl, importc.}
   proc vkGetPhysicalDeviceSurfaceFormatsKHR*(physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceFormatCount: ptr uint32; pSurfaceFormats: ptr VkSurfaceFormatKHR): VkResult {.cdecl, importc.}
@@ -4322,8 +4322,8 @@ type
     pNext*: pointer
     modes*: VkDeviceGroupPresentModeFlagsKHR
 
-  PFNVkcreateswapchainkhr* = proc (device: VkDevice; pCreateInfo: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSwapchain: ptr VkSwapchainKHR): VkResult {.cdecl.}
-  PFNVkdestroyswapchainkhr* = proc (device: VkDevice; swapchain: VkSwapchainKHR; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateswapchainkhr* = proc (device: VkDevice; pCreateInfo: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSwapchain: ptr VkSwapchainKHR): VkResult {.cdecl.}
+  PFNVkdestroyswapchainkhr* = proc (device: VkDevice; swapchain: VkSwapchainKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetswapchainimageskhr* = proc (device: VkDevice; swapchain: VkSwapchainKHR; pSwapchainImageCount: ptr uint32; pSwapchainImages: ptr VkImage): VkResult {.cdecl.}
   PFNVkacquirenextimagekhr* = proc (device: VkDevice; swapchain: VkSwapchainKHR; timeout: uint64; semaphore: VkSemaphore; fence: VkFence; pImageIndex: ptr uint32): VkResult {.cdecl.}
   PFNVkqueuepresentkhr* = proc (queue: VkQueue; pPresentInfo: ptr VkPresentInfoKHR): VkResult {.cdecl.}
@@ -4346,8 +4346,8 @@ const
   vkDeviceGroupPresentModeFlagBitsMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkDeviceGroupPresentModeFlagBitsKHR
 
 when not defined(vkNoPrototypes):
-  proc vkCreateSwapchainKHR*(device: VkDevice; pCreateInfo: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSwapchain: ptr VkSwapchainKHR): VkResult {.cdecl, importc.}
-  proc vkDestroySwapchainKHR*(device: VkDevice; swapchain: VkSwapchainKHR; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateSwapchainKHR*(device: VkDevice; pCreateInfo: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSwapchain: ptr VkSwapchainKHR): VkResult {.cdecl, importc.}
+  proc vkDestroySwapchainKHR*(device: VkDevice; swapchain: VkSwapchainKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetSwapchainImagesKHR*(device: VkDevice; swapchain: VkSwapchainKHR; pSwapchainImageCount: ptr uint32; pSwapchainImages: ptr VkImage): VkResult {.cdecl, importc.}
   proc vkAcquireNextImageKHR*(device: VkDevice; swapchain: VkSwapchainKHR; timeout: uint64; semaphore: VkSemaphore; fence: VkFence; pImageIndex: ptr uint32): VkResult {.cdecl, importc.}
   proc vkQueuePresentKHR*(queue: VkQueue; pPresentInfo: ptr VkPresentInfoKHR): VkResult {.cdecl, importc.}
@@ -4425,9 +4425,9 @@ type
   PFNVkgetphysicaldevicedisplayplanepropertieskhr* = proc (physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayPlanePropertiesKHR): VkResult {.cdecl.}
   PFNVkgetdisplayplanesupporteddisplayskhr* = proc (physicalDevice: VkPhysicalDevice; planeIndex: uint32; pDisplayCount: ptr uint32; pDisplays: ptr VkDisplayKHR): VkResult {.cdecl.}
   PFNVkgetdisplaymodepropertieskhr* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayModePropertiesKHR): VkResult {.cdecl.}
-  PFNVkcreatedisplaymodekhr* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pCreateInfo: ptr VkDisplayModeCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pMode: ptr VkDisplayModeKHR): VkResult {.cdecl.}
+  PFNVkcreatedisplaymodekhr* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pCreateInfo: ptr VkDisplayModeCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pMode: ptr VkDisplayModeKHR): VkResult {.cdecl.}
   PFNVkgetdisplayplanecapabilitieskhr* = proc (physicalDevice: VkPhysicalDevice; mode: VkDisplayModeKHR; planeIndex: uint32; pCapabilities: ptr VkDisplayPlaneCapabilitiesKHR): VkResult {.cdecl.}
-  PFNVkcreatedisplayplanesurfacekhr* = proc (instance: VkInstance; pCreateInfo: ptr VkDisplaySurfaceCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl.}
+  PFNVkcreatedisplayplanesurfacekhr* = proc (instance: VkInstance; pCreateInfo: ptr VkDisplaySurfaceCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl.}
 
 const
   vkDisplayPlaneAlphaOpaqueBitKhr* {.used.} = 0x00000001.VkDisplayPlaneAlphaFlagBitsKHR
@@ -4441,9 +4441,9 @@ when not defined(vkNoPrototypes):
   proc vkGetPhysicalDeviceDisplayPlanePropertiesKHR*(physicalDevice: VkPhysicalDevice; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayPlanePropertiesKHR): VkResult {.cdecl, importc.}
   proc vkGetDisplayPlaneSupportedDisplaysKHR*(physicalDevice: VkPhysicalDevice; planeIndex: uint32; pDisplayCount: ptr uint32; pDisplays: ptr VkDisplayKHR): VkResult {.cdecl, importc.}
   proc vkGetDisplayModePropertiesKHR*(physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pPropertyCount: ptr uint32; pProperties: ptr VkDisplayModePropertiesKHR): VkResult {.cdecl, importc.}
-  proc vkCreateDisplayModeKHR*(physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pCreateInfo: ptr VkDisplayModeCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pMode: ptr VkDisplayModeKHR): VkResult {.cdecl, importc.}
+  proc vkCreateDisplayModeKHR*(physicalDevice: VkPhysicalDevice; display: VkDisplayKHR; pCreateInfo: ptr VkDisplayModeCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pMode: ptr VkDisplayModeKHR): VkResult {.cdecl, importc.}
   proc vkGetDisplayPlaneCapabilitiesKHR*(physicalDevice: VkPhysicalDevice; mode: VkDisplayModeKHR; planeIndex: uint32; pCapabilities: ptr VkDisplayPlaneCapabilitiesKHR): VkResult {.cdecl, importc.}
-  proc vkCreateDisplayPlaneSurfaceKHR*(instance: VkInstance; pCreateInfo: ptr VkDisplaySurfaceCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl, importc.}
+  proc vkCreateDisplayPlaneSurfaceKHR*(instance: VkInstance; pCreateInfo: ptr VkDisplaySurfaceCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl, importc.}
 const
   vkKhrDisplaySwapchain* = 1
   vkKhrDisplaySwapchainSpecVersion* = 10
@@ -4457,10 +4457,10 @@ type
     dstRect*: VkRect2D
     persistent*: VkBool32
 
-  PFNVkcreatesharedswapchainskhr* = proc (device: VkDevice; swapchainCount: uint32; pCreateInfos: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSwapchains: ptr VkSwapchainKHR): VkResult {.cdecl.}
+  PFNVkcreatesharedswapchainskhr* = proc (device: VkDevice; swapchainCount: uint32; pCreateInfos: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSwapchains: ptr VkSwapchainKHR): VkResult {.cdecl.}
 
 when not defined(vkNoPrototypes):
-  proc vkCreateSharedSwapchainsKHR*(device: VkDevice; swapchainCount: uint32; pCreateInfos: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks; pSwapchains: ptr VkSwapchainKHR): VkResult {.cdecl, importc.}
+  proc vkCreateSharedSwapchainsKHR*(device: VkDevice; swapchainCount: uint32; pCreateInfos: ptr VkSwapchainCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pSwapchains: ptr VkSwapchainKHR): VkResult {.cdecl, importc.}
 const
   vkKhrSamplerMirrorClampoEdge* = 1
   vkKhrSamplerMirrorClampToEdgeSpecVersion* = 3
@@ -4746,13 +4746,13 @@ type
   VkDescriptorUpdateTemplateCreateFlagsKHR* = VkDescriptorUpdateTemplateCreateFlags
   VkDescriptorUpdateTemplateEntryKHR* = VkDescriptorUpdateTemplateEntry
   VkDescriptorUpdateTemplateCreateInfoKHR* = VkDescriptorUpdateTemplateCreateInfo
-  PFNVkcreatedescriptorupdatetemplatekhr* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl.}
-  PFNVkdestroydescriptorupdatetemplatekhr* = proc (device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatedescriptorupdatetemplatekhr* = proc (device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl.}
+  PFNVkdestroydescriptorupdatetemplatekhr* = proc (device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkupdatedescriptorsetwithtemplatekhr* = proc (device: VkDevice; descriptorSet: VkDescriptorSet; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pData: pointer) {.cdecl.}
 
 when not defined(vkNoPrototypes):
-  proc vkCreateDescriptorUpdateTemplateKHR*(device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl, importc.}
-  proc vkDestroyDescriptorUpdateTemplateKHR*(device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateDescriptorUpdateTemplateKHR*(device: VkDevice; pCreateInfo: ptr VkDescriptorUpdateTemplateCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pDescriptorUpdateTemplate: ptr VkDescriptorUpdateTemplate): VkResult {.cdecl, importc.}
+  proc vkDestroyDescriptorUpdateTemplateKHR*(device: VkDevice; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkUpdateDescriptorSetWithTemplateKHR*(device: VkDevice; descriptorSet: VkDescriptorSet; descriptorUpdateTemplate: VkDescriptorUpdateTemplate; pData: pointer) {.cdecl, importc.}
 const
   vkKhrImagelessFramebuffer* = 1
@@ -4864,13 +4864,13 @@ type
     sType*: VkStructureType
     pNext*: pointer
 
-  PFNVkcreaterenderpass2khr* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
+  PFNVkcreaterenderpass2khr* = proc (device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks = nil; pRenderPass: ptr VkRenderPass): VkResult {.cdecl.}
   PFNVkcmdbeginrenderpass2khr* = proc (commandBuffer: VkCommandBuffer; pRenderPassBegin: ptr VkRenderPassBeginInfo; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR) {.cdecl.}
   PFNVkcmdnextsubpass2khr* = proc (commandBuffer: VkCommandBuffer; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
   PFNVkcmdendrenderpass2khr* = proc (commandBuffer: VkCommandBuffer; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl.}
 
 when not defined(vkNoPrototypes):
-  proc vkCreateRenderPass2KHR*(device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks; pRenderPass: ptr VkRenderPass): VkResult {.cdecl, importc.}
+  proc vkCreateRenderPass2KHR*(device: VkDevice; pCreateInfo: ptr VkRenderPassCreateInfo2KHR; pAllocator: ptr VkAllocationCallbacks = nil; pRenderPass: ptr VkRenderPass): VkResult {.cdecl, importc.}
   proc vkCmdBeginRenderPass2KHR*(commandBuffer: VkCommandBuffer; pRenderPassBegin: ptr VkRenderPassBeginInfo; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR) {.cdecl, importc.}
   proc vkCmdNextSubpass2KHR*(commandBuffer: VkCommandBuffer; pSubpassBeginInfo: ptr VkSubpassBeginInfoKHR; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl, importc.}
   proc vkCmdEndRenderPass2KHR*(commandBuffer: VkCommandBuffer; pSubpassEndInfo: ptr VkSubpassEndInfoKHR) {.cdecl, importc.}
@@ -5099,12 +5099,12 @@ type
   VkImagePlaneMemoryRequirementsInfoKHR* = VkImagePlaneMemoryRequirementsInfo
   VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR* = VkPhysicalDeviceSamplerYcbcrConversionFeatures
   VkSamplerYcbcrConversionImageFormatPropertiesKHR* = VkSamplerYcbcrConversionImageFormatProperties
-  PFNVkcreatesamplerycbcrconversionkhr* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl.}
-  PFNVkdestroysamplerycbcrconversionkhr* = proc (device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatesamplerycbcrconversionkhr* = proc (device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl.}
+  PFNVkdestroysamplerycbcrconversionkhr* = proc (device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
 
 when not defined(vkNoPrototypes):
-  proc vkCreateSamplerYcbcrConversionKHR*(device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl, importc.}
-  proc vkDestroySamplerYcbcrConversionKHR*(device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateSamplerYcbcrConversionKHR*(device: VkDevice; pCreateInfo: ptr VkSamplerYcbcrConversionCreateInfo; pAllocator: ptr VkAllocationCallbacks = nil; pYcbcrConversion: ptr VkSamplerYcbcrConversion): VkResult {.cdecl, importc.}
+  proc vkDestroySamplerYcbcrConversionKHR*(device: VkDevice; ycbcrConversion: VkSamplerYcbcrConversion; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
 const
   vkKhrBindMemory2* = 1
   vkKhrBindMemory2SpecVersion* = 1
@@ -5417,8 +5417,8 @@ type
     pfnCallback*: PFNVkdebugreportcallbackext
     pUserData*: pointer
 
-  PFNVkcreatedebugreportcallbackext* = proc (instance: VkInstance; pCreateInfo: ptr VkDebugReportCallbackCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pCallback: ptr VkDebugReportCallbackEXT): VkResult {.cdecl.}
-  PFNVkdestroydebugreportcallbackext* = proc (instance: VkInstance; callback: VkDebugReportCallbackEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatedebugreportcallbackext* = proc (instance: VkInstance; pCreateInfo: ptr VkDebugReportCallbackCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pCallback: ptr VkDebugReportCallbackEXT): VkResult {.cdecl.}
+  PFNVkdestroydebugreportcallbackext* = proc (instance: VkInstance; callback: VkDebugReportCallbackEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkdebugreportmessageext* = proc (instance: VkInstance; flags: VkDebugReportFlagsEXT; objectType: VkDebugReportObjectTypeEXT; `object`: uint64; location: csize_t; messageCode: int32; pLayerPrefix: cstring; pMessage: cstring) {.cdecl.}
 
 const
@@ -5477,8 +5477,8 @@ const
   vkDebugReportFlagBitsMaxEnumExt* {.used.} = 0x7FFFFFFF.VkDebugReportFlagBitsEXT
 
 when not defined(vkNoPrototypes):
-  proc vkCreateDebugReportCallbackEXT*(instance: VkInstance; pCreateInfo: ptr VkDebugReportCallbackCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pCallback: ptr VkDebugReportCallbackEXT): VkResult {.cdecl, importc.}
-  proc vkDestroyDebugReportCallbackEXT*(instance: VkInstance; callback: VkDebugReportCallbackEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateDebugReportCallbackEXT*(instance: VkInstance; pCreateInfo: ptr VkDebugReportCallbackCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pCallback: ptr VkDebugReportCallbackEXT): VkResult {.cdecl, importc.}
+  proc vkDestroyDebugReportCallbackEXT*(instance: VkInstance; callback: VkDebugReportCallbackEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkDebugReportMessageEXT*(instance: VkInstance; flags: VkDebugReportFlagsEXT; objectType: VkDebugReportObjectTypeEXT; `object`: uint64; location: csize_t; messageCode: int32; pLayerPrefix: cstring; pMessage: cstring) {.cdecl, importc.}
 const
   vkNvGlslShader* = 1
@@ -5995,10 +5995,10 @@ type
 
   PFNVkcmdprocesscommandsnvx* = proc (commandBuffer: VkCommandBuffer; pProcessCommandsInfo: ptr VkCmdProcessCommandsInfoNVX) {.cdecl.}
   PFNVkcmdreservespaceforcommandsnvx* = proc (commandBuffer: VkCommandBuffer; pReserveSpaceInfo: ptr VkCmdReserveSpaceForCommandsInfoNVX) {.cdecl.}
-  PFNVkcreateindirectcommandslayoutnvx* = proc (device: VkDevice; pCreateInfo: ptr VkIndirectCommandsLayoutCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks; pIndirectCommandsLayout: ptr VkIndirectCommandsLayoutNVX): VkResult {.cdecl.}
-  PFNVkdestroyindirectcommandslayoutnvx* = proc (device: VkDevice; indirectCommandsLayout: VkIndirectCommandsLayoutNVX; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
-  PFNVkcreateobjecttablenvx* = proc (device: VkDevice; pCreateInfo: ptr VkObjectTableCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks; pObjectTable: ptr VkObjectTableNVX): VkResult {.cdecl.}
-  PFNVkdestroyobjecttablenvx* = proc (device: VkDevice; objectTable: VkObjectTableNVX; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateindirectcommandslayoutnvx* = proc (device: VkDevice; pCreateInfo: ptr VkIndirectCommandsLayoutCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks = nil; pIndirectCommandsLayout: ptr VkIndirectCommandsLayoutNVX): VkResult {.cdecl.}
+  PFNVkdestroyindirectcommandslayoutnvx* = proc (device: VkDevice; indirectCommandsLayout: VkIndirectCommandsLayoutNVX; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcreateobjecttablenvx* = proc (device: VkDevice; pCreateInfo: ptr VkObjectTableCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks = nil; pObjectTable: ptr VkObjectTableNVX): VkResult {.cdecl.}
+  PFNVkdestroyobjecttablenvx* = proc (device: VkDevice; objectTable: VkObjectTableNVX; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkregisterobjectsnvx* = proc (device: VkDevice; objectTable: VkObjectTableNVX; objectCount: uint32; ppObjectTableEntries: ptr ptr VkObjectTableEntryNVX; pObjectIndices: ptr uint32): VkResult {.cdecl.}
   PFNVkunregisterobjectsnvx* = proc (device: VkDevice; objectTable: VkObjectTableNVX; objectCount: uint32; pObjectEntryTypes: ptr VkObjectEntryTypeNVX; pObjectIndices: ptr uint32): VkResult {.cdecl.}
   PFNVkgetphysicaldevicegeneratedcommandspropertiesnvx* = proc (physicalDevice: VkPhysicalDevice; pFeatures: ptr VkDeviceGeneratedCommandsFeaturesNVX; pLimits: ptr VkDeviceGeneratedCommandsLimitsNVX) {.cdecl.}
@@ -6043,10 +6043,10 @@ const
 when not defined(vkNoPrototypes):
   proc vkCmdProcessCommandsNVX*(commandBuffer: VkCommandBuffer; pProcessCommandsInfo: ptr VkCmdProcessCommandsInfoNVX) {.cdecl, importc.}
   proc vkCmdReserveSpaceForCommandsNVX*(commandBuffer: VkCommandBuffer; pReserveSpaceInfo: ptr VkCmdReserveSpaceForCommandsInfoNVX) {.cdecl, importc.}
-  proc vkCreateIndirectCommandsLayoutNVX*(device: VkDevice; pCreateInfo: ptr VkIndirectCommandsLayoutCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks; pIndirectCommandsLayout: ptr VkIndirectCommandsLayoutNVX): VkResult {.cdecl, importc.}
-  proc vkDestroyIndirectCommandsLayoutNVX*(device: VkDevice; indirectCommandsLayout: VkIndirectCommandsLayoutNVX; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
-  proc vkCreateObjectTableNVX*(device: VkDevice; pCreateInfo: ptr VkObjectTableCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks; pObjectTable: ptr VkObjectTableNVX): VkResult {.cdecl, importc.}
-  proc vkDestroyObjectTableNVX*(device: VkDevice; objectTable: VkObjectTableNVX; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateIndirectCommandsLayoutNVX*(device: VkDevice; pCreateInfo: ptr VkIndirectCommandsLayoutCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks = nil; pIndirectCommandsLayout: ptr VkIndirectCommandsLayoutNVX): VkResult {.cdecl, importc.}
+  proc vkDestroyIndirectCommandsLayoutNVX*(device: VkDevice; indirectCommandsLayout: VkIndirectCommandsLayoutNVX; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCreateObjectTableNVX*(device: VkDevice; pCreateInfo: ptr VkObjectTableCreateInfoNVX; pAllocator: ptr VkAllocationCallbacks = nil; pObjectTable: ptr VkObjectTableNVX): VkResult {.cdecl, importc.}
+  proc vkDestroyObjectTableNVX*(device: VkDevice; objectTable: VkObjectTableNVX; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkRegisterObjectsNVX*(device: VkDevice; objectTable: VkObjectTableNVX; objectCount: uint32; ppObjectTableEntries: ptr ptr VkObjectTableEntryNVX; pObjectIndices: ptr uint32): VkResult {.cdecl, importc.}
   proc vkUnregisterObjectsNVX*(device: VkDevice; objectTable: VkObjectTableNVX; objectCount: uint32; pObjectEntryTypes: ptr VkObjectEntryTypeNVX; pObjectIndices: ptr uint32): VkResult {.cdecl, importc.}
   proc vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX*(physicalDevice: VkPhysicalDevice; pFeatures: ptr VkDeviceGeneratedCommandsFeaturesNVX; pLimits: ptr VkDeviceGeneratedCommandsLimitsNVX) {.cdecl, importc.}
@@ -6142,8 +6142,8 @@ type
     surfaceCounters*: VkSurfaceCounterFlagsEXT
 
   PFNVkdisplaypowercontrolext* = proc (device: VkDevice; display: VkDisplayKHR; pDisplayPowerInfo: ptr VkDisplayPowerInfoEXT): VkResult {.cdecl.}
-  PFNVkregisterdeviceeventext* = proc (device: VkDevice; pDeviceEventInfo: ptr VkDeviceEventInfoEXT; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl.}
-  PFNVkregisterdisplayeventext* = proc (device: VkDevice; display: VkDisplayKHR; pDisplayEventInfo: ptr VkDisplayEventInfoEXT; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl.}
+  PFNVkregisterdeviceeventext* = proc (device: VkDevice; pDeviceEventInfo: ptr VkDeviceEventInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl.}
+  PFNVkregisterdisplayeventext* = proc (device: VkDevice; display: VkDisplayKHR; pDisplayEventInfo: ptr VkDisplayEventInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl.}
   PFNVkgetswapchaincounterext* = proc (device: VkDevice; swapchain: VkSwapchainKHR; counter: VkSurfaceCounterFlagBitsEXT; pCounterValue: ptr uint64): VkResult {.cdecl.}
 
 const
@@ -6171,8 +6171,8 @@ const
 
 when not defined(vkNoPrototypes):
   proc vkDisplayPowerControlEXT*(device: VkDevice; display: VkDisplayKHR; pDisplayPowerInfo: ptr VkDisplayPowerInfoEXT): VkResult {.cdecl, importc.}
-  proc vkRegisterDeviceEventEXT*(device: VkDevice; pDeviceEventInfo: ptr VkDeviceEventInfoEXT; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl, importc.}
-  proc vkRegisterDisplayEventEXT*(device: VkDevice; display: VkDisplayKHR; pDisplayEventInfo: ptr VkDisplayEventInfoEXT; pAllocator: ptr VkAllocationCallbacks; pFence: ptr VkFence): VkResult {.cdecl, importc.}
+  proc vkRegisterDeviceEventEXT*(device: VkDevice; pDeviceEventInfo: ptr VkDeviceEventInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl, importc.}
+  proc vkRegisterDisplayEventEXT*(device: VkDevice; display: VkDisplayKHR; pDisplayEventInfo: ptr VkDisplayEventInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pFence: ptr VkFence): VkResult {.cdecl, importc.}
   proc vkGetSwapchainCounterEXT*(device: VkDevice; swapchain: VkSwapchainKHR; counter: VkSurfaceCounterFlagBitsEXT; pCounterValue: ptr uint64): VkResult {.cdecl, importc.}
 const
   vkGoogleDisplayiming* = 1
@@ -6460,8 +6460,8 @@ type
   PFNVkcmdbegindebugutilslabelext* = proc (commandBuffer: VkCommandBuffer; pLabelInfo: ptr VkDebugUtilsLabelEXT) {.cdecl.}
   PFNVkcmdenddebugutilslabelext* = proc (commandBuffer: VkCommandBuffer) {.cdecl.}
   PFNVkcmdinsertdebugutilslabelext* = proc (commandBuffer: VkCommandBuffer; pLabelInfo: ptr VkDebugUtilsLabelEXT) {.cdecl.}
-  PFNVkcreatedebugutilsmessengerext* = proc (instance: VkInstance; pCreateInfo: ptr VkDebugUtilsMessengerCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pMessenger: ptr VkDebugUtilsMessengerEXT): VkResult {.cdecl.}
-  PFNVkdestroydebugutilsmessengerext* = proc (instance: VkInstance; messenger: VkDebugUtilsMessengerEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatedebugutilsmessengerext* = proc (instance: VkInstance; pCreateInfo: ptr VkDebugUtilsMessengerCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pMessenger: ptr VkDebugUtilsMessengerEXT): VkResult {.cdecl.}
+  PFNVkdestroydebugutilsmessengerext* = proc (instance: VkInstance; messenger: VkDebugUtilsMessengerEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVksubmitdebugutilsmessageext* = proc (instance: VkInstance; messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT; messageTypes: VkDebugUtilsMessageTypeFlagsEXT; pCallbackData: ptr VkDebugUtilsMessengerCallbackDataEXT) {.cdecl.}
 
 const
@@ -6486,8 +6486,8 @@ when not defined(vkNoPrototypes):
   proc vkCmdBeginDebugUtilsLabelEXT*(commandBuffer: VkCommandBuffer; pLabelInfo: ptr VkDebugUtilsLabelEXT) {.cdecl, importc.}
   proc vkCmdEndDebugUtilsLabelEXT*(commandBuffer: VkCommandBuffer) {.cdecl, importc.}
   proc vkCmdInsertDebugUtilsLabelEXT*(commandBuffer: VkCommandBuffer; pLabelInfo: ptr VkDebugUtilsLabelEXT) {.cdecl, importc.}
-  proc vkCreateDebugUtilsMessengerEXT*(instance: VkInstance; pCreateInfo: ptr VkDebugUtilsMessengerCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pMessenger: ptr VkDebugUtilsMessengerEXT): VkResult {.cdecl, importc.}
-  proc vkDestroyDebugUtilsMessengerEXT*(instance: VkInstance; messenger: VkDebugUtilsMessengerEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateDebugUtilsMessengerEXT*(instance: VkInstance; pCreateInfo: ptr VkDebugUtilsMessengerCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pMessenger: ptr VkDebugUtilsMessengerEXT): VkResult {.cdecl, importc.}
+  proc vkDestroyDebugUtilsMessengerEXT*(instance: VkInstance; messenger: VkDebugUtilsMessengerEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkSubmitDebugUtilsMessageEXT*(instance: VkInstance; messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT; messageTypes: VkDebugUtilsMessageTypeFlagsEXT; pCallbackData: ptr VkDebugUtilsMessengerCallbackDataEXT) {.cdecl, importc.}
 const
   vkExtSamplerFilterMinmax* = 1
@@ -6800,8 +6800,8 @@ type
     pNext*: pointer
     validationCache*: VkValidationCacheEXT
 
-  PFNVkcreatevalidationcacheext* = proc (device: VkDevice; pCreateInfo: ptr VkValidationCacheCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pValidationCache: ptr VkValidationCacheEXT): VkResult {.cdecl.}
-  PFNVkdestroyvalidationcacheext* = proc (device: VkDevice; validationCache: VkValidationCacheEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreatevalidationcacheext* = proc (device: VkDevice; pCreateInfo: ptr VkValidationCacheCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pValidationCache: ptr VkValidationCacheEXT): VkResult {.cdecl.}
+  PFNVkdestroyvalidationcacheext* = proc (device: VkDevice; validationCache: VkValidationCacheEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkmergevalidationcachesext* = proc (device: VkDevice; dstCache: VkValidationCacheEXT; srcCacheCount: uint32; pSrcCaches: ptr VkValidationCacheEXT): VkResult {.cdecl.}
   PFNVkgetvalidationcachedataext* = proc (device: VkDevice; validationCache: VkValidationCacheEXT; pDataSize: ptr csize_t; pData: pointer): VkResult {.cdecl.}
 
@@ -6813,8 +6813,8 @@ const
   vkValidationCacheHeaderVersionMaxEnumExt* {.used.} = 0x7FFFFFFF.VkValidationCacheHeaderVersionEXT
 
 when not defined(vkNoPrototypes):
-  proc vkCreateValidationCacheEXT*(device: VkDevice; pCreateInfo: ptr VkValidationCacheCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pValidationCache: ptr VkValidationCacheEXT): VkResult {.cdecl, importc.}
-  proc vkDestroyValidationCacheEXT*(device: VkDevice; validationCache: VkValidationCacheEXT; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateValidationCacheEXT*(device: VkDevice; pCreateInfo: ptr VkValidationCacheCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pValidationCache: ptr VkValidationCacheEXT): VkResult {.cdecl, importc.}
+  proc vkDestroyValidationCacheEXT*(device: VkDevice; validationCache: VkValidationCacheEXT; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkMergeValidationCachesEXT*(device: VkDevice; dstCache: VkValidationCacheEXT; srcCacheCount: uint32; pSrcCaches: ptr VkValidationCacheEXT): VkResult {.cdecl, importc.}
   proc vkGetValidationCacheDataEXT*(device: VkDevice; validationCache: VkValidationCacheEXT; pDataSize: ptr csize_t; pData: pointer): VkResult {.cdecl, importc.}
 const
@@ -7117,14 +7117,14 @@ type
     maxTriangleCount*: uint64
     maxDescriptorSetAccelerationStructures*: uint32
 
-  PFNVkcreateaccelerationstructurenv* = proc (device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl.}
-  PFNVkdestroyaccelerationstructurenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks) {.cdecl.}
+  PFNVkcreateaccelerationstructurenv* = proc (device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl.}
+  PFNVkdestroyaccelerationstructurenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetaccelerationstructurememoryrequirementsnv* = proc (device: VkDevice; pInfo: ptr VkAccelerationStructureMemoryRequirementsInfoNV; pMemoryRequirements: ptr VkMemoryRequirements2KHR) {.cdecl.}
   PFNVkbindaccelerationstructurememorynv* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoNV): VkResult {.cdecl.}
   PFNVkcmdbuildaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl.}
   PFNVkcmdcopyaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; mode: VkCopyAccelerationStructureModeNV) {.cdecl.}
   PFNVkcmdtraceraysnv* = proc (commandBuffer: VkCommandBuffer; raygenShaderBindingTableBuffer: VkBuffer; raygenShaderBindingOffset: VkDeviceSize; missShaderBindingTableBuffer: VkBuffer; missShaderBindingOffset: VkDeviceSize; missShaderBindingStride: VkDeviceSize; hitShaderBindingTableBuffer: VkBuffer; hitShaderBindingOffset: VkDeviceSize; hitShaderBindingStride: VkDeviceSize; callableShaderBindingTableBuffer: VkBuffer; callableShaderBindingOffset: VkDeviceSize; callableShaderBindingStride: VkDeviceSize; width: uint32; height: uint32; depth: uint32) {.cdecl.}
-  PFNVkcreateraytracingpipelinesnv* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
+  PFNVkcreateraytracingpipelinesnv* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
   PFNVkgetraytracingshadergrouphandlesnv* = proc (device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
   PFNVkgetaccelerationstructurehandlenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureNV; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
   PFNVkcmdwriteaccelerationstructurespropertiesnv* = proc (commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureNV; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl.}
@@ -7193,14 +7193,14 @@ const
   vkBuildAccelerationStructureFlagBitsMaxEnumNv* {.used.} = 0x7FFFFFFF.VkBuildAccelerationStructureFlagBitsNV
 
 when not defined(vkNoPrototypes):
-  proc vkCreateAccelerationStructureNV*(device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl, importc.}
-  proc vkDestroyAccelerationStructureNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks) {.cdecl, importc.}
+  proc vkCreateAccelerationStructureNV*(device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl, importc.}
+  proc vkDestroyAccelerationStructureNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetAccelerationStructureMemoryRequirementsNV*(device: VkDevice; pInfo: ptr VkAccelerationStructureMemoryRequirementsInfoNV; pMemoryRequirements: ptr VkMemoryRequirements2KHR) {.cdecl, importc.}
   proc vkBindAccelerationStructureMemoryNV*(device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoNV): VkResult {.cdecl, importc.}
   proc vkCmdBuildAccelerationStructureNV*(commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl, importc.}
   proc vkCmdCopyAccelerationStructureNV*(commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; mode: VkCopyAccelerationStructureModeNV) {.cdecl, importc.}
   proc vkCmdTraceRaysNV*(commandBuffer: VkCommandBuffer; raygenShaderBindingTableBuffer: VkBuffer; raygenShaderBindingOffset: VkDeviceSize; missShaderBindingTableBuffer: VkBuffer; missShaderBindingOffset: VkDeviceSize; missShaderBindingStride: VkDeviceSize; hitShaderBindingTableBuffer: VkBuffer; hitShaderBindingOffset: VkDeviceSize; hitShaderBindingStride: VkDeviceSize; callableShaderBindingTableBuffer: VkBuffer; callableShaderBindingOffset: VkDeviceSize; callableShaderBindingStride: VkDeviceSize; width: uint32; height: uint32; depth: uint32) {.cdecl, importc.}
-  proc vkCreateRayTracingPipelinesNV*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
+  proc vkCreateRayTracingPipelinesNV*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
   proc vkGetRayTracingShaderGroupHandlesNV*(device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
   proc vkGetAccelerationStructureHandleNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureNV; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
   proc vkCmdWriteAccelerationStructuresPropertiesNV*(commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureNV; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl, importc.}
@@ -8102,10 +8102,10 @@ type
     pNext*: pointer
     flags*: VkHeadlessSurfaceCreateFlagsEXT
 
-  PFNVkcreateheadlesssurfaceext* = proc (instance: VkInstance; pCreateInfo: ptr VkHeadlessSurfaceCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl.}
+  PFNVkcreateheadlesssurfaceext* = proc (instance: VkInstance; pCreateInfo: ptr VkHeadlessSurfaceCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl.}
 
 when not defined(vkNoPrototypes):
-  proc vkCreateHeadlessSurfaceEXT*(instance: VkInstance; pCreateInfo: ptr VkHeadlessSurfaceCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl, importc.}
+  proc vkCreateHeadlessSurfaceEXT*(instance: VkInstance; pCreateInfo: ptr VkHeadlessSurfaceCreateInfoEXT; pAllocator: ptr VkAllocationCallbacks = nil; pSurface: ptr VkSurfaceKHR): VkResult {.cdecl, importc.}
 const
   vkExtLineRasterization* = 1
   vkExtLineRasterizationSpecVersion* = 1
