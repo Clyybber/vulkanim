@@ -15,19 +15,15 @@ macro vk*(name, instance: untyped): untyped =
   nnkStmtList.newTree(
     nnkLetSection.newTree(
       nnkIdentDefs.newTree(
-        newIdentNode("v" & name.strVal),
-        newIdentNode("PFN" & name.strVal),
+        ident "v" & name.strVal,
+        ident "PFN" & name.strVal,
         nnkCast.newTree(
-          newIdentNode("PFN" & name.strVal),
+          ident "PFN" & name.strVal,
           nnkCall.newTree(
-            newIdentNode("vkGetInstanceProcAddr"),
-            newIdentNode(instance.strVal),
+            ident "vkGetInstanceProcAddr",
+            instance,
             newLit(name.strVal)
-          )
-        )
-      )
-    )
-  )
+  ) ) ) ) )
 
 macro genDistinctOps(identifiers: untyped): untyped =
   result =  nnkStmtList.newTree()
@@ -36,136 +32,109 @@ macro genDistinctOps(identifiers: untyped): untyped =
       #Negative sign for distincts
       nnkProcDef.newTree(
         nnkPostfix.newTree(
-          newIdentNode("*"),
-          nnkAccQuoted.newTree(
-            newIdentNode("-")
-          )
+          ident"*",
+          nnkAccQuoted.newTree(ident"-")
         ),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode(identifier.strVal),
+          identifier,
           nnkIdentDefs.newTree(
-            newIdentNode("x"),
-            newIdentNode(identifier.strVal),
+            ident"x",
+            identifier,
             newEmptyNode()
-          )
-        ),
-        nnkPragma.newTree(
-          newIdentNode("borrow")
-        ),
+        ) ),
+        nnkPragma.newTree(ident"borrow"),
         newEmptyNode(),
         newEmptyNode()
       ),
       #Subtract distincts
       nnkProcDef.newTree(
         nnkPostfix.newTree(
-          newIdentNode("*"),
-          nnkAccQuoted.newTree(
-            newIdentNode("-")
-          )
+          ident"*",
+          nnkAccQuoted.newTree(ident"-")
         ),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode(identifier.strVal),
+          identifier,
           nnkIdentDefs.newTree(
-            newIdentNode("x"),
-            newIdentNode("y"),
-            newIdentNode(identifier.strVal),
+            ident"x",
+            ident"y",
+            identifier,
             newEmptyNode()
-          )
-        ),
-        nnkPragma.newTree(
-          newIdentNode("borrow")
-        ),
+        ) ),
+        nnkPragma.newTree(ident"borrow"),
         newEmptyNode(),
         newEmptyNode()
       ),
       #Add distincts
       nnkProcDef.newTree(
         nnkPostfix.newTree(
-          newIdentNode("*"),
-          nnkAccQuoted.newTree(
-            newIdentNode("+")
-          )
+          ident"*",
+          nnkAccQuoted.newTree(ident"+")
         ),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode(identifier.strVal),
+          identifier,
           nnkIdentDefs.newTree(
-            newIdentNode("x"),
-            newIdentNode("y"),
-            newIdentNode(identifier.strVal),
+            ident"x",
+            ident"y",
+            identifier,
             newEmptyNode()
-          )
-        ),
-        nnkPragma.newTree(
-          newIdentNode("borrow")
-        ),
+        ) ),
+        nnkPragma.newTree(ident"borrow"),
         newEmptyNode(),
         newEmptyNode()
       ),
       #Check distincts for equality
       nnkProcDef.newTree(
         nnkPostfix.newTree(
-          newIdentNode("*"),
-          nnkAccQuoted.newTree(
-            newIdentNode("==")
-          )
+          ident"*",
+          nnkAccQuoted.newTree(ident"==")
         ),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode("bool"),
+          ident"bool",
           nnkIdentDefs.newTree(
-            newIdentNode("x"),
-            newIdentNode("y"),
-            newIdentNode(identifier.strVal),
+            ident"x",
+            ident"y",
+            identifier,
             newEmptyNode()
-          )
-        ),
-        nnkPragma.newTree(
-          newIdentNode("borrow")
-        ),
+        ) ),
+        nnkPragma.newTree(ident"borrow"),
         newEmptyNode(),
         newEmptyNode()
       ),
       #Add int literal to distinct
       nnkTemplateDef.newTree(
-        nnkAccQuoted.newTree(
-          newIdentNode("+")
-        ),
+        nnkAccQuoted.newTree(ident"+"),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode(identifier.strVal),
+          identifier,
           nnkIdentDefs.newTree(
-            newIdentNode("x"),
-            newIdentNode(identifier.strVal),
+            ident"x",
+            identifier,
             newEmptyNode()
           ),
           nnkIdentDefs.newTree(
-            newIdentNode("y"),
-            newIdentNode("int"),
+            ident"y",
+            ident"int",
             newEmptyNode()
-          )
-        ),
-        newEmptyNode(),
+        ) ),
+        nnkPragma.newTree(ident"used"),
         newEmptyNode(),
         nnkStmtList.newTree(
           nnkInfix.newTree(
-            newIdentNode("+"),
-            newIdentNode("x"),
+            ident"+",
+            ident"x",
             nnkDotExpr.newTree(
-              newIdentNode("y"),
-              newIdentNode(identifier.strVal)
-            )
-          )
-        )
-      )
-    )
+              ident"y",
+              identifier
+    ) ) ) ) )
 
 type
   VkHandle = int64
