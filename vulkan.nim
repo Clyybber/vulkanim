@@ -47,7 +47,6 @@ macro genDistinctOps(identifiers: untyped): untyped =
           newIdentNode(identifier.strVal),
           nnkIdentDefs.newTree(
             newIdentNode("x"),
-            newIdentNode("y"),
             newIdentNode(identifier.strVal),
             newEmptyNode()
           )
@@ -72,6 +71,7 @@ macro genDistinctOps(identifiers: untyped): untyped =
           newIdentNode(identifier.strVal),
           nnkIdentDefs.newTree(
             newIdentNode("x"),
+            newIdentNode("y"),
             newIdentNode(identifier.strVal),
             newEmptyNode()
           )
