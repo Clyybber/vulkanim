@@ -9030,39 +9030,34 @@ type
     formatA4R4G4B4*: VkBool32
     formatA4B4G4R4*: VkBool32
 
-
 from strutils import replace
 
 macro genFlagConverters(identifiers: untyped): untyped =
-  result =  nnkStmtList.newTree() #same as newNimNode()
-  for identifier in identifiers: #Identifiers of the FlagBits types
-    var flagType = identifier.strVal.replace("Bit")
+  result = nnkStmtList.newTree()
+  for identifier in identifiers:
+    let flagType = identifier.strVal.replace("Bit")
     result.add(
       nnkConverterDef.newTree(
         nnkPostfix.newTree(
-          newIdentNode("*"),
-          newIdentNode("to" & flagType)
+          ident"*",
+          ident "to" & flagType
         ),
         newEmptyNode(),
         newEmptyNode(),
         nnkFormalParams.newTree(
-          newIdentNode(flagType ),
+          ident flagType,
           nnkIdentDefs.newTree(
-            newIdentNode("i"),
-            newIdentNode(identifier.strVal),
+            ident"i",
+            identifier,
             newEmptyNode()
-          )
-        ),
+        ) ),
         newEmptyNode(),
         newEmptyNode(),
         nnkStmtList.newTree(
           nnkDotExpr.newTree(
-            newIdentNode("i"),
-            newIdentNode(flagType )
-          )
-        )
-      )
-    )
+            ident"i",
+            ident flagType
+    ) ) ) )
 
 genFlagConverters:
   VkAccessFlagBits
