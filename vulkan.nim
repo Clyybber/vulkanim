@@ -254,6 +254,7 @@ genDistinctOps:
   VkPerformanceCounterStorageKHR
   VkPerformanceCounterDescriptionFlagBitsKHR
   VkAcquireProfilingLockFlagBitsKHR
+  VkFragmentShadingRateCombinerOpKHR
   VkPipelineExecutableStatisticFormatKHR
   VkDebugReportObjectTypeEXT
   VkDebugReportFlagBitsEXT
@@ -281,7 +282,7 @@ genDistinctOps:
   VkGeometryTypeKHR
   VkAccelerationStructureTypeKHR
   VkCopyAccelerationStructureModeKHR
-  VkAccelerationStructureMemoryRequirementsTypeKHR
+  VkAccelerationStructureMemoryRequirementsTypeNV
   VkGeometryFlagBitsKHR
   VkGeometryInstanceFlagBitsKHR
   VkBuildAccelerationStructureFlagBitsKHR
@@ -306,8 +307,16 @@ genDistinctOps:
   VkIndirectCommandsTokenTypeNV
   VkIndirectStateFlagBitsNV
   VkIndirectCommandsLayoutUsageFlagBitsNV
+  VkDeviceMemoryReportEventTypeEXT
   VkPrivateDataSlotCreateFlagBitsEXT
   VkDeviceDiagnosticsConfigFlagBitsNV
+  VkFragmentShadingRateTypeNV
+  VkFragmentShadingRateNV
+  VkBuildAccelerationStructureModeKHR
+  VkAccelerationStructureBuildTypeKHR
+  VkAccelerationStructureCompatibilityKHR
+  VkAccelerationStructureCreateFlagBitsKHR
+  VkShaderGroupShaderKHR
 
 const
   vkVersion10* = 1
@@ -325,7 +334,7 @@ const
 ##  Version of this file
 
 const
-  vkHeaderVersion* = 152
+  vkHeaderVersion* = 168
 
 ##  Complete version of this file
 
@@ -1655,7 +1664,6 @@ const
   vkErrorNotPermittedExt* {.used.} = -1000174001.VkResult
   vkErrorFragmentation* {.used.} = -1000161000.VkResult
   vkErrorInvalidDrmFormatModifierPlaneLayoutExt* {.used.} = -1000158000.VkResult
-  vkErrorIncompatibleVersionKhr* {.used.} = -1000150000.VkResult
   vkErrorInvalidExternalHandle* {.used.} = -1000072003.VkResult
   vkErrorOutOfPoolMemory* {.used.} = -1000069000.VkResult
   vkErrorInvalidShaderNv* {.used.} = -1000012000.VkResult
@@ -1946,23 +1954,23 @@ const
   vkStructureTypePipelineColorBlendAdvancedStateCreateInfoExt* {.used.} = 1000148002.VkStructureType
   vkStructureTypePipelineCoverageToColorStateCreateInfoNv* {.used.} = 1000149000.VkStructureType
   vkStructureTypeAccelerationStructureBuildGeometryInfoKhr* {.used.} = 1000150000.VkStructureType
-  vkStructureTypeAccelerationStructureCreateGeometryTypeInfoKhr* {.used.} = 1000150001.VkStructureType
   vkStructureTypeAccelerationStructureDeviceAddressInfoKhr* {.used.} = 1000150002.VkStructureType
   vkStructureTypeAccelerationStructureGeometryAabbsDataKhr* {.used.} = 1000150003.VkStructureType
   vkStructureTypeAccelerationStructureGeometryInstancesDataKhr* {.used.} = 1000150004.VkStructureType
   vkStructureTypeAccelerationStructureGeometryTrianglesDataKhr* {.used.} = 1000150005.VkStructureType
   vkStructureTypeAccelerationStructureGeometryKhr* {.used.} = 1000150006.VkStructureType
-  vkStructureTypeAccelerationStructureMemoryRequirementsInfoKhr* {.used.} = 1000150008.VkStructureType
-  vkStructureTypeAccelerationStructureVersionKhr* {.used.} = 1000150009.VkStructureType
+  vkStructureTypeWriteDescriptorSetAccelerationStructureKhr* {.used.} = 1000150007.VkStructureType
+  vkStructureTypeAccelerationStructureVersionInfoKhr* {.used.} = 1000150009.VkStructureType
   vkStructureTypeCopyAccelerationStructureInfoKhr* {.used.} = 1000150010.VkStructureType
   vkStructureTypeCopyAccelerationStructureToMemoryInfoKhr* {.used.} = 1000150011.VkStructureType
   vkStructureTypeCopyMemoryToAccelerationStructureInfoKhr* {.used.} = 1000150012.VkStructureType
-  vkStructureTypePhysicalDeviceRayTracingFeaturesKhr* {.used.} = 1000150013.VkStructureType
-  vkStructureTypePhysicalDeviceRayTracingPropertiesKhr* {.used.} = 1000150014.VkStructureType
+  vkStructureTypePhysicalDeviceAccelerationStructureFeaturesKhr* {.used.} = 1000150013.VkStructureType
+  vkStructureTypePhysicalDeviceAccelerationStructurePropertiesKhr* {.used.} = 1000150014.VkStructureType
   vkStructureTypeRayTracingPipelineCreateInfoKhr* {.used.} = 1000150015.VkStructureType
   vkStructureTypeRayTracingShaderGroupCreateInfoKhr* {.used.} = 1000150016.VkStructureType
   vkStructureTypeAccelerationStructureCreateInfoKhr* {.used.} = 1000150017.VkStructureType
   vkStructureTypeRayTracingPipelineInterfaceCreateInfoKhr* {.used.} = 1000150018.VkStructureType
+  vkStructureTypeAccelerationStructureBuildSizesInfoKhr* {.used.} = 1000150020.VkStructureType
   vkStructureTypePipelineCoverageModulationStateCreateInfoNv* {.used.} = 1000152000.VkStructureType
   vkStructureTypePhysicalDeviceShaderSmBuiltinsFeaturesNv* {.used.} = 1000154000.VkStructureType
   vkStructureTypePhysicalDeviceShaderSmBuiltinsPropertiesNv* {.used.} = 1000154001.VkStructureType
@@ -1975,7 +1983,6 @@ const
   vkStructureTypeBindBufferMemoryInfo* {.used.} = 1000157000.VkStructureType
   vkStructureTypeBindImageMemoryInfo* {.used.} = 1000157001.VkStructureType
   vkStructureTypeDrmFormatModifierPropertiesListExt* {.used.} = 1000158000.VkStructureType
-  vkStructureTypeDrmFormatModifierPropertiesExt* {.used.} = 1000158001.VkStructureType
   vkStructureTypePhysicalDeviceImageDrmFormatModifierInfoExt* {.used.} = 1000158002.VkStructureType
   vkStructureTypeImageDrmFormatModifierListCreateInfoExt* {.used.} = 1000158003.VkStructureType
   vkStructureTypeImageDrmFormatModifierExplicitCreateInfoExt* {.used.} = 1000158004.VkStructureType
@@ -1987,6 +1994,8 @@ const
   vkStructureTypePhysicalDeviceDescriptorIndexingProperties* {.used.} = 1000161002.VkStructureType
   vkStructureTypeDescriptorSetVariableDescriptorCountAllocateInfo* {.used.} = 1000161003.VkStructureType
   vkStructureTypeDescriptorSetVariableDescriptorCountLayoutSupport* {.used.} = 1000161004.VkStructureType
+  vkStructureTypePhysicalDevicePortabilitySubsetFeaturesKhr* {.used.} = 1000163000.VkStructureType
+  vkStructureTypePhysicalDevicePortabilitySubsetPropertiesKhr* {.used.} = 1000163001.VkStructureType
   vkStructureTypePipelineViewportShadingRateImageStateCreateInfoNv* {.used.} = 1000164000.VkStructureType
   vkStructureTypePhysicalDeviceShadingRateImageFeaturesNv* {.used.} = 1000164001.VkStructureType
   vkStructureTypePhysicalDeviceShadingRateImagePropertiesNv* {.used.} = 1000164002.VkStructureType
@@ -1996,8 +2005,8 @@ const
   vkStructureTypeGeometryNv* {.used.} = 1000165003.VkStructureType
   vkStructureTypeGeometryTrianglesNv* {.used.} = 1000165004.VkStructureType
   vkStructureTypeGeometryAabbNv* {.used.} = 1000165005.VkStructureType
-  vkStructureTypeBindAccelerationStructureMemoryInfoKhr* {.used.} = 1000165006.VkStructureType
-  vkStructureTypeWriteDescriptorSetAccelerationStructureKhr* {.used.} = 1000165007.VkStructureType
+  vkStructureTypeBindAccelerationStructureMemoryInfoNv* {.used.} = 1000165006.VkStructureType
+  vkStructureTypeWriteDescriptorSetAccelerationStructureNv* {.used.} = 1000165007.VkStructureType
   vkStructureTypeAccelerationStructureMemoryRequirementsInfoNv* {.used.} = 1000165008.VkStructureType
   vkStructureTypePhysicalDeviceRayTracingPropertiesNv* {.used.} = 1000165009.VkStructureType
   vkStructureTypeRayTracingShaderGroupCreateInfoNv* {.used.} = 1000165011.VkStructureType
@@ -2056,6 +2065,7 @@ const
   vkStructureTypeDisplayNativeHdrSurfaceCapabilitiesAmd* {.used.} = 1000213000.VkStructureType
   vkStructureTypeSwapchainDisplayNativeHdrCreateInfoAmd* {.used.} = 1000213001.VkStructureType
   vkStructureTypeImagepipeSurfaceCreateInfoFuchsia* {.used.} = 1000214000.VkStructureType
+  vkStructureTypePhysicalDeviceShaderTerminateInvocationFeaturesKhr* {.used.} = 1000215000.VkStructureType
   vkStructureTypeMetalSurfaceCreateInfoExt* {.used.} = 1000217000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMapFeaturesExt* {.used.} = 1000218000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMapPropertiesExt* {.used.} = 1000218001.VkStructureType
@@ -2064,8 +2074,14 @@ const
   vkStructureTypePhysicalDeviceSubgroupSizeControlPropertiesExt* {.used.} = 1000225000.VkStructureType
   vkStructureTypePipelineShaderStageRequiredSubgroupSizeCreateInfoExt* {.used.} = 1000225001.VkStructureType
   vkStructureTypePhysicalDeviceSubgroupSizeControlFeaturesExt* {.used.} = 1000225002.VkStructureType
+  vkStructureTypeFragmentShadingRateAttachmentInfoKhr* {.used.} = 1000226000.VkStructureType
+  vkStructureTypePipelineFragmentShadingRateStateCreateInfoKhr* {.used.} = 1000226001.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentShadingRatePropertiesKhr* {.used.} = 1000226002.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentShadingRateFeaturesKhr* {.used.} = 1000226003.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentShadingRateKhr* {.used.} = 1000226004.VkStructureType
   vkStructureTypePhysicalDeviceShaderCoreProperties2Amd* {.used.} = 1000227000.VkStructureType
   vkStructureTypePhysicalDeviceCoherentMemoryFeaturesAmd* {.used.} = 1000229000.VkStructureType
+  vkStructureTypePhysicalDeviceShaderImageAtomicInt64FeaturesExt* {.used.} = 1000234000.VkStructureType
   vkStructureTypePhysicalDeviceMemoryBudgetPropertiesExt* {.used.} = 1000237000.VkStructureType
   vkStructureTypePhysicalDeviceMemoryPriorityFeaturesExt* {.used.} = 1000238000.VkStructureType
   vkStructureTypeMemoryPriorityAllocateInfoExt* {.used.} = 1000238001.VkStructureType
@@ -2104,7 +2120,6 @@ const
   vkStructureTypePhysicalDeviceHostQueryResetFeatures* {.used.} = 1000261000.VkStructureType
   vkStructureTypePhysicalDeviceIndexTypeUint8FeaturesExt* {.used.} = 1000265000.VkStructureType
   vkStructureTypePhysicalDeviceExtendedDynamicStateFeaturesExt* {.used.} = 1000267000.VkStructureType
-  vkStructureTypeDeferredOperationInfoKhr* {.used.} = 1000268000.VkStructureType
   vkStructureTypePhysicalDevicePipelineExecutablePropertiesFeaturesKhr* {.used.} = 1000269000.VkStructureType
   vkStructureTypePipelineInfoKhr* {.used.} = 1000269001.VkStructureType
   vkStructureTypePipelineExecutablePropertiesKhr* {.used.} = 1000269002.VkStructureType
@@ -2124,6 +2139,9 @@ const
   vkStructureTypePhysicalDeviceTexelBufferAlignmentPropertiesExt* {.used.} = 1000281001.VkStructureType
   vkStructureTypeCommandBufferInheritanceRenderPassTransformInfoQcom* {.used.} = 1000282000.VkStructureType
   vkStructureTypeRenderPassTransformBeginInfoQcom* {.used.} = 1000282001.VkStructureType
+  vkStructureTypePhysicalDeviceDeviceMemoryReportFeaturesExt* {.used.} = 1000284000.VkStructureType
+  vkStructureTypeDeviceDeviceMemoryReportCreateInfoExt* {.used.} = 1000284001.VkStructureType
+  vkStructureTypeDeviceMemoryReportCallbackDataExt* {.used.} = 1000284002.VkStructureType
   vkStructureTypePhysicalDeviceRobustness2FeaturesExt* {.used.} = 1000286000.VkStructureType
   vkStructureTypePhysicalDeviceRobustness2PropertiesExt* {.used.} = 1000286001.VkStructureType
   vkStructureTypeSamplerCustomBorderColorCreateInfoExt* {.used.} = 1000287000.VkStructureType
@@ -2136,11 +2154,33 @@ const
   vkStructureTypePhysicalDevicePipelineCreationCacheControlFeaturesExt* {.used.} = 1000297000.VkStructureType
   vkStructureTypePhysicalDeviceDiagnosticsConfigFeaturesNv* {.used.} = 1000300000.VkStructureType
   vkStructureTypeDeviceDiagnosticsConfigCreateInfoNv* {.used.} = 1000300001.VkStructureType
+  vkStructureTypePhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKhr* {.used.} = 1000325000.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentShadingRateEnumsPropertiesNv* {.used.} = 1000326000.VkStructureType
+  vkStructureTypePhysicalDeviceFragmentShadingRateEnumsFeaturesNv* {.used.} = 1000326001.VkStructureType
+  vkStructureTypePipelineFragmentShadingRateEnumStateCreateInfoNv* {.used.} = 1000326002.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMap2FeaturesExt* {.used.} = 1000332000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentDensityMap2PropertiesExt* {.used.} = 1000332001.VkStructureType
+  vkStructureTypeCopyCommandTransformInfoQcom* {.used.} = 1000333000.VkStructureType
   vkStructureTypePhysicalDeviceImageRobustnessFeaturesExt* {.used.} = 1000335000.VkStructureType
+  vkStructureTypePhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKhr* {.used.} = 1000336000.VkStructureType
+  vkStructureTypeCopyBufferInfo2Khr* {.used.} = 1000337000.VkStructureType
+  vkStructureTypeCopyImageInfo2Khr* {.used.} = 1000337001.VkStructureType
+  vkStructureTypeCopyBufferToImageInfo2Khr* {.used.} = 1000337002.VkStructureType
+  vkStructureTypeCopyImageToBufferInfo2Khr* {.used.} = 1000337003.VkStructureType
+  vkStructureTypeBlitImageInfo2Khr* {.used.} = 1000337004.VkStructureType
+  vkStructureTypeResolveImageInfo2Khr* {.used.} = 1000337005.VkStructureType
+  vkStructureTypeBufferCopy2Khr* {.used.} = 1000337006.VkStructureType
+  vkStructureTypeImageCopy2Khr* {.used.} = 1000337007.VkStructureType
+  vkStructureTypeImageBlit2Khr* {.used.} = 1000337008.VkStructureType
+  vkStructureTypeBufferImageCopy2Khr* {.used.} = 1000337009.VkStructureType
+  vkStructureTypeImageResolve2Khr* {.used.} = 1000337010.VkStructureType
   vkStructureTypePhysicalDevice4444FormatsFeaturesExt* {.used.} = 1000340000.VkStructureType
   vkStructureTypeDirectfbSurfaceCreateInfoExt* {.used.} = 1000346000.VkStructureType
+  vkStructureTypePhysicalDeviceRayTracingPipelineFeaturesKhr* {.used.} = 1000347000.VkStructureType
+  vkStructureTypePhysicalDeviceRayTracingPipelinePropertiesKhr* {.used.} = 1000347001.VkStructureType
+  vkStructureTypePhysicalDeviceRayQueryFeaturesKhr* {.used.} = 1000348013.VkStructureType
+  vkStructureTypePhysicalDeviceMutableDescriptorTypeFeaturesValve* {.used.} = 1000351000.VkStructureType
+  vkStructureTypeMutableDescriptorTypeCreateInfoValve* {.used.} = 1000351002.VkStructureType
   vkStructureTypePhysicalDeviceVariablePointerFeatures* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceVariablePointersFeatures
   vkStructureTypePhysicalDeviceShaderDrawParameterFeatures* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceShaderDrawParametersFeatures
   vkStructureTypeDebugReportCreateInfoExt* {.used.}: VkStructureType = vkStructureTypeDebugReportCallbackCreateInfoExt
@@ -2223,8 +2263,6 @@ const
   vkStructureTypePhysicalDeviceDescriptorIndexingPropertiesExt* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceDescriptorIndexingProperties
   vkStructureTypeDescriptorSetVariableDescriptorCountAllocateInfoExt* {.used.}: VkStructureType = vkStructureTypeDescriptorSetVariableDescriptorCountAllocateInfo
   vkStructureTypeDescriptorSetVariableDescriptorCountLayoutSupportExt* {.used.}: VkStructureType = vkStructureTypeDescriptorSetVariableDescriptorCountLayoutSupport
-  vkStructureTypeBindAccelerationStructureMemoryInfoNv* {.used.}: VkStructureType = vkStructureTypeBindAccelerationStructureMemoryInfoKhr
-  vkStructureTypeWriteDescriptorSetAccelerationStructureNv* {.used.}: VkStructureType = vkStructureTypeWriteDescriptorSetAccelerationStructureKhr
   vkStructureTypePhysicalDeviceMaintenance3PropertiesKhr* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceMaintenance3Properties
   vkStructureTypeDescriptorSetLayoutSupportKhr* {.used.}: VkStructureType = vkStructureTypeDescriptorSetLayoutSupport
   vkStructureTypePhysicalDeviceShaderSubgroupExtendedTypesFeaturesKhr* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceShaderSubgroupExtendedTypesFeatures
@@ -2276,6 +2314,7 @@ const
   vkImageLayoutFragmentDensityMapOptimalExt* {.used.} = 1000218000.VkImageLayout
   vkImageLayoutDepthReadOnlyStencilAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthReadOnlyStencilAttachmentOptimal
   vkImageLayoutDepthAttachmentStencilReadOnlyOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthAttachmentStencilReadOnlyOptimal
+  vkImageLayoutFragmentShadingRateAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutShadingRateOptimalNv
   vkImageLayoutDepthAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthAttachmentOptimal
   vkImageLayoutDepthReadOnlyOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthReadOnlyOptimal
   vkImageLayoutStencilAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutStencilAttachmentOptimal
@@ -2320,16 +2359,16 @@ const
   vkObjectTypeDebugReportCallbackExt* {.used.} = 1000011000.VkObjectType
   vkObjectTypeDescriptorUpdateTemplate* {.used.} = 1000085000.VkObjectType
   vkObjectTypeDebugUtilsMessengerExt* {.used.} = 1000128000.VkObjectType
+  vkObjectTypeAccelerationStructureKhr* {.used.} = 1000150000.VkObjectType
   vkObjectTypeSamplerYcbcrConversion* {.used.} = 1000156000.VkObjectType
   vkObjectTypeValidationCacheExt* {.used.} = 1000160000.VkObjectType
-  vkObjectTypeAccelerationStructureKhr* {.used.} = 1000165000.VkObjectType
+  vkObjectTypeAccelerationStructureNv* {.used.} = 1000165000.VkObjectType
   vkObjectTypePerformanceConfigurationIntel* {.used.} = 1000210000.VkObjectType
   vkObjectTypeDeferredOperationKhr* {.used.} = 1000268000.VkObjectType
   vkObjectTypeIndirectCommandsLayoutNv* {.used.} = 1000277000.VkObjectType
   vkObjectTypePrivateDataSlotExt* {.used.} = 1000295000.VkObjectType
   vkObjectTypeDescriptorUpdateTemplateKhr* {.used.}: VkObjectType = vkObjectTypeDescriptorUpdateTemplate
   vkObjectTypeSamplerYcbcrConversionKhr* {.used.}: VkObjectType = vkObjectTypeSamplerYcbcrConversion
-  vkObjectTypeAccelerationStructureNv* {.used.}: VkObjectType = vkObjectTypeAccelerationStructureKhr
   vkObjectTypeMaxEnum* {.used.} = 0x7FFFFFFF.VkObjectType
 
 const
@@ -2338,6 +2377,7 @@ const
   vkVendorIdKazan* {.used.} = 0x00010003.VkVendorId
   vkVendorIdCodeplay* {.used.} = 0x00010004.VkVendorId
   vkVendorIdMesa* {.used.} = 0x00010005.VkVendorId
+  vkVendorIdPocl* {.used.} = 0x00010006.VkVendorId
   vkVendorIdMaxEnum* {.used.} = 0x7FFFFFFF.VkVendorId
 
 const
@@ -2662,10 +2702,10 @@ const
   vkQueryTypeTimestamp* {.used.} = 2.VkQueryType
   vkQueryTypeTransformFeedbackStreamExt* {.used.} = 1000028004.VkQueryType
   vkQueryTypePerformanceQueryKhr* {.used.} = 1000116000.VkQueryType
-  vkQueryTypeAccelerationStructureSerializationSizeKhr* {.used.} = 1000150000.VkQueryType
-  vkQueryTypeAccelerationStructureCompactedSizeKhr* {.used.} = 1000165000.VkQueryType
+  vkQueryTypeAccelerationStructureCompactedSizeKhr* {.used.} = 1000150000.VkQueryType
+  vkQueryTypeAccelerationStructureSerializationSizeKhr* {.used.} = 1000150001.VkQueryType
+  vkQueryTypeAccelerationStructureCompactedSizeNv* {.used.} = 1000165000.VkQueryType
   vkQueryTypePerformanceQueryIntel* {.used.} = 1000210000.VkQueryType
-  vkQueryTypeAccelerationStructureCompactedSizeNv* {.used.}: VkQueryType = vkQueryTypeAccelerationStructureCompactedSizeKhr
   vkQueryTypeMaxEnum* {.used.} = 0x7FFFFFFF.VkQueryType
 
 const
@@ -2796,6 +2836,7 @@ const
   vkDynamicStateViewportShadingRatePaletteNv* {.used.} = 1000164004.VkDynamicState
   vkDynamicStateViewportCoarseSampleOrderNv* {.used.} = 1000164006.VkDynamicState
   vkDynamicStateExclusiveScissorNv* {.used.} = 1000205001.VkDynamicState
+  vkDynamicStateFragmentShadingRateKhr* {.used.} = 1000226000.VkDynamicState
   vkDynamicStateLineStippleExt* {.used.} = 1000259000.VkDynamicState
   vkDynamicStateCullModeExt* {.used.} = 1000267000.VkDynamicState
   vkDynamicStateFrontFaceExt* {.used.} = 1000267001.VkDynamicState
@@ -2809,6 +2850,7 @@ const
   vkDynamicStateDepthBoundsTestEnableExt* {.used.} = 1000267009.VkDynamicState
   vkDynamicStateStencilTestEnableExt* {.used.} = 1000267010.VkDynamicState
   vkDynamicStateStencilOpExt* {.used.} = 1000267011.VkDynamicState
+  vkDynamicStateRayTracingPipelineStackSizeKhr* {.used.} = 1000347000.VkDynamicState
   vkDynamicStateMaxEnum* {.used.} = 0x7FFFFFFF.VkDynamicState
 
 const
@@ -2917,8 +2959,9 @@ const
   vkDescriptorTypeStorageBufferDynamic* {.used.} = 9.VkDescriptorType
   vkDescriptorTypeInputAttachment* {.used.} = 10.VkDescriptorType
   vkDescriptorTypeInlineUniformBlockExt* {.used.} = 1000138000.VkDescriptorType
-  vkDescriptorTypeAccelerationStructureKhr* {.used.} = 1000165000.VkDescriptorType
-  vkDescriptorTypeAccelerationStructureNv* {.used.}: VkDescriptorType = vkDescriptorTypeAccelerationStructureKhr
+  vkDescriptorTypeAccelerationStructureKhr* {.used.} = 1000150000.VkDescriptorType
+  vkDescriptorTypeAccelerationStructureNv* {.used.} = 1000165000.VkDescriptorType
+  vkDescriptorTypeMutableValve* {.used.} = 1000351000.VkDescriptorType
   vkDescriptorTypeMaxEnum* {.used.} = 0x7FFFFFFF.VkDescriptorType
 
 const
@@ -2980,6 +3023,7 @@ const
   vkAccessCommandPreprocessWriteBitNv* {.used.} = 0x00040000.VkAccessFlagBits
   vkAccessAccelerationStructureReadBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureReadBitKhr
   vkAccessAccelerationStructureWriteBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureWriteBitKhr
+  vkAccessFragmentShadingRateAttachmentReadBitKhr* {.used.}: VkAccessFlagBits = vkAccessShadingRateImageReadBitNv
   vkAccessColorAttachmentReadNoncoherentBitExt* {.used.} = 0x00080000.VkAccessFlagBits
   vkAccessConditionalRenderingReadBitExt* {.used.} = 0x00100000.VkAccessFlagBits
   vkAccessAccelerationStructureReadBitKhr* {.used.} = 0x00200000.VkAccessFlagBits
@@ -3034,6 +3078,8 @@ const
   vkFormatFeatureDisjointBit* {.used.} = 0x00400000.VkFormatFeatureFlagBits
   vkFormatFeatureCositedChromaSamplesBit* {.used.} = 0x00800000.VkFormatFeatureFlagBits
   vkFormatFeatureFragmentDensityMapBitExt* {.used.} = 0x01000000.VkFormatFeatureFlagBits
+  vkFormatFeatureAccelerationStructureVertexBufferBitKhr* {.used.} = 0x20000000.VkFormatFeatureFlagBits
+  vkFormatFeatureFragmentShadingRateAttachmentBitKhr* {.used.} = 0x40000000.VkFormatFeatureFlagBits
   vkFormatFeatureTransferSrcBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureTransferSrcBit
   vkFormatFeatureTransferDstBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureTransferDstBit
   vkFormatFeatureSampledImageFilterMinmaxBitExt* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureSampledImageFilterMinmaxBit
@@ -3045,7 +3091,6 @@ const
   vkFormatFeatureDisjointBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureDisjointBit
   vkFormatFeatureCositedChromaSamplesBitKhr* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureCositedChromaSamplesBit
   vkFormatFeatureSampledImageFilterCubicBitExt* {.used.}: VkFormatFeatureFlagBits = vkFormatFeatureSampledImageFilterCubicBitImg
-  vkFormatFeatureAccelerationStructureVertexBufferBitKhr* {.used.} = 0x20000000.VkFormatFeatureFlagBits
   vkFormatFeatureFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkFormatFeatureFlagBits
 
 const
@@ -3093,6 +3138,7 @@ const
   vkImageUsageInputAttachmentBit* {.used.} = 0x00000080.VkImageUsageFlagBits
   vkImageUsageShadingRateImageBitNv* {.used.} = 0x00000100.VkImageUsageFlagBits
   vkImageUsageFragmentDensityMapBitExt* {.used.} = 0x00000200.VkImageUsageFlagBits
+  vkImageUsageFragmentShadingRateAttachmentBitKhr* {.used.}: VkImageUsageFlagBits = vkImageUsageShadingRateImageBitNv
   vkImageUsageFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkImageUsageFlagBits
 
 const
@@ -3145,6 +3191,7 @@ const
   vkPipelineStageCommandPreprocessBitNv* {.used.} = 0x00020000.VkPipelineStageFlagBits
   vkPipelineStageRayTracingShaderBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageRayTracingShaderBitKhr
   vkPipelineStageAccelerationStructureBuildBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageAccelerationStructureBuildBitKhr
+  vkPipelineStageFragmentShadingRateAttachmentBitKhr* {.used.}: VkPipelineStageFlagBits = vkPipelineStageShadingRateImageBitNv
   vkPipelineStageConditionalRenderingBitExt* {.used.} = 0x00040000.VkPipelineStageFlagBits
   vkPipelineStageTaskShaderBitNv* {.used.} = 0x00080000.VkPipelineStageFlagBits
   vkPipelineStageMeshShaderBitNv* {.used.} = 0x00100000.VkPipelineStageFlagBits
@@ -3211,13 +3258,15 @@ const
   vkBufferUsageVertexBufferBit* {.used.} = 0x00000080.VkBufferUsageFlagBits
   vkBufferUsageIndirectBufferBit* {.used.} = 0x00000100.VkBufferUsageFlagBits
   vkBufferUsageConditionalRenderingBitExt* {.used.} = 0x00000200.VkBufferUsageFlagBits
-  vkBufferUsageRayTracingBitKhr* {.used.} = 0x00000400.VkBufferUsageFlagBits
-  vkBufferUsageRayTracingBitNv* {.used.}: VkBufferUsageFlagBits = vkBufferUsageRayTracingBitKhr
+  vkBufferUsageShaderBindingTableBitKhr* {.used.} = 0x00000400.VkBufferUsageFlagBits
+  vkBufferUsageRayTracingBitNv* {.used.}: VkBufferUsageFlagBits = vkBufferUsageShaderBindingTableBitKhr
   vkBufferUsageShaderDeviceAddressBitExt* {.used.}: VkBufferUsageFlagBits = vkBufferUsageShaderDeviceAddressBit
   vkBufferUsageShaderDeviceAddressBitKhr* {.used.}: VkBufferUsageFlagBits = vkBufferUsageShaderDeviceAddressBit
   vkBufferUsageTransformFeedbackBufferBitExt* {.used.} = 0x00000800.VkBufferUsageFlagBits
   vkBufferUsageTransformFeedbackCounterBufferBitExt* {.used.} = 0x00001000.VkBufferUsageFlagBits
   vkBufferUsageShaderDeviceAddressBit* {.used.} = 0x00020000.VkBufferUsageFlagBits
+  vkBufferUsageAccelerationStructureBuildInputReadOnlyBitKhr* {.used.} = 0x00080000.VkBufferUsageFlagBits
+  vkBufferUsageAccelerationStructureStorageBitKhr* {.used.} = 0x00100000.VkBufferUsageFlagBits
   vkBufferUsageFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkBufferUsageFlagBits
 
 const
@@ -3261,6 +3310,7 @@ const
   vkPipelineCreateRayTracingNoNullMissShadersBitKhr* {.used.} = 0x00010000.VkPipelineCreateFlagBits
   vkPipelineCreateRayTracingNoNullIntersectionShadersBitKhr* {.used.} = 0x00020000.VkPipelineCreateFlagBits
   vkPipelineCreateIndirectBindableBitNv* {.used.} = 0x00040000.VkPipelineCreateFlagBits
+  vkPipelineCreateRayTracingShaderGroupHandleCaptureReplayBitKhr* {.used.} = 0x00080000.VkPipelineCreateFlagBits
   vkPipelineCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkPipelineCreateFlagBits
 
 const
@@ -3308,13 +3358,15 @@ const
 const
   vkDescriptorPoolCreateFreeDescriptorSetBit* {.used.} = 0x00000001.VkDescriptorPoolCreateFlagBits
   vkDescriptorPoolCreateUpdateAfterBindBit* {.used.} = 0x00000002.VkDescriptorPoolCreateFlagBits
+  vkDescriptorPoolCreateHostOnlyBitValve* {.used.} = 0x00000004.VkDescriptorPoolCreateFlagBits
   vkDescriptorPoolCreateUpdateAfterBindBitExt* {.used.}: VkDescriptorPoolCreateFlagBits = vkDescriptorPoolCreateUpdateAfterBindBit
   vkDescriptorPoolCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkDescriptorPoolCreateFlagBits
 
 const
   vkDescriptorSetLayoutCreatePushDescriptorBitKhr* {.used.} = 0x00000001.VkDescriptorSetLayoutCreateFlagBits
-  vkDescriptorSetLayoutCreateUpdateAfterBindPoolBitExt* {.used.}: VkDescriptorSetLayoutCreateFlagBits = vkDescriptorSetLayoutCreateUpdateAfterBindPoolBit
   vkDescriptorSetLayoutCreateUpdateAfterBindPoolBit* {.used.} = 0x00000002.VkDescriptorSetLayoutCreateFlagBits
+  vkDescriptorSetLayoutCreateHostOnlyPoolBitValve* {.used.} = 0x00000004.VkDescriptorSetLayoutCreateFlagBits
+  vkDescriptorSetLayoutCreateUpdateAfterBindPoolBitExt* {.used.}: VkDescriptorSetLayoutCreateFlagBits = vkDescriptorSetLayoutCreateUpdateAfterBindPoolBit
   vkDescriptorSetLayoutCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkDescriptorSetLayoutCreateFlagBits
 
 const
@@ -5642,8 +5694,10 @@ const
   vkPerformanceCounterStorageMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkPerformanceCounterStorageKHR
 
 const
-  vkPerformanceCounterDescriptionPerformanceImpactingKhr* {.used.} = 0x00000001.VkPerformanceCounterDescriptionFlagBitsKHR
-  vkPerformanceCounterDescriptionConcurrentlyImpactedKhr* {.used.} = 0x00000002.VkPerformanceCounterDescriptionFlagBitsKHR
+  vkPerformanceCounterDescriptionPerformanceImpactingBitKhr* {.used.} = 0x00000001.VkPerformanceCounterDescriptionFlagBitsKHR
+  vkPerformanceCounterDescriptionConcurrentlyImpactedBitKhr* {.used.} = 0x00000002.VkPerformanceCounterDescriptionFlagBitsKHR
+  vkPerformanceCounterDescriptionPerformanceImpactingKhr* {.used.}: VkPerformanceCounterDescriptionFlagBitsKHR = vkPerformanceCounterDescriptionPerformanceImpactingBitKhr
+  vkPerformanceCounterDescriptionConcurrentlyImpactedKhr* {.used.}: VkPerformanceCounterDescriptionFlagBitsKHR = vkPerformanceCounterDescriptionConcurrentlyImpactedBitKhr
   vkPerformanceCounterDescriptionFlagBitsMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkPerformanceCounterDescriptionFlagBitsKHR
 
 const
@@ -5956,6 +6010,85 @@ type
   VkPhysicalDeviceVulkanMemoryModelFeaturesKHR* = VkPhysicalDeviceVulkanMemoryModelFeatures
 
 const
+  vkKhrShadererminateInvocation* = 1
+  vkKhrShaderTerminateInvocationSpecVersion* = 1
+  vkKhrShaderTerminateInvocationExtensionName* = "VK_KHR_shadererminate_invocation"
+
+type
+  VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shaderTerminateInvocation*: VkBool32
+
+
+const
+  vkKhrFragmentShadingRate* = 1
+  vkKhrFragmentShadingRateSpecVersion* = 1
+  vkKhrFragmentShadingRateExtensionName* = "VK_KHR_fragment_shading_rate"
+
+type
+  VkFragmentShadingRateCombinerOpKHR* = distinct cint
+  VkFragmentShadingRateAttachmentInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    pFragmentShadingRateAttachment*: ptr VkAttachmentReference2
+    shadingRateAttachmentTexelSize*: VkExtent2D
+
+  VkPipelineFragmentShadingRateStateCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    fragmentSize*: VkExtent2D
+    combinerOps*: array[2, VkFragmentShadingRateCombinerOpKHR]
+
+  VkPhysicalDeviceFragmentShadingRateFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    pipelineFragmentShadingRate*: VkBool32
+    primitiveFragmentShadingRate*: VkBool32
+    attachmentFragmentShadingRate*: VkBool32
+
+  VkPhysicalDeviceFragmentShadingRatePropertiesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    minFragmentShadingRateAttachmentTexelSize*: VkExtent2D
+    maxFragmentShadingRateAttachmentTexelSize*: VkExtent2D
+    maxFragmentShadingRateAttachmentTexelSizeAspectRatio*: uint32
+    primitiveFragmentShadingRateWithMultipleViewports*: VkBool32
+    layeredShadingRateAttachments*: VkBool32
+    fragmentShadingRateNonTrivialCombinerOps*: VkBool32
+    maxFragmentSize*: VkExtent2D
+    maxFragmentSizeAspectRatio*: uint32
+    maxFragmentShadingRateCoverageSamples*: uint32
+    maxFragmentShadingRateRasterizationSamples*: VkSampleCountFlagBits
+    fragmentShadingRateWithShaderDepthStencilWrites*: VkBool32
+    fragmentShadingRateWithSampleMask*: VkBool32
+    fragmentShadingRateWithShaderSampleMask*: VkBool32
+    fragmentShadingRateWithConservativeRasterization*: VkBool32
+    fragmentShadingRateWithFragmentShaderInterlock*: VkBool32
+    fragmentShadingRateWithCustomSampleLocations*: VkBool32
+    fragmentShadingRateStrictMultiplyCombiner*: VkBool32
+
+  VkPhysicalDeviceFragmentShadingRateKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    sampleCounts*: VkSampleCountFlags
+    fragmentSize*: VkExtent2D
+
+  PFNVkgetphysicaldevicefragmentshadingrateskhr* = proc (physicalDevice: VkPhysicalDevice; pFragmentShadingRateCount: ptr uint32; pFragmentShadingRates: ptr VkPhysicalDeviceFragmentShadingRateKHR): VkResult {.cdecl.}
+  PFNVkcmdsetfragmentshadingratekhr* = proc (commandBuffer: VkCommandBuffer; pFragmentSize: ptr VkExtent2D; combinerOps: array[2, VkFragmentShadingRateCombinerOpKHR]) {.cdecl.}
+
+const
+  vkFragmentShadingRateCombinerOpKeepKhr* {.used.} = 0.VkFragmentShadingRateCombinerOpKHR
+  vkFragmentShadingRateCombinerOpReplaceKhr* {.used.} = 1.VkFragmentShadingRateCombinerOpKHR
+  vkFragmentShadingRateCombinerOpMinKhr* {.used.} = 2.VkFragmentShadingRateCombinerOpKHR
+  vkFragmentShadingRateCombinerOpMaxKhr* {.used.} = 3.VkFragmentShadingRateCombinerOpKHR
+  vkFragmentShadingRateCombinerOpMulKhr* {.used.} = 4.VkFragmentShadingRateCombinerOpKHR
+  vkFragmentShadingRateCombinerOpMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkFragmentShadingRateCombinerOpKHR
+
+when not defined(vkNoPrototypes):
+  proc vkGetPhysicalDeviceFragmentShadingRatesKHR*(physicalDevice: VkPhysicalDevice; pFragmentShadingRateCount: ptr uint32; pFragmentShadingRates: ptr VkPhysicalDeviceFragmentShadingRateKHR): VkResult {.cdecl, importc.}
+  proc vkCmdSetFragmentShadingRateKHR*(commandBuffer: VkCommandBuffer; pFragmentSize: ptr VkExtent2D; combinerOps: array[2, VkFragmentShadingRateCombinerOpKHR]) {.cdecl, importc.}
+const
   vkKhrSpirv14* = 1
   vkKhrSpirv14SpecVersion* = 1
   vkKhrSpirv14ExtensionName* = "VK_KHR_spirv_1_4"
@@ -6007,6 +6140,29 @@ when not defined(vkNoPrototypes):
   proc vkGetBufferDeviceAddressKHR*(device: VkDevice; pInfo: ptr VkBufferDeviceAddressInfo): VkDeviceAddress {.cdecl, importc.}
   proc vkGetBufferOpaqueCaptureAddressKHR*(device: VkDevice; pInfo: ptr VkBufferDeviceAddressInfo): uint64 {.cdecl, importc.}
   proc vkGetDeviceMemoryOpaqueCaptureAddressKHR*(device: VkDevice; pInfo: ptr VkDeviceMemoryOpaqueCaptureAddressInfo): uint64 {.cdecl, importc.}
+const
+  vkKhrDeferredHostOperations* = 1
+
+type
+  VkDeferredOperationKHR* = VkNonDispatchableHandle
+
+const
+  vkKhrDeferredHostOperationsSpecVersion* = 4
+  vkKhrDeferredHostOperationsExtensionName* = "VK_KHR_deferred_host_operations"
+
+type
+  PFNVkcreatedeferredoperationkhr* = proc (device: VkDevice; pAllocator: ptr VkAllocationCallbacks = nil; pDeferredOperation: ptr VkDeferredOperationKHR): VkResult {.cdecl.}
+  PFNVkdestroydeferredoperationkhr* = proc (device: VkDevice; operation: VkDeferredOperationKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkgetdeferredoperationmaxconcurrencykhr* = proc (device: VkDevice; operation: VkDeferredOperationKHR): uint32 {.cdecl.}
+  PFNVkgetdeferredoperationresultkhr* = proc (device: VkDevice; operation: VkDeferredOperationKHR): VkResult {.cdecl.}
+  PFNVkdeferredoperationjoinkhr* = proc (device: VkDevice; operation: VkDeferredOperationKHR): VkResult {.cdecl.}
+
+when not defined(vkNoPrototypes):
+  proc vkCreateDeferredOperationKHR*(device: VkDevice; pAllocator: ptr VkAllocationCallbacks = nil; pDeferredOperation: ptr VkDeferredOperationKHR): VkResult {.cdecl, importc.}
+  proc vkDestroyDeferredOperationKHR*(device: VkDevice; operation: VkDeferredOperationKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkGetDeferredOperationMaxConcurrencyKHR*(device: VkDevice; operation: VkDeferredOperationKHR): uint32 {.cdecl, importc.}
+  proc vkGetDeferredOperationResultKHR*(device: VkDevice; operation: VkDeferredOperationKHR): VkResult {.cdecl, importc.}
+  proc vkDeferredOperationJoinKHR*(device: VkDevice; operation: VkDeferredOperationKHR): VkResult {.cdecl, importc.}
 const
   vkKhrPipelineExecutableProperties* = 1
   vkKhrPipelineExecutablePropertiesSpecVersion* = 1
@@ -6077,9 +6233,169 @@ when not defined(vkNoPrototypes):
   proc vkGetPipelineExecutableStatisticsKHR*(device: VkDevice; pExecutableInfo: ptr VkPipelineExecutableInfoKHR; pStatisticCount: ptr uint32; pStatistics: ptr VkPipelineExecutableStatisticKHR): VkResult {.cdecl, importc.}
   proc vkGetPipelineExecutableInternalRepresentationsKHR*(device: VkDevice; pExecutableInfo: ptr VkPipelineExecutableInfoKHR; pInternalRepresentationCount: ptr uint32; pInternalRepresentations: ptr VkPipelineExecutableInternalRepresentationKHR): VkResult {.cdecl, importc.}
 const
+  vkKhrPipelineLibrary* = 1
+  vkKhrPipelineLibrarySpecVersion* = 1
+  vkKhrPipelineLibraryExtensionName* = "VK_KHR_pipeline_library"
+
+type
+  VkPipelineLibraryCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    libraryCount*: uint32
+    pLibraries*: ptr VkPipeline
+
+
+const
   vkKhrShaderNonSemanticInfo* = 1
   vkKhrShaderNonSemanticInfoSpecVersion* = 1
   vkKhrShaderNonSemanticInfoExtensionName* = "VK_KHR_shader_non_semantic_info"
+  vkKhrZeroInitializeWorkgroupMemory* = 1
+  vkKhrZeroInitializeWorkgroupMemorySpecVersion* = 1
+  vkKhrZeroInitializeWorkgroupMemoryExtensionName* = "VK_KHR_zero_initialize_workgroup_memory"
+
+type
+  VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shaderZeroInitializeWorkgroupMemory*: VkBool32
+
+
+const
+  vkKhrWorkgroupMemoryExplicitLayout* = 1
+  vkKhrWorkgroupMemoryExplicitLayoutSpecVersion* = 1
+  vkKhrWorkgroupMemoryExplicitLayoutExtensionName* = "VK_KHR_workgroup_memory_explicit_layout"
+
+type
+  VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    workgroupMemoryExplicitLayout*: VkBool32
+    workgroupMemoryExplicitLayoutScalarBlockLayout*: VkBool32
+    workgroupMemoryExplicitLayout8BitAccess*: VkBool32
+    workgroupMemoryExplicitLayout16BitAccess*: VkBool32
+
+
+const
+  vkKhrCopyCommands2* = 1
+  vkKhrCopyCommands2SpecVersion* = 1
+  vkKhrCopyCommands2ExtensionName* = "VK_KHR_copy_commands2"
+
+type
+  VkBufferCopy2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcOffset*: VkDeviceSize
+    dstOffset*: VkDeviceSize
+    size*: VkDeviceSize
+
+  VkCopyBufferInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcBuffer*: VkBuffer
+    dstBuffer*: VkBuffer
+    regionCount*: uint32
+    pRegions*: ptr VkBufferCopy2KHR
+
+  VkImageCopy2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcSubresource*: VkImageSubresourceLayers
+    srcOffset*: VkOffset3D
+    dstSubresource*: VkImageSubresourceLayers
+    dstOffset*: VkOffset3D
+    extent*: VkExtent3D
+
+  VkCopyImageInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcImage*: VkImage
+    srcImageLayout*: VkImageLayout
+    dstImage*: VkImage
+    dstImageLayout*: VkImageLayout
+    regionCount*: uint32
+    pRegions*: ptr VkImageCopy2KHR
+
+  VkBufferImageCopy2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    bufferOffset*: VkDeviceSize
+    bufferRowLength*: uint32
+    bufferImageHeight*: uint32
+    imageSubresource*: VkImageSubresourceLayers
+    imageOffset*: VkOffset3D
+    imageExtent*: VkExtent3D
+
+  VkCopyBufferToImageInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcBuffer*: VkBuffer
+    dstImage*: VkImage
+    dstImageLayout*: VkImageLayout
+    regionCount*: uint32
+    pRegions*: ptr VkBufferImageCopy2KHR
+
+  VkCopyImageToBufferInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcImage*: VkImage
+    srcImageLayout*: VkImageLayout
+    dstBuffer*: VkBuffer
+    regionCount*: uint32
+    pRegions*: ptr VkBufferImageCopy2KHR
+
+  VkImageBlit2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcSubresource*: VkImageSubresourceLayers
+    srcOffsets*: array[2, VkOffset3D]
+    dstSubresource*: VkImageSubresourceLayers
+    dstOffsets*: array[2, VkOffset3D]
+
+  VkBlitImageInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcImage*: VkImage
+    srcImageLayout*: VkImageLayout
+    dstImage*: VkImage
+    dstImageLayout*: VkImageLayout
+    regionCount*: uint32
+    pRegions*: ptr VkImageBlit2KHR
+    filter*: VkFilter
+
+  VkImageResolve2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcSubresource*: VkImageSubresourceLayers
+    srcOffset*: VkOffset3D
+    dstSubresource*: VkImageSubresourceLayers
+    dstOffset*: VkOffset3D
+    extent*: VkExtent3D
+
+  VkResolveImageInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcImage*: VkImage
+    srcImageLayout*: VkImageLayout
+    dstImage*: VkImage
+    dstImageLayout*: VkImageLayout
+    regionCount*: uint32
+    pRegions*: ptr VkImageResolve2KHR
+
+  PFNVkcmdcopybuffer2khr* = proc (commandBuffer: VkCommandBuffer; pCopyBufferInfo: ptr VkCopyBufferInfo2KHR) {.cdecl.}
+  PFNVkcmdcopyimage2khr* = proc (commandBuffer: VkCommandBuffer; pCopyImageInfo: ptr VkCopyImageInfo2KHR) {.cdecl.}
+  PFNVkcmdcopybuffertoimage2khr* = proc (commandBuffer: VkCommandBuffer; pCopyBufferToImageInfo: ptr VkCopyBufferToImageInfo2KHR) {.cdecl.}
+  PFNVkcmdcopyimagetobuffer2khr* = proc (commandBuffer: VkCommandBuffer; pCopyImageToBufferInfo: ptr VkCopyImageToBufferInfo2KHR) {.cdecl.}
+  PFNVkcmdblitimage2khr* = proc (commandBuffer: VkCommandBuffer; pBlitImageInfo: ptr VkBlitImageInfo2KHR) {.cdecl.}
+  PFNVkcmdresolveimage2khr* = proc (commandBuffer: VkCommandBuffer; pResolveImageInfo: ptr VkResolveImageInfo2KHR) {.cdecl.}
+
+when not defined(vkNoPrototypes):
+  proc vkCmdCopyBuffer2KHR*(commandBuffer: VkCommandBuffer; pCopyBufferInfo: ptr VkCopyBufferInfo2KHR) {.cdecl, importc.}
+  proc vkCmdCopyImage2KHR*(commandBuffer: VkCommandBuffer; pCopyImageInfo: ptr VkCopyImageInfo2KHR) {.cdecl, importc.}
+  proc vkCmdCopyBufferToImage2KHR*(commandBuffer: VkCommandBuffer; pCopyBufferToImageInfo: ptr VkCopyBufferToImageInfo2KHR) {.cdecl, importc.}
+  proc vkCmdCopyImageToBuffer2KHR*(commandBuffer: VkCommandBuffer; pCopyImageToBufferInfo: ptr VkCopyImageToBufferInfo2KHR) {.cdecl, importc.}
+  proc vkCmdBlitImage2KHR*(commandBuffer: VkCommandBuffer; pBlitImageInfo: ptr VkBlitImageInfo2KHR) {.cdecl, importc.}
+  proc vkCmdResolveImage2KHR*(commandBuffer: VkCommandBuffer; pResolveImageInfo: ptr VkResolveImageInfo2KHR) {.cdecl, importc.}
+const
   vkExtDebugReport* = 1
 
 type
@@ -6139,13 +6455,13 @@ const
   vkDebugReportObjectTypeDisplayModeKhrExt* {.used.} = 30.VkDebugReportObjectTypeEXT
   vkDebugReportObjectTypeValidationCacheExtExt* {.used.} = 33.VkDebugReportObjectTypeEXT
   vkDebugReportObjectTypeDescriptorUpdateTemplateExt* {.used.} = 1000085000.VkDebugReportObjectTypeEXT
+  vkDebugReportObjectTypeAccelerationStructureKhrExt* {.used.} = 1000150000.VkDebugReportObjectTypeEXT
   vkDebugReportObjectTypeSamplerYcbcrConversionExt* {.used.} = 1000156000.VkDebugReportObjectTypeEXT
-  vkDebugReportObjectTypeAccelerationStructureKhrExt* {.used.} = 1000165000.VkDebugReportObjectTypeEXT
+  vkDebugReportObjectTypeAccelerationStructureNvExt* {.used.} = 1000165000.VkDebugReportObjectTypeEXT
   vkDebugReportObjectTypeDebugReportExt* {.used.}: VkDebugReportObjectTypeEXT = vkDebugReportObjectTypeDebugReportCallbackExtExt
   vkDebugReportObjectTypeValidationCacheExt* {.used.}: VkDebugReportObjectTypeEXT = vkDebugReportObjectTypeValidationCacheExtExt
   vkDebugReportObjectTypeDescriptorUpdateTemplateKhrExt* {.used.}: VkDebugReportObjectTypeEXT = vkDebugReportObjectTypeDescriptorUpdateTemplateExt
   vkDebugReportObjectTypeSamplerYcbcrConversionKhrExt* {.used.}: VkDebugReportObjectTypeEXT = vkDebugReportObjectTypeSamplerYcbcrConversionExt
-  vkDebugReportObjectTypeAccelerationStructureNvExt* {.used.}: VkDebugReportObjectTypeEXT = vkDebugReportObjectTypeAccelerationStructureKhrExt
   vkDebugReportObjectTypeMaxEnumExt* {.used.} = 0x7FFFFFFF.VkDebugReportObjectTypeEXT
 
 const
@@ -6612,7 +6928,8 @@ type
   PFNVkgetphysicaldevicesurfacecapabilities2ext* = proc (physicalDevice: VkPhysicalDevice; surface: VkSurfaceKHR; pSurfaceCapabilities: ptr VkSurfaceCapabilities2EXT): VkResult {.cdecl.}
 
 const
-  vkSurfaceCounterVblankExt* {.used.} = 0x00000001.VkSurfaceCounterFlagBitsEXT
+  vkSurfaceCounterVblankBitExt* {.used.} = 0x00000001.VkSurfaceCounterFlagBitsEXT
+  vkSurfaceCounterVblankExt* {.used.}: VkSurfaceCounterFlagBitsEXT = vkSurfaceCounterVblankBitExt
   vkSurfaceCounterFlagBitsMaxEnumExt* {.used.} = 0x7FFFFFFF.VkSurfaceCounterFlagBitsEXT
 
 when not defined(vkNoPrototypes):
@@ -7378,8 +7695,7 @@ const
   vkNvRayracing* = 1
 
 type
-  VkAccelerationStructureKHR* = VkNonDispatchableHandle
-  VkAccelerationStructureNV* = VkAccelerationStructureKHR
+  VkAccelerationStructureNV* = VkNonDispatchableHandle
 
 const
   vkNvRayTracingSpecVersion* = 3
@@ -7396,8 +7712,7 @@ type
   VkAccelerationStructureTypeNV* = VkAccelerationStructureTypeKHR
   VkCopyAccelerationStructureModeKHR* = distinct cint
   VkCopyAccelerationStructureModeNV* = VkCopyAccelerationStructureModeKHR
-  VkAccelerationStructureMemoryRequirementsTypeKHR* = distinct cint
-  VkAccelerationStructureMemoryRequirementsTypeNV* = VkAccelerationStructureMemoryRequirementsTypeKHR
+  VkAccelerationStructureMemoryRequirementsTypeNV* = distinct cint
   VkGeometryFlagBitsKHR* = distinct cint
   VkGeometryFlagsKHR* = VkFlags
   VkGeometryFlagsNV* = VkGeometryFlagsKHR
@@ -7481,23 +7796,21 @@ type
     compactedSize*: VkDeviceSize
     info*: VkAccelerationStructureInfoNV
 
-  VkBindAccelerationStructureMemoryInfoKHR* {.bycopy.} = object
+  VkBindAccelerationStructureMemoryInfoNV* {.bycopy.} = object
     sType*: VkStructureType
     pNext*: pointer
-    accelerationStructure*: VkAccelerationStructureKHR
+    accelerationStructure*: VkAccelerationStructureNV
     memory*: VkDeviceMemory
     memoryOffset*: VkDeviceSize
     deviceIndexCount*: uint32
     pDeviceIndices*: ptr uint32
 
-  VkBindAccelerationStructureMemoryInfoNV* = VkBindAccelerationStructureMemoryInfoKHR
-  VkWriteDescriptorSetAccelerationStructureKHR* {.bycopy.} = object
+  VkWriteDescriptorSetAccelerationStructureNV* {.bycopy.} = object
     sType*: VkStructureType
     pNext*: pointer
     accelerationStructureCount*: uint32
-    pAccelerationStructures*: ptr VkAccelerationStructureKHR
+    pAccelerationStructures*: ptr VkAccelerationStructureNV
 
-  VkWriteDescriptorSetAccelerationStructureNV* = VkWriteDescriptorSetAccelerationStructureKHR
   VkAccelerationStructureMemoryRequirementsInfoNV* {.bycopy.} = object
     sType*: VkStructureType
     pNext*: pointer
@@ -7539,20 +7852,17 @@ type
 
   VkAccelerationStructureInstanceNV* = VkAccelerationStructureInstanceKHR
   PFNVkcreateaccelerationstructurenv* = proc (device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl.}
-  PFNVkdestroyaccelerationstructurekhr* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
-  PFNVkdestroyaccelerationstructurenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkdestroyaccelerationstructurenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
   PFNVkgetaccelerationstructurememoryrequirementsnv* = proc (device: VkDevice; pInfo: ptr VkAccelerationStructureMemoryRequirementsInfoNV; pMemoryRequirements: ptr VkMemoryRequirements2KHR) {.cdecl.}
-  PFNVkbindaccelerationstructurememorykhr* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoKHR): VkResult {.cdecl.}
-  PFNVkbindaccelerationstructurememorynv* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoKHR): VkResult {.cdecl.}
-  PFNVkcmdbuildaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureKHR; src: VkAccelerationStructureKHR; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl.}
-  PFNVkcmdcopyaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureKHR; src: VkAccelerationStructureKHR; mode: VkCopyAccelerationStructureModeKHR) {.cdecl.}
+  PFNVkbindaccelerationstructurememorynv* = proc (device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoNV): VkResult {.cdecl.}
+  PFNVkcmdbuildaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl.}
+  PFNVkcmdcopyaccelerationstructurenv* = proc (commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; mode: VkCopyAccelerationStructureModeKHR) {.cdecl.}
   PFNVkcmdtraceraysnv* = proc (commandBuffer: VkCommandBuffer; raygenShaderBindingTableBuffer: VkBuffer; raygenShaderBindingOffset: VkDeviceSize; missShaderBindingTableBuffer: VkBuffer; missShaderBindingOffset: VkDeviceSize; missShaderBindingStride: VkDeviceSize; hitShaderBindingTableBuffer: VkBuffer; hitShaderBindingOffset: VkDeviceSize; hitShaderBindingStride: VkDeviceSize; callableShaderBindingTableBuffer: VkBuffer; callableShaderBindingOffset: VkDeviceSize; callableShaderBindingStride: VkDeviceSize; width: uint32; height: uint32; depth: uint32) {.cdecl.}
   PFNVkcreateraytracingpipelinesnv* = proc (device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
   PFNVkgetraytracingshadergrouphandleskhr* = proc (device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
   PFNVkgetraytracingshadergrouphandlesnv* = proc (device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
-  PFNVkgetaccelerationstructurehandlenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
-  PFNVkcmdwriteaccelerationstructurespropertieskhr* = proc (commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl.}
-  PFNVkcmdwriteaccelerationstructurespropertiesnv* = proc (commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl.}
+  PFNVkgetaccelerationstructurehandlenv* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureNV; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
+  PFNVkcmdwriteaccelerationstructurespropertiesnv* = proc (commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureNV; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl.}
   PFNVkcompiledeferrednv* = proc (device: VkDevice; pipeline: VkPipeline; shader: uint32): VkResult {.cdecl.}
 
 const
@@ -7567,7 +7877,7 @@ const
 const
   vkGeometryTypeTrianglesKhr* {.used.} = 0.VkGeometryTypeKHR
   vkGeometryTypeAabbsKhr* {.used.} = 1.VkGeometryTypeKHR
-  vkGeometryTypeInstancesKhr* {.used.} = 1000150000.VkGeometryTypeKHR
+  vkGeometryTypeInstancesKhr* {.used.} = 2.VkGeometryTypeKHR
   vkGeometryTypeTrianglesNv* {.used.}: VkGeometryTypeKHR = vkGeometryTypeTrianglesKhr
   vkGeometryTypeAabbsNv* {.used.}: VkGeometryTypeKHR = vkGeometryTypeAabbsKhr
   vkGeometryTypeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkGeometryTypeKHR
@@ -7575,6 +7885,7 @@ const
 const
   vkAccelerationStructureTypeTopLevelKhr* {.used.} = 0.VkAccelerationStructureTypeKHR
   vkAccelerationStructureTypeBottomLevelKhr* {.used.} = 1.VkAccelerationStructureTypeKHR
+  vkAccelerationStructureTypeGenericKhr* {.used.} = 2.VkAccelerationStructureTypeKHR
   vkAccelerationStructureTypeTopLevelNv* {.used.}: VkAccelerationStructureTypeKHR = vkAccelerationStructureTypeTopLevelKhr
   vkAccelerationStructureTypeBottomLevelNv* {.used.}: VkAccelerationStructureTypeKHR = vkAccelerationStructureTypeBottomLevelKhr
   vkAccelerationStructureTypeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkAccelerationStructureTypeKHR
@@ -7589,13 +7900,10 @@ const
   vkCopyAccelerationStructureModeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkCopyAccelerationStructureModeKHR
 
 const
-  vkAccelerationStructureMemoryRequirementsTypeObjectKhr* {.used.} = 0.VkAccelerationStructureMemoryRequirementsTypeKHR
-  vkAccelerationStructureMemoryRequirementsTypeBuildScratchKhr* {.used.} = 1.VkAccelerationStructureMemoryRequirementsTypeKHR
-  vkAccelerationStructureMemoryRequirementsTypeUpdateScratchKhr* {.used.} = 2.VkAccelerationStructureMemoryRequirementsTypeKHR
-  vkAccelerationStructureMemoryRequirementsTypeObjectNv* {.used.}: VkAccelerationStructureMemoryRequirementsTypeKHR = vkAccelerationStructureMemoryRequirementsTypeObjectKhr
-  vkAccelerationStructureMemoryRequirementsTypeBuildScratchNv* {.used.}: VkAccelerationStructureMemoryRequirementsTypeKHR = vkAccelerationStructureMemoryRequirementsTypeBuildScratchKhr
-  vkAccelerationStructureMemoryRequirementsTypeUpdateScratchNv* {.used.}: VkAccelerationStructureMemoryRequirementsTypeKHR = vkAccelerationStructureMemoryRequirementsTypeUpdateScratchKhr
-  vkAccelerationStructureMemoryRequirementsTypeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkAccelerationStructureMemoryRequirementsTypeKHR
+  vkAccelerationStructureMemoryRequirementsTypeObjectNv* {.used.} = 0.VkAccelerationStructureMemoryRequirementsTypeNV
+  vkAccelerationStructureMemoryRequirementsTypeBuildScratchNv* {.used.} = 1.VkAccelerationStructureMemoryRequirementsTypeNV
+  vkAccelerationStructureMemoryRequirementsTypeUpdateScratchNv* {.used.} = 2.VkAccelerationStructureMemoryRequirementsTypeNV
+  vkAccelerationStructureMemoryRequirementsTypeMaxEnumNv* {.used.} = 0x7FFFFFFF.VkAccelerationStructureMemoryRequirementsTypeNV
 
 const
   vkGeometryOpaqueBitKhr* {.used.} = 0x00000001.VkGeometryFlagBitsKHR
@@ -7630,20 +7938,17 @@ const
 
 when not defined(vkNoPrototypes):
   proc vkCreateAccelerationStructureNV*(device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureNV): VkResult {.cdecl, importc.}
-  proc vkDestroyAccelerationStructureKHR*(device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
-  proc vkDestroyAccelerationStructureNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkDestroyAccelerationStructureNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureNV; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
   proc vkGetAccelerationStructureMemoryRequirementsNV*(device: VkDevice; pInfo: ptr VkAccelerationStructureMemoryRequirementsInfoNV; pMemoryRequirements: ptr VkMemoryRequirements2KHR) {.cdecl, importc.}
-  proc vkBindAccelerationStructureMemoryKHR*(device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoKHR): VkResult {.cdecl, importc.}
-  proc vkBindAccelerationStructureMemoryNV*(device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoKHR): VkResult {.cdecl, importc.}
-  proc vkCmdBuildAccelerationStructureNV*(commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureKHR; src: VkAccelerationStructureKHR; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl, importc.}
-  proc vkCmdCopyAccelerationStructureNV*(commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureKHR; src: VkAccelerationStructureKHR; mode: VkCopyAccelerationStructureModeKHR) {.cdecl, importc.}
+  proc vkBindAccelerationStructureMemoryNV*(device: VkDevice; bindInfoCount: uint32; pBindInfos: ptr VkBindAccelerationStructureMemoryInfoNV): VkResult {.cdecl, importc.}
+  proc vkCmdBuildAccelerationStructureNV*(commandBuffer: VkCommandBuffer; pInfo: ptr VkAccelerationStructureInfoNV; instanceData: VkBuffer; instanceOffset: VkDeviceSize; update: VkBool32; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; scratch: VkBuffer; scratchOffset: VkDeviceSize) {.cdecl, importc.}
+  proc vkCmdCopyAccelerationStructureNV*(commandBuffer: VkCommandBuffer; dst: VkAccelerationStructureNV; src: VkAccelerationStructureNV; mode: VkCopyAccelerationStructureModeKHR) {.cdecl, importc.}
   proc vkCmdTraceRaysNV*(commandBuffer: VkCommandBuffer; raygenShaderBindingTableBuffer: VkBuffer; raygenShaderBindingOffset: VkDeviceSize; missShaderBindingTableBuffer: VkBuffer; missShaderBindingOffset: VkDeviceSize; missShaderBindingStride: VkDeviceSize; hitShaderBindingTableBuffer: VkBuffer; hitShaderBindingOffset: VkDeviceSize; hitShaderBindingStride: VkDeviceSize; callableShaderBindingTableBuffer: VkBuffer; callableShaderBindingOffset: VkDeviceSize; callableShaderBindingStride: VkDeviceSize; width: uint32; height: uint32; depth: uint32) {.cdecl, importc.}
   proc vkCreateRayTracingPipelinesNV*(device: VkDevice; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoNV; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
   proc vkGetRayTracingShaderGroupHandlesKHR*(device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
   proc vkGetRayTracingShaderGroupHandlesNV*(device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
-  proc vkGetAccelerationStructureHandleNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
-  proc vkCmdWriteAccelerationStructuresPropertiesKHR*(commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl, importc.}
-  proc vkCmdWriteAccelerationStructuresPropertiesNV*(commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl, importc.}
+  proc vkGetAccelerationStructureHandleNV*(device: VkDevice; accelerationStructure: VkAccelerationStructureNV; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
+  proc vkCmdWriteAccelerationStructuresPropertiesNV*(commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureNV; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl, importc.}
   proc vkCompileDeferredNV*(device: VkDevice; pipeline: VkPipeline; shader: uint32): VkResult {.cdecl, importc.}
 const
   vkNvRepresentativeFragmentest* = 1
@@ -8254,6 +8559,19 @@ type
 
 
 const
+  vkExtShaderImageAtomicInt64* = 1
+  vkExtShaderImageAtomicInt64SpecVersion* = 1
+  vkExtShaderImageAtomicInt64ExtensionName* = "VK_EXT_shader_image_atomic_int64"
+
+type
+  VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shaderImageInt64Atomics*: VkBool32
+    sparseImageInt64Atomics*: VkBool32
+
+
+const
   vkExtMemoryBudget* = 1
   vkExtMemoryBudgetSpecVersion* = 1
   vkExtMemoryBudgetExtensionName* = "VK_EXT_memory_budget"
@@ -8859,6 +9177,47 @@ type
 
 
 const
+  vkExtDeviceMemoryReport* = 1
+  vkExtDeviceMemoryReportSpecVersion* = 2
+  vkExtDeviceMemoryReportExtensionName* = "VK_EXT_device_memory_report"
+
+type
+  VkDeviceMemoryReportEventTypeEXT* = distinct cint
+  VkDeviceMemoryReportFlagsEXT* = VkFlags
+  VkPhysicalDeviceDeviceMemoryReportFeaturesEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    deviceMemoryReport*: VkBool32
+
+  VkDeviceMemoryReportCallbackDataEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    flags*: VkDeviceMemoryReportFlagsEXT
+    `type`*: VkDeviceMemoryReportEventTypeEXT
+    memoryObjectId*: uint64
+    size*: VkDeviceSize
+    objectType*: VkObjectType
+    objectHandle*: uint64
+    heapIndex*: uint32
+
+  PFNVkdevicememoryreportcallbackext* = proc (pCallbackData: ptr VkDeviceMemoryReportCallbackDataEXT; pUserData: pointer) {.cdecl.}
+  VkDeviceDeviceMemoryReportCreateInfoEXT* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    flags*: VkDeviceMemoryReportFlagsEXT
+    pfnUserCallback*: PFNVkdevicememoryreportcallbackext
+    pUserData*: pointer
+
+
+const
+  vkDeviceMemoryReportEventTypeAllocateExt* {.used.} = 0.VkDeviceMemoryReportEventTypeEXT
+  vkDeviceMemoryReportEventTypeFreeExt* {.used.} = 1.VkDeviceMemoryReportEventTypeEXT
+  vkDeviceMemoryReportEventTypeImportExt* {.used.} = 2.VkDeviceMemoryReportEventTypeEXT
+  vkDeviceMemoryReportEventTypeUnimportExt* {.used.} = 3.VkDeviceMemoryReportEventTypeEXT
+  vkDeviceMemoryReportEventTypeAllocationFailedExt* {.used.} = 4.VkDeviceMemoryReportEventTypeEXT
+  vkDeviceMemoryReportEventTypeMaxEnumExt* {.used.} = 0x7FFFFFFF.VkDeviceMemoryReportEventTypeEXT
+
+const
   vkExtRobustness2* = 1
   vkExtRobustness2SpecVersion* = 1
   vkExtRobustness2ExtensionName* = "VK_EXT_robustness2"
@@ -8987,6 +9346,57 @@ const
   vkQcomRenderPassStoreOps* = 1
   vkQcomRenderPassStoreOpsSpecVersion* = 2
   vkQcomRenderPassStoreOpsExtensionName* = "VK_QCOM_render_pass_store_ops"
+  vkNvFragmentShadingRateEnums* = 1
+  vkNvFragmentShadingRateEnumsSpecVersion* = 1
+  vkNvFragmentShadingRateEnumsExtensionName* = "VK_NV_fragment_shading_rate_enums"
+
+type
+  VkFragmentShadingRateTypeNV* = distinct cint
+  VkFragmentShadingRateNV* = distinct cint
+  VkPhysicalDeviceFragmentShadingRateEnumsFeaturesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    fragmentShadingRateEnums*: VkBool32
+    supersampleFragmentShadingRates*: VkBool32
+    noInvocationFragmentShadingRates*: VkBool32
+
+  VkPhysicalDeviceFragmentShadingRateEnumsPropertiesNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    maxFragmentShadingRateInvocationCount*: VkSampleCountFlagBits
+
+  VkPipelineFragmentShadingRateEnumStateCreateInfoNV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shadingRateType*: VkFragmentShadingRateTypeNV
+    shadingRate*: VkFragmentShadingRateNV
+    combinerOps*: array[2, VkFragmentShadingRateCombinerOpKHR]
+
+  PFNVkcmdsetfragmentshadingrateenumnv* = proc (commandBuffer: VkCommandBuffer; shadingRate: VkFragmentShadingRateNV; combinerOps: array[2, VkFragmentShadingRateCombinerOpKHR]) {.cdecl.}
+
+const
+  vkFragmentShadingRateTypeFragmentSizeNv* {.used.} = 0.VkFragmentShadingRateTypeNV
+  vkFragmentShadingRateTypeEnumsNv* {.used.} = 1.VkFragmentShadingRateTypeNV
+  vkFragmentShadingRateTypeMaxEnumNv* {.used.} = 0x7FFFFFFF.VkFragmentShadingRateTypeNV
+
+const
+  vkFragmentShadingRate1InvocationPerPixelNv* {.used.} = 0.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer1x2PixelsNv* {.used.} = 1.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer2x1PixelsNv* {.used.} = 4.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer2x2PixelsNv* {.used.} = 5.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer2x4PixelsNv* {.used.} = 6.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer4x2PixelsNv* {.used.} = 9.VkFragmentShadingRateNV
+  vkFragmentShadingRate1InvocationPer4x4PixelsNv* {.used.} = 10.VkFragmentShadingRateNV
+  vkFragmentShadingRate2InvocationsPerPixelNv* {.used.} = 11.VkFragmentShadingRateNV
+  vkFragmentShadingRate4InvocationsPerPixelNv* {.used.} = 12.VkFragmentShadingRateNV
+  vkFragmentShadingRate8InvocationsPerPixelNv* {.used.} = 13.VkFragmentShadingRateNV
+  vkFragmentShadingRate16InvocationsPerPixelNv* {.used.} = 14.VkFragmentShadingRateNV
+  vkFragmentShadingRateNoInvocationsNv* {.used.} = 15.VkFragmentShadingRateNV
+  vkFragmentShadingRateMaxEnumNv* {.used.} = 0x7FFFFFFF.VkFragmentShadingRateNV
+
+when not defined(vkNoPrototypes):
+  proc vkCmdSetFragmentShadingRateEnumNV*(commandBuffer: VkCommandBuffer; shadingRate: VkFragmentShadingRateNV; combinerOps: array[2, VkFragmentShadingRateCombinerOpKHR]) {.cdecl, importc.}
+const
   vkExtFragmentDensityMap2* = 1
   vkExtFragmentDensityMap2SpecVersion* = 1
   vkExtFragmentDensityMap2ExtensionName* = "VK_EXT_fragment_density_map2"
@@ -9004,6 +9414,18 @@ type
     subsampledCoarseReconstructionEarlyAccess*: VkBool32
     maxSubsampledArrayLayers*: uint32
     maxDescriptorSetSubsampledSamplers*: uint32
+
+
+const
+  vkQcomRotatedCopyCommands* = 1
+  vkQcomRotatedCopyCommandsSpecVersion* = 0
+  vkQcomRotatedCopyCommandsExtensionName* = "VK_QCOM_rotated_copy_commands"
+
+type
+  VkCopyCommandTransformInfoQCOM* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    transform*: VkSurfaceTransformFlagBitsKHR
 
 
 const
@@ -9029,6 +9451,350 @@ type
     pNext*: pointer
     formatA4R4G4B4*: VkBool32
     formatA4B4G4R4*: VkBool32
+
+
+const
+  vkNvAcquireWinrtDisplay* = 1
+  vkNvAcquireWinrtDisplaySpecVersion* = 1
+  vkNvAcquireWinrtDisplayExtensionName* = "VK_NV_acquire_winrt_display"
+
+type
+  PFNVkacquirewinrtdisplaynv* = proc (physicalDevice: VkPhysicalDevice; display: VkDisplayKHR): VkResult {.cdecl.}
+  PFNVkgetwinrtdisplaynv* = proc (physicalDevice: VkPhysicalDevice; deviceRelativeId: uint32; pDisplay: ptr VkDisplayKHR): VkResult {.cdecl.}
+
+when not defined(vkNoPrototypes):
+  proc vkAcquireWinrtDisplayNV*(physicalDevice: VkPhysicalDevice; display: VkDisplayKHR): VkResult {.cdecl, importc.}
+  proc vkGetWinrtDisplayNV*(physicalDevice: VkPhysicalDevice; deviceRelativeId: uint32; pDisplay: ptr VkDisplayKHR): VkResult {.cdecl, importc.}
+const
+  vkValveMutableDescriptorype* = 1
+  vkValveMutableDescriptorTypeSpecVersion* = 1
+  vkValveMutableDescriptorTypeExtensionName* = "VK_VALVE_mutable_descriptorype"
+
+type
+  VkPhysicalDeviceMutableDescriptorTypeFeaturesVALVE* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    mutableDescriptorType*: VkBool32
+
+  VkMutableDescriptorTypeListVALVE* {.bycopy.} = object
+    descriptorTypeCount*: uint32
+    pDescriptorTypes*: ptr VkDescriptorType
+
+  VkMutableDescriptorTypeCreateInfoVALVE* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    mutableDescriptorTypeListCount*: uint32
+    pMutableDescriptorTypeLists*: ptr VkMutableDescriptorTypeListVALVE
+
+
+const
+  vkKhrAccelerationStructure* = 1
+
+type
+  VkAccelerationStructureKHR* = VkNonDispatchableHandle
+
+const
+  vkKhrAccelerationStructureSpecVersion* = 11
+  vkKhrAccelerationStructureExtensionName* = "VK_KHR_acceleration_structure"
+
+type
+  VkBuildAccelerationStructureModeKHR* = distinct cint
+  VkAccelerationStructureBuildTypeKHR* = distinct cint
+  VkAccelerationStructureCompatibilityKHR* = distinct cint
+  VkAccelerationStructureCreateFlagBitsKHR* = distinct cint
+  VkAccelerationStructureCreateFlagsKHR* = VkFlags
+  VkDeviceOrHostAddressKHR* {.bycopy, union.} = object
+    deviceAddress*: VkDeviceAddress
+    hostAddress*: pointer
+
+  VkDeviceOrHostAddressConstKHR* {.bycopy, union.} = object
+    deviceAddress*: VkDeviceAddress
+    hostAddress*: pointer
+
+  VkAccelerationStructureBuildRangeInfoKHR* {.bycopy.} = object
+    primitiveCount*: uint32
+    primitiveOffset*: uint32
+    firstVertex*: uint32
+    transformOffset*: uint32
+
+  VkAccelerationStructureGeometryTrianglesDataKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    vertexFormat*: VkFormat
+    vertexData*: VkDeviceOrHostAddressConstKHR
+    vertexStride*: VkDeviceSize
+    maxVertex*: uint32
+    indexType*: VkIndexType
+    indexData*: VkDeviceOrHostAddressConstKHR
+    transformData*: VkDeviceOrHostAddressConstKHR
+
+  VkAccelerationStructureGeometryAabbsDataKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    data*: VkDeviceOrHostAddressConstKHR
+    stride*: VkDeviceSize
+
+  VkAccelerationStructureGeometryInstancesDataKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    arrayOfPointers*: VkBool32
+    data*: VkDeviceOrHostAddressConstKHR
+
+  VkAccelerationStructureGeometryDataKHR* {.bycopy, union.} = object
+    triangles*: VkAccelerationStructureGeometryTrianglesDataKHR
+    aabbs*: VkAccelerationStructureGeometryAabbsDataKHR
+    instances*: VkAccelerationStructureGeometryInstancesDataKHR
+
+  VkAccelerationStructureGeometryKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    geometryType*: VkGeometryTypeKHR
+    geometry*: VkAccelerationStructureGeometryDataKHR
+    flags*: VkGeometryFlagsKHR
+
+  VkAccelerationStructureBuildGeometryInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    `type`*: VkAccelerationStructureTypeKHR
+    flags*: VkBuildAccelerationStructureFlagsKHR
+    mode*: VkBuildAccelerationStructureModeKHR
+    srcAccelerationStructure*: VkAccelerationStructureKHR
+    dstAccelerationStructure*: VkAccelerationStructureKHR
+    geometryCount*: uint32
+    pGeometries*: ptr VkAccelerationStructureGeometryKHR
+    ppGeometries*: ptr ptr VkAccelerationStructureGeometryKHR
+    scratchData*: VkDeviceOrHostAddressKHR
+
+  VkAccelerationStructureCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    createFlags*: VkAccelerationStructureCreateFlagsKHR
+    buffer*: VkBuffer
+    offset*: VkDeviceSize
+    size*: VkDeviceSize
+    `type`*: VkAccelerationStructureTypeKHR
+    deviceAddress*: VkDeviceAddress
+
+  VkWriteDescriptorSetAccelerationStructureKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    accelerationStructureCount*: uint32
+    pAccelerationStructures*: ptr VkAccelerationStructureKHR
+
+  VkPhysicalDeviceAccelerationStructureFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    accelerationStructure*: VkBool32
+    accelerationStructureCaptureReplay*: VkBool32
+    accelerationStructureIndirectBuild*: VkBool32
+    accelerationStructureHostCommands*: VkBool32
+    descriptorBindingAccelerationStructureUpdateAfterBind*: VkBool32
+
+  VkPhysicalDeviceAccelerationStructurePropertiesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    maxGeometryCount*: uint64
+    maxInstanceCount*: uint64
+    maxPrimitiveCount*: uint64
+    maxPerStageDescriptorAccelerationStructures*: uint32
+    maxPerStageDescriptorUpdateAfterBindAccelerationStructures*: uint32
+    maxDescriptorSetAccelerationStructures*: uint32
+    maxDescriptorSetUpdateAfterBindAccelerationStructures*: uint32
+    minAccelerationStructureScratchOffsetAlignment*: uint32
+
+  VkAccelerationStructureDeviceAddressInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    accelerationStructure*: VkAccelerationStructureKHR
+
+  VkAccelerationStructureVersionInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    pVersionData*: ptr uint8
+
+  VkCopyAccelerationStructureToMemoryInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    src*: VkAccelerationStructureKHR
+    dst*: VkDeviceOrHostAddressKHR
+    mode*: VkCopyAccelerationStructureModeKHR
+
+  VkCopyMemoryToAccelerationStructureInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    src*: VkDeviceOrHostAddressConstKHR
+    dst*: VkAccelerationStructureKHR
+    mode*: VkCopyAccelerationStructureModeKHR
+
+  VkCopyAccelerationStructureInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    src*: VkAccelerationStructureKHR
+    dst*: VkAccelerationStructureKHR
+    mode*: VkCopyAccelerationStructureModeKHR
+
+  VkAccelerationStructureBuildSizesInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    accelerationStructureSize*: VkDeviceSize
+    updateScratchSize*: VkDeviceSize
+    buildScratchSize*: VkDeviceSize
+
+  PFNVkcreateaccelerationstructurekhr* = proc (device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureKHR): VkResult {.cdecl.}
+  PFNVkdestroyaccelerationstructurekhr* = proc (device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl.}
+  PFNVkcmdbuildaccelerationstructureskhr* = proc (commandBuffer: VkCommandBuffer; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; ppBuildRangeInfos: ptr ptr VkAccelerationStructureBuildRangeInfoKHR) {.cdecl.}
+  PFNVkcmdbuildaccelerationstructuresindirectkhr* = proc (commandBuffer: VkCommandBuffer; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; pIndirectDeviceAddresses: ptr VkDeviceAddress; pIndirectStrides: ptr uint32; ppMaxPrimitiveCounts: ptr ptr uint32) {.cdecl.}
+  PFNVkbuildaccelerationstructureskhr* = proc (device: VkDevice; deferredOperation: VkDeferredOperationKHR; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; ppBuildRangeInfos: ptr ptr VkAccelerationStructureBuildRangeInfoKHR): VkResult {.cdecl.}
+  PFNVkcopyaccelerationstructurekhr* = proc (device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyAccelerationStructureInfoKHR): VkResult {.cdecl.}
+  PFNVkcopyaccelerationstructuretomemorykhr* = proc (device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyAccelerationStructureToMemoryInfoKHR): VkResult {.cdecl.}
+  PFNVkcopymemorytoaccelerationstructurekhr* = proc (device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyMemoryToAccelerationStructureInfoKHR): VkResult {.cdecl.}
+  PFNVkwriteaccelerationstructurespropertieskhr* = proc (device: VkDevice; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; dataSize: csize_t; pData: pointer; stride: csize_t): VkResult {.cdecl.}
+  PFNVkcmdcopyaccelerationstructurekhr* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyAccelerationStructureInfoKHR) {.cdecl.}
+  PFNVkcmdcopyaccelerationstructuretomemorykhr* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyAccelerationStructureToMemoryInfoKHR) {.cdecl.}
+  PFNVkcmdcopymemorytoaccelerationstructurekhr* = proc (commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyMemoryToAccelerationStructureInfoKHR) {.cdecl.}
+  PFNVkgetaccelerationstructuredeviceaddresskhr* = proc (device: VkDevice; pInfo: ptr VkAccelerationStructureDeviceAddressInfoKHR): VkDeviceAddress {.cdecl.}
+  PFNVkcmdwriteaccelerationstructurespropertieskhr* = proc (commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl.}
+  PFNVkgetdeviceaccelerationstructurecompatibilitykhr* = proc (device: VkDevice; pVersionInfo: ptr VkAccelerationStructureVersionInfoKHR; pCompatibility: ptr VkAccelerationStructureCompatibilityKHR) {.cdecl.}
+  PFNVkgetaccelerationstructurebuildsizeskhr* = proc (device: VkDevice; buildType: VkAccelerationStructureBuildTypeKHR; pBuildInfo: ptr VkAccelerationStructureBuildGeometryInfoKHR; pMaxPrimitiveCounts: ptr uint32; pSizeInfo: ptr VkAccelerationStructureBuildSizesInfoKHR) {.cdecl.}
+
+const
+  vkBuildAccelerationStructureModeBuildKhr* {.used.} = 0.VkBuildAccelerationStructureModeKHR
+  vkBuildAccelerationStructureModeUpdateKhr* {.used.} = 1.VkBuildAccelerationStructureModeKHR
+  vkBuildAccelerationStructureModeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkBuildAccelerationStructureModeKHR
+
+const
+  vkAccelerationStructureBuildTypeHostKhr* {.used.} = 0.VkAccelerationStructureBuildTypeKHR
+  vkAccelerationStructureBuildTypeDeviceKhr* {.used.} = 1.VkAccelerationStructureBuildTypeKHR
+  vkAccelerationStructureBuildTypeHostOrDeviceKhr* {.used.} = 2.VkAccelerationStructureBuildTypeKHR
+  vkAccelerationStructureBuildTypeMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkAccelerationStructureBuildTypeKHR
+
+const
+  vkAccelerationStructureCompatibilityCompatibleKhr* {.used.} = 0.VkAccelerationStructureCompatibilityKHR
+  vkAccelerationStructureCompatibilityIncompatibleKhr* {.used.} = 1.VkAccelerationStructureCompatibilityKHR
+  vkAccelerationStructureCompatibilityMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkAccelerationStructureCompatibilityKHR
+
+const
+  vkAccelerationStructureCreateDeviceAddressCaptureReplayBitKhr* {.used.} = 0x00000001.VkAccelerationStructureCreateFlagBitsKHR
+  vkAccelerationStructureCreateFlagBitsMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkAccelerationStructureCreateFlagBitsKHR
+
+when not defined(vkNoPrototypes):
+  proc vkCreateAccelerationStructureKHR*(device: VkDevice; pCreateInfo: ptr VkAccelerationStructureCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pAccelerationStructure: ptr VkAccelerationStructureKHR): VkResult {.cdecl, importc.}
+  proc vkDestroyAccelerationStructureKHR*(device: VkDevice; accelerationStructure: VkAccelerationStructureKHR; pAllocator: ptr VkAllocationCallbacks = nil) {.cdecl, importc.}
+  proc vkCmdBuildAccelerationStructuresKHR*(commandBuffer: VkCommandBuffer; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; ppBuildRangeInfos: ptr ptr VkAccelerationStructureBuildRangeInfoKHR) {.cdecl, importc.}
+  proc vkCmdBuildAccelerationStructuresIndirectKHR*(commandBuffer: VkCommandBuffer; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; pIndirectDeviceAddresses: ptr VkDeviceAddress; pIndirectStrides: ptr uint32; ppMaxPrimitiveCounts: ptr ptr uint32) {.cdecl, importc.}
+  proc vkBuildAccelerationStructuresKHR*(device: VkDevice; deferredOperation: VkDeferredOperationKHR; infoCount: uint32; pInfos: ptr VkAccelerationStructureBuildGeometryInfoKHR; ppBuildRangeInfos: ptr ptr VkAccelerationStructureBuildRangeInfoKHR): VkResult {.cdecl, importc.}
+  proc vkCopyAccelerationStructureKHR*(device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyAccelerationStructureInfoKHR): VkResult {.cdecl, importc.}
+  proc vkCopyAccelerationStructureToMemoryKHR*(device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyAccelerationStructureToMemoryInfoKHR): VkResult {.cdecl, importc.}
+  proc vkCopyMemoryToAccelerationStructureKHR*(device: VkDevice; deferredOperation: VkDeferredOperationKHR; pInfo: ptr VkCopyMemoryToAccelerationStructureInfoKHR): VkResult {.cdecl, importc.}
+  proc vkWriteAccelerationStructuresPropertiesKHR*(device: VkDevice; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; dataSize: csize_t; pData: pointer; stride: csize_t): VkResult {.cdecl, importc.}
+  proc vkCmdCopyAccelerationStructureKHR*(commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyAccelerationStructureInfoKHR) {.cdecl, importc.}
+  proc vkCmdCopyAccelerationStructureToMemoryKHR*(commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyAccelerationStructureToMemoryInfoKHR) {.cdecl, importc.}
+  proc vkCmdCopyMemoryToAccelerationStructureKHR*(commandBuffer: VkCommandBuffer; pInfo: ptr VkCopyMemoryToAccelerationStructureInfoKHR) {.cdecl, importc.}
+  proc vkGetAccelerationStructureDeviceAddressKHR*(device: VkDevice; pInfo: ptr VkAccelerationStructureDeviceAddressInfoKHR): VkDeviceAddress {.cdecl, importc.}
+  proc vkCmdWriteAccelerationStructuresPropertiesKHR*(commandBuffer: VkCommandBuffer; accelerationStructureCount: uint32; pAccelerationStructures: ptr VkAccelerationStructureKHR; queryType: VkQueryType; queryPool: VkQueryPool; firstQuery: uint32) {.cdecl, importc.}
+  proc vkGetDeviceAccelerationStructureCompatibilityKHR*(device: VkDevice; pVersionInfo: ptr VkAccelerationStructureVersionInfoKHR; pCompatibility: ptr VkAccelerationStructureCompatibilityKHR) {.cdecl, importc.}
+  proc vkGetAccelerationStructureBuildSizesKHR*(device: VkDevice; buildType: VkAccelerationStructureBuildTypeKHR; pBuildInfo: ptr VkAccelerationStructureBuildGeometryInfoKHR; pMaxPrimitiveCounts: ptr uint32; pSizeInfo: ptr VkAccelerationStructureBuildSizesInfoKHR) {.cdecl, importc.}
+const
+  vkKhrRayracingPipeline* = 1
+  vkKhrRayTracingPipelineSpecVersion* = 1
+  vkKhrRayTracingPipelineExtensionName* = "VK_KHR_rayracing_pipeline"
+
+type
+  VkShaderGroupShaderKHR* = distinct cint
+  VkRayTracingShaderGroupCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    `type`*: VkRayTracingShaderGroupTypeKHR
+    generalShader*: uint32
+    closestHitShader*: uint32
+    anyHitShader*: uint32
+    intersectionShader*: uint32
+    pShaderGroupCaptureReplayHandle*: pointer
+
+  VkRayTracingPipelineInterfaceCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    maxPipelineRayPayloadSize*: uint32
+    maxPipelineRayHitAttributeSize*: uint32
+
+  VkRayTracingPipelineCreateInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    flags*: VkPipelineCreateFlags
+    stageCount*: uint32
+    pStages*: ptr VkPipelineShaderStageCreateInfo
+    groupCount*: uint32
+    pGroups*: ptr VkRayTracingShaderGroupCreateInfoKHR
+    maxPipelineRayRecursionDepth*: uint32
+    pLibraryInfo*: ptr VkPipelineLibraryCreateInfoKHR
+    pLibraryInterface*: ptr VkRayTracingPipelineInterfaceCreateInfoKHR
+    pDynamicState*: ptr VkPipelineDynamicStateCreateInfo
+    layout*: VkPipelineLayout
+    basePipelineHandle*: VkPipeline
+    basePipelineIndex*: int32
+
+  VkPhysicalDeviceRayTracingPipelineFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    rayTracingPipeline*: VkBool32
+    rayTracingPipelineShaderGroupHandleCaptureReplay*: VkBool32
+    rayTracingPipelineShaderGroupHandleCaptureReplayMixed*: VkBool32
+    rayTracingPipelineTraceRaysIndirect*: VkBool32
+    rayTraversalPrimitiveCulling*: VkBool32
+
+  VkPhysicalDeviceRayTracingPipelinePropertiesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    shaderGroupHandleSize*: uint32
+    maxRayRecursionDepth*: uint32
+    maxShaderGroupStride*: uint32
+    shaderGroupBaseAlignment*: uint32
+    shaderGroupHandleCaptureReplaySize*: uint32
+    maxRayDispatchInvocationCount*: uint32
+    shaderGroupHandleAlignment*: uint32
+    maxRayHitAttributeSize*: uint32
+
+  VkStridedDeviceAddressRegionKHR* {.bycopy.} = object
+    deviceAddress*: VkDeviceAddress
+    stride*: VkDeviceSize
+    size*: VkDeviceSize
+
+  VkTraceRaysIndirectCommandKHR* {.bycopy.} = object
+    width*: uint32
+    height*: uint32
+    depth*: uint32
+
+  PFNVkcmdtracerayskhr* = proc (commandBuffer: VkCommandBuffer; pRaygenShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pMissShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pHitShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pCallableShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; width: uint32; height: uint32; depth: uint32) {.cdecl.}
+  PFNVkcreateraytracingpipelineskhr* = proc (device: VkDevice; deferredOperation: VkDeferredOperationKHR; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl.}
+  PFNVkgetraytracingcapturereplayshadergrouphandleskhr* = proc (device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl.}
+  PFNVkcmdtraceraysindirectkhr* = proc (commandBuffer: VkCommandBuffer; pRaygenShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pMissShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pHitShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pCallableShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; indirectDeviceAddress: VkDeviceAddress) {.cdecl.}
+  PFNVkgetraytracingshadergroupstacksizekhr* = proc (device: VkDevice; pipeline: VkPipeline; group: uint32; groupShader: VkShaderGroupShaderKHR): VkDeviceSize {.cdecl.}
+  PFNVkcmdsetraytracingpipelinestacksizekhr* = proc (commandBuffer: VkCommandBuffer; pipelineStackSize: uint32) {.cdecl.}
+
+const
+  vkShaderGroupShaderGeneralKhr* {.used.} = 0.VkShaderGroupShaderKHR
+  vkShaderGroupShaderClosestHitKhr* {.used.} = 1.VkShaderGroupShaderKHR
+  vkShaderGroupShaderAnyHitKhr* {.used.} = 2.VkShaderGroupShaderKHR
+  vkShaderGroupShaderIntersectionKhr* {.used.} = 3.VkShaderGroupShaderKHR
+  vkShaderGroupShaderMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkShaderGroupShaderKHR
+
+when not defined(vkNoPrototypes):
+  proc vkCmdTraceRaysKHR*(commandBuffer: VkCommandBuffer; pRaygenShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pMissShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pHitShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pCallableShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; width: uint32; height: uint32; depth: uint32) {.cdecl, importc.}
+  proc vkCreateRayTracingPipelinesKHR*(device: VkDevice; deferredOperation: VkDeferredOperationKHR; pipelineCache: VkPipelineCache; createInfoCount: uint32; pCreateInfos: ptr VkRayTracingPipelineCreateInfoKHR; pAllocator: ptr VkAllocationCallbacks = nil; pPipelines: ptr VkPipeline): VkResult {.cdecl, importc.}
+  proc vkGetRayTracingCaptureReplayShaderGroupHandlesKHR*(device: VkDevice; pipeline: VkPipeline; firstGroup: uint32; groupCount: uint32; dataSize: csize_t; pData: pointer): VkResult {.cdecl, importc.}
+  proc vkCmdTraceRaysIndirectKHR*(commandBuffer: VkCommandBuffer; pRaygenShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pMissShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pHitShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; pCallableShaderBindingTable: ptr VkStridedDeviceAddressRegionKHR; indirectDeviceAddress: VkDeviceAddress) {.cdecl, importc.}
+  proc vkGetRayTracingShaderGroupStackSizeKHR*(device: VkDevice; pipeline: VkPipeline; group: uint32; groupShader: VkShaderGroupShaderKHR): VkDeviceSize {.cdecl, importc.}
+  proc vkCmdSetRayTracingPipelineStackSizeKHR*(commandBuffer: VkCommandBuffer; pipelineStackSize: uint32) {.cdecl, importc.}
+const
+  vkKhrRayQuery* = 1
+  vkKhrRayQuerySpecVersion* = 1
+  vkKhrRayQueryExtensionName* = "VK_KHR_ray_query"
+
+type
+  VkPhysicalDeviceRayQueryFeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    rayQuery*: VkBool32
 
 from strutils import replace
 
@@ -9139,3 +9905,4 @@ genFlagConverters:
   VkIndirectCommandsLayoutUsageFlagBitsNV
   VkPrivateDataSlotCreateFlagBitsEXT
   VkDeviceDiagnosticsConfigFlagBitsNV
+  VkAccelerationStructureCreateFlagBitsKHR
