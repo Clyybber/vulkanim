@@ -1,5 +1,5 @@
 ##
-## * Copyright (c) 2015-2020 The Khronos Group Inc.
+## * Copyright 2015-2021 The Khronos Group Inc.
 ## *
 ## * SPDX-License-Identifier: Apache-2.0
 ##
@@ -192,6 +192,7 @@ genDistinctOps:
   VkSparseMemoryBindFlagBits
   VkSparseImageFormatFlagBits
   VkFenceCreateFlagBits
+  VkEventCreateFlagBits
   VkQueryPipelineStatisticFlagBits
   VkQueryResultFlagBits
   VkBufferCreateFlagBits
@@ -256,6 +257,7 @@ genDistinctOps:
   VkAcquireProfilingLockFlagBitsKHR
   VkFragmentShadingRateCombinerOpKHR
   VkPipelineExecutableStatisticFormatKHR
+  VkSubmitFlagBitsKHR
   VkDebugReportObjectTypeEXT
   VkDebugReportFlagBitsEXT
   VkRasterizationOrderAMD
@@ -334,7 +336,7 @@ const
 ##  Version of this file
 
 const
-  vkHeaderVersion* = 168
+  vkHeaderVersion* = 172
 
 ##  Complete version of this file
 
@@ -472,6 +474,7 @@ type
   VkFenceCreateFlagBits* = distinct cint
   VkFenceCreateFlags* = VkFlags
   VkSemaphoreCreateFlags* = VkFlags
+  VkEventCreateFlagBits* = distinct cint
   VkEventCreateFlags* = VkFlags
   VkQueryPipelineStatisticFlagBits* = distinct cint
   VkQueryPipelineStatisticFlags* = VkFlags
@@ -1994,8 +1997,6 @@ const
   vkStructureTypePhysicalDeviceDescriptorIndexingProperties* {.used.} = 1000161002.VkStructureType
   vkStructureTypeDescriptorSetVariableDescriptorCountAllocateInfo* {.used.} = 1000161003.VkStructureType
   vkStructureTypeDescriptorSetVariableDescriptorCountLayoutSupport* {.used.} = 1000161004.VkStructureType
-  vkStructureTypePhysicalDevicePortabilitySubsetFeaturesKhr* {.used.} = 1000163000.VkStructureType
-  vkStructureTypePhysicalDevicePortabilitySubsetPropertiesKhr* {.used.} = 1000163001.VkStructureType
   vkStructureTypePipelineViewportShadingRateImageStateCreateInfoNv* {.used.} = 1000164000.VkStructureType
   vkStructureTypePhysicalDeviceShadingRateImageFeaturesNv* {.used.} = 1000164001.VkStructureType
   vkStructureTypePhysicalDeviceShadingRateImagePropertiesNv* {.used.} = 1000164002.VkStructureType
@@ -2154,6 +2155,16 @@ const
   vkStructureTypePhysicalDevicePipelineCreationCacheControlFeaturesExt* {.used.} = 1000297000.VkStructureType
   vkStructureTypePhysicalDeviceDiagnosticsConfigFeaturesNv* {.used.} = 1000300000.VkStructureType
   vkStructureTypeDeviceDiagnosticsConfigCreateInfoNv* {.used.} = 1000300001.VkStructureType
+  vkStructureTypeMemoryBarrier2Khr* {.used.} = 1000314000.VkStructureType
+  vkStructureTypeBufferMemoryBarrier2Khr* {.used.} = 1000314001.VkStructureType
+  vkStructureTypeImageMemoryBarrier2Khr* {.used.} = 1000314002.VkStructureType
+  vkStructureTypeDependencyInfoKhr* {.used.} = 1000314003.VkStructureType
+  vkStructureTypeSubmitInfo2Khr* {.used.} = 1000314004.VkStructureType
+  vkStructureTypeSemaphoreSubmitInfoKhr* {.used.} = 1000314005.VkStructureType
+  vkStructureTypeCommandBufferSubmitInfoKhr* {.used.} = 1000314006.VkStructureType
+  vkStructureTypePhysicalDeviceSynchronization2FeaturesKhr* {.used.} = 1000314007.VkStructureType
+  vkStructureTypeQueueFamilyCheckpointProperties2Nv* {.used.} = 1000314008.VkStructureType
+  vkStructureTypeCheckpointData2Nv* {.used.} = 1000314009.VkStructureType
   vkStructureTypePhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKhr* {.used.} = 1000325000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentShadingRateEnumsPropertiesNv* {.used.} = 1000326000.VkStructureType
   vkStructureTypePhysicalDeviceFragmentShadingRateEnumsFeaturesNv* {.used.} = 1000326001.VkStructureType
@@ -2181,6 +2192,7 @@ const
   vkStructureTypePhysicalDeviceRayQueryFeaturesKhr* {.used.} = 1000348013.VkStructureType
   vkStructureTypePhysicalDeviceMutableDescriptorTypeFeaturesValve* {.used.} = 1000351000.VkStructureType
   vkStructureTypeMutableDescriptorTypeCreateInfoValve* {.used.} = 1000351002.VkStructureType
+  vkStructureTypeScreenSurfaceCreateInfoQnx* {.used.} = 1000378000.VkStructureType
   vkStructureTypePhysicalDeviceVariablePointerFeatures* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceVariablePointersFeatures
   vkStructureTypePhysicalDeviceShaderDrawParameterFeatures* {.used.}: VkStructureType = vkStructureTypePhysicalDeviceShaderDrawParametersFeatures
   vkStructureTypeDebugReportCreateInfoExt* {.used.}: VkStructureType = vkStructureTypeDebugReportCallbackCreateInfoExt
@@ -2312,6 +2324,12 @@ const
   vkImageLayoutDepthAttachmentStencilReadOnlyOptimal* {.used.} = 1000117001.VkImageLayout
   vkImageLayoutShadingRateOptimalNv* {.used.} = 1000164003.VkImageLayout
   vkImageLayoutFragmentDensityMapOptimalExt* {.used.} = 1000218000.VkImageLayout
+  vkImageLayoutDepthAttachmentOptimal* {.used.} = 1000241000.VkImageLayout
+  vkImageLayoutDepthReadOnlyOptimal* {.used.} = 1000241001.VkImageLayout
+  vkImageLayoutStencilAttachmentOptimal* {.used.} = 1000241002.VkImageLayout
+  vkImageLayoutStencilReadOnlyOptimal* {.used.} = 1000241003.VkImageLayout
+  vkImageLayoutReadOnlyOptimalKhr* {.used.} = 1000314000.VkImageLayout
+  vkImageLayoutAttachmentOptimalKhr* {.used.} = 1000314001.VkImageLayout
   vkImageLayoutDepthReadOnlyStencilAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthReadOnlyStencilAttachmentOptimal
   vkImageLayoutDepthAttachmentStencilReadOnlyOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthAttachmentStencilReadOnlyOptimal
   vkImageLayoutFragmentShadingRateAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutShadingRateOptimalNv
@@ -2319,10 +2337,6 @@ const
   vkImageLayoutDepthReadOnlyOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutDepthReadOnlyOptimal
   vkImageLayoutStencilAttachmentOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutStencilAttachmentOptimal
   vkImageLayoutStencilReadOnlyOptimalKhr* {.used.}: VkImageLayout = vkImageLayoutStencilReadOnlyOptimal
-  vkImageLayoutDepthAttachmentOptimal* {.used.} = 1000241000.VkImageLayout
-  vkImageLayoutDepthReadOnlyOptimal* {.used.} = 1000241001.VkImageLayout
-  vkImageLayoutStencilAttachmentOptimal* {.used.} = 1000241002.VkImageLayout
-  vkImageLayoutStencilReadOnlyOptimal* {.used.} = 1000241003.VkImageLayout
   vkImageLayoutMaxEnum* {.used.} = 0x7FFFFFFF.VkImageLayout
 
 const
@@ -3002,6 +3016,10 @@ const
   vkSubpassContentsMaxEnum* {.used.} = 0x7FFFFFFF.VkSubpassContents
 
 const
+  vkAccessNoneKhr* {.used.} = 0.VkAccessFlagBits
+  vkAccessAccelerationStructureReadBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureReadBitKhr
+  vkAccessAccelerationStructureWriteBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureWriteBitKhr
+  vkAccessFragmentShadingRateAttachmentReadBitKhr* {.used.}: VkAccessFlagBits = vkAccessShadingRateImageReadBitNv
   vkAccessIndirectCommandReadBit* {.used.} = 0x00000001.VkAccessFlagBits
   vkAccessIndexReadBit* {.used.} = 0x00000002.VkAccessFlagBits
   vkAccessVertexAttributeReadBit* {.used.} = 0x00000004.VkAccessFlagBits
@@ -3021,9 +3039,6 @@ const
   vkAccessMemoryWriteBit* {.used.} = 0x00010000.VkAccessFlagBits
   vkAccessCommandPreprocessReadBitNv* {.used.} = 0x00020000.VkAccessFlagBits
   vkAccessCommandPreprocessWriteBitNv* {.used.} = 0x00040000.VkAccessFlagBits
-  vkAccessAccelerationStructureReadBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureReadBitKhr
-  vkAccessAccelerationStructureWriteBitNv* {.used.}: VkAccessFlagBits = vkAccessAccelerationStructureWriteBitKhr
-  vkAccessFragmentShadingRateAttachmentReadBitKhr* {.used.}: VkAccessFlagBits = vkAccessShadingRateImageReadBitNv
   vkAccessColorAttachmentReadNoncoherentBitExt* {.used.} = 0x00080000.VkAccessFlagBits
   vkAccessConditionalRenderingReadBitExt* {.used.} = 0x00100000.VkAccessFlagBits
   vkAccessAccelerationStructureReadBitKhr* {.used.} = 0x00200000.VkAccessFlagBits
@@ -3171,6 +3186,10 @@ const
   vkDeviceQueueCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkDeviceQueueCreateFlagBits
 
 const
+  vkPipelineStageNoneKhr* {.used.} = 0.VkPipelineStageFlagBits
+  vkPipelineStageRayTracingShaderBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageRayTracingShaderBitKhr
+  vkPipelineStageAccelerationStructureBuildBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageAccelerationStructureBuildBitKhr
+  vkPipelineStageFragmentShadingRateAttachmentBitKhr* {.used.}: VkPipelineStageFlagBits = vkPipelineStageShadingRateImageBitNv
   vkPipelineStageTopOfPipeBit* {.used.} = 0x00000001.VkPipelineStageFlagBits
   vkPipelineStageDrawIndirectBit* {.used.} = 0x00000002.VkPipelineStageFlagBits
   vkPipelineStageVertexInputBit* {.used.} = 0x00000004.VkPipelineStageFlagBits
@@ -3189,9 +3208,6 @@ const
   vkPipelineStageAllGraphicsBit* {.used.} = 0x00008000.VkPipelineStageFlagBits
   vkPipelineStageAllCommandsBit* {.used.} = 0x00010000.VkPipelineStageFlagBits
   vkPipelineStageCommandPreprocessBitNv* {.used.} = 0x00020000.VkPipelineStageFlagBits
-  vkPipelineStageRayTracingShaderBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageRayTracingShaderBitKhr
-  vkPipelineStageAccelerationStructureBuildBitNv* {.used.}: VkPipelineStageFlagBits = vkPipelineStageAccelerationStructureBuildBitKhr
-  vkPipelineStageFragmentShadingRateAttachmentBitKhr* {.used.}: VkPipelineStageFlagBits = vkPipelineStageShadingRateImageBitNv
   vkPipelineStageConditionalRenderingBitExt* {.used.} = 0x00040000.VkPipelineStageFlagBits
   vkPipelineStageTaskShaderBitNv* {.used.} = 0x00080000.VkPipelineStageFlagBits
   vkPipelineStageMeshShaderBitNv* {.used.} = 0x00100000.VkPipelineStageFlagBits
@@ -3215,6 +3231,10 @@ const
 const
   vkFenceCreateSignaledBit* {.used.} = 0x00000001.VkFenceCreateFlagBits
   vkFenceCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkFenceCreateFlagBits
+
+const
+  vkEventCreateDeviceOnlyBitKhr* {.used.} = 0x00000001.VkEventCreateFlagBits
+  vkEventCreateFlagBitsMaxEnum* {.used.} = 0x7FFFFFFF.VkEventCreateFlagBits
 
 const
   vkQueryPipelineStatisticInputAssemblyVerticesBit* {.used.} = 0x00000001.VkQueryPipelineStatisticFlagBits
@@ -6249,6 +6269,284 @@ const
   vkKhrShaderNonSemanticInfo* = 1
   vkKhrShaderNonSemanticInfoSpecVersion* = 1
   vkKhrShaderNonSemanticInfoExtensionName* = "VK_KHR_shader_non_semantic_info"
+  vkKhrSynchronization2* = 1
+
+type
+  VkFlags64* = uint64
+
+const
+  vkKhrSynchronization2SpecVersion* = 1
+  vkKhrSynchronization2ExtensionName* = "VK_KHR_synchronization2"
+
+type
+  VkPipelineStageFlags2KHR* = VkFlags64
+
+##  Flag bits for VkPipelineStageFlags2KHR
+
+const vkPipelineStage2NoneKhr* = 0.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2TopOfPipeBitKhr* = 0x00000001.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2DrawIndirectBitKhr* = 0x00000002.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2VertexInputBitKhr* = 0x00000004.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2VertexShaderBitKhr* = 0x00000008.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2TessellationControlShaderBitKhr* = 0x00000010.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2TessellationEvaluationShaderBitKhr* = 0x00000020.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2GeometryShaderBitKhr* = 0x00000040.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2FragmentShaderBitKhr* = 0x00000080.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2EarlyFragmentTestsBitKhr* = 0x00000100.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2LateFragmentTestsBitKhr* = 0x00000200.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2ColorAttachmentOutputBitKhr* = 0x00000400.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2ComputeShaderBitKhr* = 0x00000800.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2AllTransferBitKhr* = 0x00001000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2TransferBitKhr* = 0x00001000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2BottomOfPipeBitKhr* = 0x00002000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2HostBitKhr* = 0x00004000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2AllGraphicsBitKhr* = 0x00008000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2AllCommandsBitKhr* = 0x00010000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2CopyBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2ResolveBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2BlitBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2ClearBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2IndexInputBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2VertexAttributeInputBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2PreRasterizationShadersBitKhr* = 0x0000000000000000.VkPipelineStageFlags2KHR'i64
+
+const vkPipelineStage2TransformFeedbackBitExt* = 0x01000000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2ConditionalRenderingBitExt* = 0x00040000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2CommandPreprocessBitNv* = 0x00020000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2FragmentShadingRateAttachmentBitKhr* = 0x00400000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2ShadingRateImageBitNv* = 0x00400000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2AccelerationStructureBuildBitKhr* = 0x02000000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2RayTracingShaderBitKhr* = 0x00200000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2RayTracingShaderBitNv* = 0x00200000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2AccelerationStructureBuildBitNv* = 0x02000000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2FragmentDensityProcessBitExt* = 0x00800000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2TaskShaderBitNv* = 0x00080000.VkPipelineStageFlags2KHR
+
+const vkPipelineStage2MeshShaderBitNv* = 0x00100000.VkPipelineStageFlags2KHR
+
+type
+  VkAccessFlags2KHR* = VkFlags64
+
+##  Flag bits for VkAccessFlags2KHR
+
+const vkAccess2NoneKhr* = 0.VkAccessFlags2KHR
+
+const vkAccess2IndirectCommandReadBitKhr* = 0x00000001.VkAccessFlags2KHR
+
+const vkAccess2IndexReadBitKhr* = 0x00000002.VkAccessFlags2KHR
+
+const vkAccess2VertexAttributeReadBitKhr* = 0x00000004.VkAccessFlags2KHR
+
+const vkAccess2UniformReadBitKhr* = 0x00000008.VkAccessFlags2KHR
+
+const vkAccess2InputAttachmentReadBitKhr* = 0x00000010.VkAccessFlags2KHR
+
+const vkAccess2ShaderReadBitKhr* = 0x00000020.VkAccessFlags2KHR
+
+const vkAccess2ShaderWriteBitKhr* = 0x00000040.VkAccessFlags2KHR
+
+const vkAccess2ColorAttachmentReadBitKhr* = 0x00000080.VkAccessFlags2KHR
+
+const vkAccess2ColorAttachmentWriteBitKhr* = 0x00000100.VkAccessFlags2KHR
+
+const vkAccess2DepthStencilAttachmentReadBitKhr* = 0x00000200.VkAccessFlags2KHR
+
+const vkAccess2DepthStencilAttachmentWriteBitKhr* = 0x00000400.VkAccessFlags2KHR
+
+const vkAccess2TransferReadBitKhr* = 0x00000800.VkAccessFlags2KHR
+
+const vkAccess2TransferWriteBitKhr* = 0x00001000.VkAccessFlags2KHR
+
+const vkAccess2HostReadBitKhr* = 0x00002000.VkAccessFlags2KHR
+
+const vkAccess2HostWriteBitKhr* = 0x00004000.VkAccessFlags2KHR
+
+const vkAccess2MemoryReadBitKhr* = 0x00008000.VkAccessFlags2KHR
+
+const vkAccess2MemoryWriteBitKhr* = 0x00010000.VkAccessFlags2KHR
+
+const vkAccess2ShaderSampledReadBitKhr* = 0x0000000000000000.VkAccessFlags2KHR'i64
+
+const vkAccess2ShaderStorageReadBitKhr* = 0x0000000000000000.VkAccessFlags2KHR'i64
+
+const vkAccess2ShaderStorageWriteBitKhr* = 0x0000000000000000.VkAccessFlags2KHR'i64
+
+const vkAccess2TransformFeedbackWriteBitExt* = 0x02000000.VkAccessFlags2KHR
+
+const vkAccess2TransformFeedbackCounterReadBitExt* = 0x04000000.VkAccessFlags2KHR
+
+const vkAccess2TransformFeedbackCounterWriteBitExt* = 0x08000000.VkAccessFlags2KHR
+
+const vkAccess2ConditionalRenderingReadBitExt* = 0x00100000.VkAccessFlags2KHR
+
+const vkAccess2CommandPreprocessReadBitNv* = 0x00020000.VkAccessFlags2KHR
+
+const vkAccess2CommandPreprocessWriteBitNv* = 0x00040000.VkAccessFlags2KHR
+
+const vkAccess2FragmentShadingRateAttachmentReadBitKhr* = 0x00800000.VkAccessFlags2KHR
+
+const vkAccess2ShadingRateImageReadBitNv* = 0x00800000.VkAccessFlags2KHR
+
+const vkAccess2AccelerationStructureReadBitKhr* = 0x00200000.VkAccessFlags2KHR
+
+const vkAccess2AccelerationStructureWriteBitKhr* = 0x00400000.VkAccessFlags2KHR
+
+const vkAccess2AccelerationStructureReadBitNv* = 0x00200000.VkAccessFlags2KHR
+
+const vkAccess2AccelerationStructureWriteBitNv* = 0x00400000.VkAccessFlags2KHR
+
+const vkAccess2FragmentDensityMapReadBitExt* = 0x01000000.VkAccessFlags2KHR
+
+const vkAccess2ColorAttachmentReadNoncoherentBitExt* = 0x00080000.VkAccessFlags2KHR
+
+type
+  VkSubmitFlagBitsKHR* = distinct cint
+  VkSubmitFlagsKHR* = VkFlags
+  VkMemoryBarrier2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcStageMask*: VkPipelineStageFlags2KHR
+    srcAccessMask*: VkAccessFlags2KHR
+    dstStageMask*: VkPipelineStageFlags2KHR
+    dstAccessMask*: VkAccessFlags2KHR
+
+  VkBufferMemoryBarrier2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcStageMask*: VkPipelineStageFlags2KHR
+    srcAccessMask*: VkAccessFlags2KHR
+    dstStageMask*: VkPipelineStageFlags2KHR
+    dstAccessMask*: VkAccessFlags2KHR
+    srcQueueFamilyIndex*: uint32
+    dstQueueFamilyIndex*: uint32
+    buffer*: VkBuffer
+    offset*: VkDeviceSize
+    size*: VkDeviceSize
+
+  VkImageMemoryBarrier2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    srcStageMask*: VkPipelineStageFlags2KHR
+    srcAccessMask*: VkAccessFlags2KHR
+    dstStageMask*: VkPipelineStageFlags2KHR
+    dstAccessMask*: VkAccessFlags2KHR
+    oldLayout*: VkImageLayout
+    newLayout*: VkImageLayout
+    srcQueueFamilyIndex*: uint32
+    dstQueueFamilyIndex*: uint32
+    image*: VkImage
+    subresourceRange*: VkImageSubresourceRange
+
+  VkDependencyInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    dependencyFlags*: VkDependencyFlags
+    memoryBarrierCount*: uint32
+    pMemoryBarriers*: ptr VkMemoryBarrier2KHR
+    bufferMemoryBarrierCount*: uint32
+    pBufferMemoryBarriers*: ptr VkBufferMemoryBarrier2KHR
+    imageMemoryBarrierCount*: uint32
+    pImageMemoryBarriers*: ptr VkImageMemoryBarrier2KHR
+
+  VkSemaphoreSubmitInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    semaphore*: VkSemaphore
+    value*: uint64
+    stageMask*: VkPipelineStageFlags2KHR
+    deviceIndex*: uint32
+
+  VkCommandBufferSubmitInfoKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    commandBuffer*: VkCommandBuffer
+    deviceMask*: uint32
+
+  VkSubmitInfo2KHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    flags*: VkSubmitFlagsKHR
+    waitSemaphoreInfoCount*: uint32
+    pWaitSemaphoreInfos*: ptr VkSemaphoreSubmitInfoKHR
+    commandBufferInfoCount*: uint32
+    pCommandBufferInfos*: ptr VkCommandBufferSubmitInfoKHR
+    signalSemaphoreInfoCount*: uint32
+    pSignalSemaphoreInfos*: ptr VkSemaphoreSubmitInfoKHR
+
+  VkPhysicalDeviceSynchronization2FeaturesKHR* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    synchronization2*: VkBool32
+
+  VkQueueFamilyCheckpointProperties2NV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    checkpointExecutionStageMask*: VkPipelineStageFlags2KHR
+
+  VkCheckpointData2NV* {.bycopy.} = object
+    sType*: VkStructureType
+    pNext*: pointer
+    stage*: VkPipelineStageFlags2KHR
+    pCheckpointMarker*: pointer
+
+  PFNVkcmdsetevent2khr* = proc (commandBuffer: VkCommandBuffer; event: VkEvent; pDependencyInfo: ptr VkDependencyInfoKHR) {.cdecl.}
+  PFNVkcmdresetevent2khr* = proc (commandBuffer: VkCommandBuffer; event: VkEvent; stageMask: VkPipelineStageFlags2KHR) {.cdecl.}
+  PFNVkcmdwaitevents2khr* = proc (commandBuffer: VkCommandBuffer; eventCount: uint32; pEvents: ptr VkEvent; pDependencyInfos: ptr VkDependencyInfoKHR) {.cdecl.}
+  PFNVkcmdpipelinebarrier2khr* = proc (commandBuffer: VkCommandBuffer; pDependencyInfo: ptr VkDependencyInfoKHR) {.cdecl.}
+  PFNVkcmdwritetimestamp2khr* = proc (commandBuffer: VkCommandBuffer; stage: VkPipelineStageFlags2KHR; queryPool: VkQueryPool; query: uint32) {.cdecl.}
+  PFNVkqueuesubmit2khr* = proc (queue: VkQueue; submitCount: uint32; pSubmits: ptr VkSubmitInfo2KHR; fence: VkFence): VkResult {.cdecl.}
+  PFNVkcmdwritebuffermarker2amd* = proc (commandBuffer: VkCommandBuffer; stage: VkPipelineStageFlags2KHR; dstBuffer: VkBuffer; dstOffset: VkDeviceSize; marker: uint32) {.cdecl.}
+  PFNVkgetqueuecheckpointdata2nv* = proc (queue: VkQueue; pCheckpointDataCount: ptr uint32; pCheckpointData: ptr VkCheckpointData2NV) {.cdecl.}
+
+const
+  vkSubmitProtectedBitKhr* {.used.} = 0x00000001.VkSubmitFlagBitsKHR
+  vkSubmitFlagBitsMaxEnumKhr* {.used.} = 0x7FFFFFFF.VkSubmitFlagBitsKHR
+
+when not defined(vkNoPrototypes):
+  proc vkCmdSetEvent2KHR*(commandBuffer: VkCommandBuffer; event: VkEvent; pDependencyInfo: ptr VkDependencyInfoKHR) {.cdecl, importc.}
+  proc vkCmdResetEvent2KHR*(commandBuffer: VkCommandBuffer; event: VkEvent; stageMask: VkPipelineStageFlags2KHR) {.cdecl, importc.}
+  proc vkCmdWaitEvents2KHR*(commandBuffer: VkCommandBuffer; eventCount: uint32; pEvents: ptr VkEvent; pDependencyInfos: ptr VkDependencyInfoKHR) {.cdecl, importc.}
+  proc vkCmdPipelineBarrier2KHR*(commandBuffer: VkCommandBuffer; pDependencyInfo: ptr VkDependencyInfoKHR) {.cdecl, importc.}
+  proc vkCmdWriteTimestamp2KHR*(commandBuffer: VkCommandBuffer; stage: VkPipelineStageFlags2KHR; queryPool: VkQueryPool; query: uint32) {.cdecl, importc.}
+  proc vkQueueSubmit2KHR*(queue: VkQueue; submitCount: uint32; pSubmits: ptr VkSubmitInfo2KHR; fence: VkFence): VkResult {.cdecl, importc.}
+  proc vkCmdWriteBufferMarker2AMD*(commandBuffer: VkCommandBuffer; stage: VkPipelineStageFlags2KHR; dstBuffer: VkBuffer; dstOffset: VkDeviceSize; marker: uint32) {.cdecl, importc.}
+  proc vkGetQueueCheckpointData2NV*(queue: VkQueue; pCheckpointDataCount: ptr uint32; pCheckpointData: ptr VkCheckpointData2NV) {.cdecl, importc.}
+const
   vkKhrZeroInitializeWorkgroupMemory* = 1
   vkKhrZeroInitializeWorkgroupMemorySpecVersion* = 1
   vkKhrZeroInitializeWorkgroupMemoryExtensionName* = "VK_KHR_zero_initialize_workgroup_memory"
@@ -9840,6 +10138,7 @@ genFlagConverters:
   VkSparseMemoryBindFlagBits
   VkSparseImageFormatFlagBits
   VkFenceCreateFlagBits
+  VkEventCreateFlagBits
   VkQueryPipelineStatisticFlagBits
   VkQueryResultFlagBits
   VkBufferCreateFlagBits
@@ -9887,6 +10186,7 @@ genFlagConverters:
   VkDisplayPlaneAlphaFlagBitsKHR
   VkPerformanceCounterDescriptionFlagBitsKHR
   VkAcquireProfilingLockFlagBitsKHR
+  VkSubmitFlagBitsKHR
   VkDebugReportFlagBitsEXT
   VkExternalMemoryHandleTypeFlagBitsNV
   VkExternalMemoryFeatureFlagBitsNV
