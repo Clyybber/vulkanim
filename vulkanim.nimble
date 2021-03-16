@@ -1,6 +1,6 @@
 # Package
 
-version     = "1.2.172.0"
+version     = "1.2.172.1"
 author      = "Clyybber"
 description = "Vulkan bindings for Nim"
 license     = "MIT"
